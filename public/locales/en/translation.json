@@ -1,0 +1,19 @@
+{
+  "pages": {
+    "home": "home",
+    "about": "about",
+    "news": "news",
+    "events": "events"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "news": "News",
+    "events": "Events",
+    "language": "Language"
+  },
+  "languages": {
+    "en": "English",
+    "mk": "Macedonian"
+  }
+}
