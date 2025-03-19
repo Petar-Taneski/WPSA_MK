@@ -1,14 +1,13 @@
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
+
+import Hero from "@/components/Home/HeroSection/Hero";
 
 const Home = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
-  return (
-    <div className="page home-page">
-      <h1 className="text-3xl font-bold mb-4">{t("navigation.home")}</h1>
-      <p>This is the home page content.</p>
-    </div>
-  );
+  return <div className="">
+    <Hero />
+  </div>;
 };
 
 export default Home;

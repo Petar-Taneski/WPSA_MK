@@ -10,8 +10,6 @@ const LanguageSwitcher = () => {
     // Get the current path segments
     const pathSegments = location.pathname.split("/").filter(Boolean);
 
-    // Get the language segment (first segment)
-    const currentLang = pathSegments[0] || i18n.language;
 
     // Get the current page (second segment or empty for home)
     const currentPage = pathSegments[1] || "home";

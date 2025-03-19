@@ -19,9 +19,9 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
 
   return (
     <div className="mb-12 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl overflow-hidden">
-      <div className="relative flex flex-col lg:flex-row">
+      <div className="relative flex flex-col lg:flex-row h-[400px] sm:h-[450px] lg:h-[400px]">
         {/* Featured Image */}
-        <div className="lg:w-3/5 h-64 sm:h-80 lg:h-auto overflow-hidden">
+        <div className="lg:w-3/5 h-64 sm:h-80 lg:h-full rounded-xl overflow-hidden">
           <img
             src={imageUrl}
             alt={title}
@@ -30,7 +30,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
         </div>
 
         {/* Featured Content */}
-        <div className="lg:w-2/5 p-6 lg:p-8 flex flex-col justify-center">
+        <div className="lg:w-2/5 p-6 lg:p-8 flex flex-col">
           <div className="mb-3 flex items-center space-x-2">
             <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
               {t("news.featured")}
@@ -42,7 +42,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
             )}
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 line-clamp-2">
             {title}
           </h2>
 

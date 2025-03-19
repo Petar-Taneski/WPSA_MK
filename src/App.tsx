@@ -11,19 +11,11 @@ const About = lazy(() => import("./pages/About"));
 const News = lazy(() => import("./pages/News"));
 const Events = lazy(() => import("./pages/Events"));
 // Lazy load news details component
-const NewsDetails = lazy(() => import("./components/NewsDetails"));
 
 // Component to wrap News routes with NewsProvider
 const NewsWithProvider = () => (
   <NewsProvider>
     <News />
-  </NewsProvider>
-);
-
-// Component to wrap NewsDetails routes with NewsProvider
-const NewsDetailsWithProvider = () => (
-  <NewsProvider>
-    <NewsDetails />
   </NewsProvider>
 );
 
@@ -77,10 +69,6 @@ function App() {
                 path={`/en/${paths.en.news}`}
                 element={<NewsWithProvider />}
               />
-              <Route
-                path={`/en/${paths.en.news}/:id`}
-                element={<NewsDetailsWithProvider />}
-              />
               <Route path={`/en/${paths.en.events}`} element={<Events />} />
 
               {/* Macedonian routes */}
@@ -93,10 +81,6 @@ function App() {
               <Route
                 path={`/mk/${paths.mk.news}`}
                 element={<NewsWithProvider />}
-              />
-              <Route
-                path={`/mk/${paths.mk.news}/:id`}
-                element={<NewsDetailsWithProvider />}
               />
               <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
 

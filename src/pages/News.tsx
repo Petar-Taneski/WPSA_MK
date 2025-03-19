@@ -11,7 +11,7 @@ import NewsCard from "../components/news/NewsCard";
 
 const News = () => {
   const { t } = useTranslation();
-  const { loading, error, featuredArticle, remainingArticles, viewMode } =
+  const { loading, error, featuredArticle, filteredArticles, viewMode } =
     useNews();
 
   return (
@@ -36,27 +36,22 @@ const News = () => {
 
       {!loading && !error && (
         <>
-          {/* Featured Article Section */}
           {featuredArticle && <FeaturedArticle article={featuredArticle} />}
 
-          {/* Search and filter bar */}
           <SearchFilterBar />
 
-          {/* Empty state */}
-          {remainingArticles.length === 0 && <EmptyState />}
+          {filteredArticles.length === 0 && <EmptyState />}
 
-          {/* Grid View */}
-          {viewMode === "grid" && remainingArticles.length > 0 && (
+          {viewMode === "grid" && filteredArticles.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {remainingArticles.map((article) => (
+              {filteredArticles.map((article) => (
                 <NewsCard key={article.id} article={article} />
               ))}
             </div>
           )}
 
-          {/* List View */}
-          {viewMode === "list" && remainingArticles.length > 0 && (
-            <NewsListView articles={remainingArticles} />
+          {viewMode === "list" && filteredArticles.length > 0 && (
+            <NewsListView articles={filteredArticles} />
           )}
         </>
       )}

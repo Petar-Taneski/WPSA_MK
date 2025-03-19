@@ -20,7 +20,6 @@ interface NewsContextType {
   setViewMode: (mode: "grid" | "list") => void;
   allTags: string[];
   featuredArticle: NewsArticle | null;
-  remainingArticles: NewsArticle[];
 }
 
 const NewsContext = createContext<NewsContextType | undefined>(undefined);
@@ -67,6 +66,9 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     new Set(articles.flatMap((article) => article.tags))
   ).sort();
 
+  // Get the featured article (newest) - independent of filters
+  const featuredArticle = articles.length > 0 ? articles[0] : null;
+
   // Filter articles based on active filter and search query
   const filteredArticles = articles.filter((article) => {
     // Filter by tag if active
@@ -82,15 +84,6 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     return matchesTag && matchesSearch;
   });
 
-  // Get the featured article (newest)
-  const featuredArticle =
-    filteredArticles.length > 0 ? filteredArticles[0] : null;
-
-  // Remaining articles (excluding the featured one)
-  const remainingArticles = featuredArticle
-    ? filteredArticles.slice(1)
-    : filteredArticles;
-
   const value = {
     articles,
     filteredArticles,
@@ -104,7 +97,6 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     setViewMode,
     allTags,
     featuredArticle,
-    remainingArticles,
   };
 
   return <NewsContext.Provider value={value}>{children}</NewsContext.Provider>;
