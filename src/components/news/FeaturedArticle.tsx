@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { NewsArticle } from "../../services/api";
+import { Card, CardContent, CardHeader, CardFooter } from "../ui/card";
+import ReadMoreButton from "../common/ReadMoreButton";
 
 interface FeaturedArticleProps {
   article: NewsArticle;
@@ -18,10 +19,10 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
   });
 
   return (
-    <div className="mb-12 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl overflow-hidden">
-      <div className="relative flex flex-col lg:flex-row h-[400px] sm:h-[450px] lg:h-[400px]">
+    <Card className="mb-8 sm:mb-12 bg-gradient-to-br py-0 from-indigo-50 to-purple-50 overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+      <div className="relative flex flex-col lg:flex-row h-auto sm:h-[550px] lg:h-[400px]">
         {/* Featured Image */}
-        <div className="lg:w-3/5 h-64 sm:h-80 lg:h-full rounded-xl overflow-hidden">
+        <div className="lg:w-3/5 max-lg:h-1/2 rounded-xl lg:h-full overflow-hidden">
           <img
             src={imageUrl}
             alt={title}
@@ -30,8 +31,8 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
         </div>
 
         {/* Featured Content */}
-        <div className="lg:w-2/5 p-6 lg:p-8 flex flex-col">
-          <div className="mb-3 flex items-center space-x-2">
+        <CardContent className="lg:w-2/5 max-lg:h-1/2 p-4 sm:p-6 lg:p-8 flex flex-col h-full">
+          <div className="mb-2 sm:mb-3 flex flex-wrap gap-2 items-center">
             <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
               {t("news.featured")}
             </span>
@@ -42,39 +43,27 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
             )}
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 line-clamp-2">
-            {title}
-          </h2>
+          <CardHeader className="p-0 space-y-2 sm:space-y-3">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 line-clamp-2">
+              {title}
+            </h2>
 
-          <p className="text-gray-700 mb-4 line-clamp-3">{summary}</p>
+            <p className="text-sm sm:text-base text-gray-700 line-clamp-2 sm:line-clamp-3">
+              {summary}
+            </p>
+          </CardHeader>
 
-          <div className="flex justify-between items-center text-sm text-gray-600 mb-4">
-            <span>{formattedDate}</span>
-            <span>{author}</span>
-          </div>
+          <CardFooter className="p-0 mt-auto pt-4 flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex justify-between w-full sm:w-auto items-center text-xs sm:text-sm text-gray-600">
+              <span className="mr-4">{formattedDate}</span>
+              <span className="truncate max-w-[150px]">{author}</span>
+            </div>
 
-          <Link
-            to={`/news/${id}`}
-            className="mt-auto self-start inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            {t("news.readFullArticle")}
-            <svg
-              className="ml-2 w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              ></path>
-            </svg>
-          </Link>
-        </div>
+            <ReadMoreButton articleId={id} />
+          </CardFooter>
+        </CardContent>
       </div>
-    </div>
+    </Card>
   );
 };
 

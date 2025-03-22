@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { ArrowRight } from "lucide-react";
 import { NewsArticle } from "../../services/api";
+import ReadMoreButton from "../common/ReadMoreButton";
 import {
   Card,
   CardContent,
@@ -15,7 +14,6 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ article }: NewsCardProps) => {
-  const { t } = useTranslation();
   const { id, title, summary, thumbnailUrl, publishDate, author, tags } =
     article;
 
@@ -29,9 +27,9 @@ const NewsCard = ({ article }: NewsCardProps) => {
   return (
     <Link to={`/news/${id}`} className="block h-full">
       <Card className="group h-full transition-all duration-300 hover:shadow-xl pt-0 overflow-clip hover:-translate-y-1">
-        <div className="relative overflow-hidden">
+        <div className="relative rounded-xl overflow-hidden">
           {/* Image with zoom effect on hover */}
-          <div className="h-48 overflow-hidden">
+          <div className="h-48">
             <img
               src={thumbnailUrl}
               alt={title}
@@ -71,14 +69,11 @@ const NewsCard = ({ article }: NewsCardProps) => {
           <p className="line-clamp-3 flex-grow text-gray-600">{summary}</p>
         </CardContent>
 
-        <CardFooter className="mt-auto border-t border-gray-100 pt-4">
+        <CardFooter className="mt-auto border-t flex justify-between border-gray-100 pt-4">
           <span className="text-xs text-gray-500 italic truncate max-w-[60%]">
             {author}
           </span>
-          <div className="ml-auto inline-flex items-center text-indigo-600 font-medium group-hover:translate-x-1 duration-300 whitespace-nowrap">
-            {t("news.readMore")}
-            <ArrowRight className="ml-1 h-4 w-4" />
-          </div>
+          <ReadMoreButton articleId={id} />
         </CardFooter>
       </Card>
     </Link>
