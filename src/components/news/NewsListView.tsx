@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { NewsArticle } from "../../services/api";
+import ReadMoreButton from "../common/ReadMoreButton";
 import { Card } from "../ui/card";
 
 interface NewsListViewProps {
@@ -8,7 +7,6 @@ interface NewsListViewProps {
 }
 
 const NewsListView = ({ articles }: NewsListViewProps) => {
-  const { t } = useTranslation();
 
   // Format the date for display
   const formatDate = (dateString: string) => {
@@ -62,12 +60,7 @@ const NewsListView = ({ articles }: NewsListViewProps) => {
                   ))}
                 </div>
 
-                <Link
-                  to={`/news/${article.id}`}
-                  className="text-indigo-600 font-medium hover:text-indigo-800 transition-colors whitespace-nowrap ml-2"
-                >
-                  {t("news.readMore")} →
-                </Link>
+                <ReadMoreButton articleId={article.id} className="ml-2" />
               </div>
             </div>
           </div>

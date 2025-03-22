@@ -1,4 +1,5 @@
 import { NewsArticle } from "../../services/api";
+import ReadMoreButton from "../common/ReadMoreButton";
 
 interface ArticleHeaderProps {
   article: NewsArticle;
@@ -77,6 +78,12 @@ const ArticleHeader = ({ article }: ArticleHeaderProps) => {
             </svg>
             <span>{author}</span>
           </div>
+        </div>
+        <div className="mt-6">
+          <ReadMoreButton
+            articleId={article.id}
+            className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-6 py-2 rounded-full"
+          />
         </div>
       </div>
     </div>
