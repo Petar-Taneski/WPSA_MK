@@ -17,7 +17,6 @@ const NewsCard = ({ article }: NewsCardProps) => {
   const { id, title, summary, thumbnailUrl, publishDate, author, tags } =
     article;
 
-  // Format the date to be more readable
   const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
@@ -28,7 +27,6 @@ const NewsCard = ({ article }: NewsCardProps) => {
     <Link to={`/news/${id}`} className="block h-full">
       <Card className="group h-full transition-all duration-300 hover:shadow-xl pt-0 overflow-clip hover:-translate-y-1">
         <div className="relative rounded-xl overflow-hidden">
-          {/* Image with zoom effect on hover */}
           <div className="h-48">
             <img
               src={thumbnailUrl}
@@ -37,7 +35,6 @@ const NewsCard = ({ article }: NewsCardProps) => {
             />
           </div>
 
-          {/* Tag labels */}
           {tags.length > 0 && (
             <div className="absolute right-3 top-3 flex max-w-[70%] flex-wrap justify-end gap-1">
               {tags.slice(0, 2).map((tag, index) => (
@@ -51,7 +48,6 @@ const NewsCard = ({ article }: NewsCardProps) => {
             </div>
           )}
 
-          {/* Date label */}
           <div className="absolute bottom-3 left-3">
             <span className="inline-block rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur-sm">
               {formattedDate}

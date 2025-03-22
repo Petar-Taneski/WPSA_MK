@@ -1,13 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useNews } from "../contexts/NewsContext";
 
-// Import modular components
-import FeaturedArticle from "../components/news/FeaturedArticle";
-import SearchFilterBar from "../components/news/SearchFilterBar";
-import NewsListView from "../components/news/NewsListView";
 import EmptyState from "../components/news/EmptyState";
+import FeaturedArticle from "../components/news/FeaturedArticle";
 import LoadingState from "../components/news/LoadingState";
 import NewsCard from "../components/news/NewsCard";
+import NewsListView from "../components/news/NewsListView";
+import SearchFilterBar from "../components/news/SearchFilterBar";
 
 const News = () => {
   const { t } = useTranslation();
@@ -16,7 +15,6 @@ const News = () => {
 
   return (
     <div className="page news-page max-w-7xl mx-auto px-4 py-8">
-      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
           {t("navigation.news")}
@@ -24,10 +22,8 @@ const News = () => {
         <p className="text-xl text-gray-600">{t("news.latestUpdates")}</p>
       </div>
 
-      {/* Loading state */}
       {loading && <LoadingState />}
 
-      {/* Error state */}
       {error && !loading && (
         <div className="bg-red-50 p-4 rounded-md border border-red-200 text-red-700">
           {error}

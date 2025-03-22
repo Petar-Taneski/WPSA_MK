@@ -20,7 +20,6 @@ const SearchFilterBar = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const tagsContainerRef = useRef<HTMLDivElement>(null);
 
-  // Handle click outside search to unfocus
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -61,7 +60,6 @@ const SearchFilterBar = () => {
         </div>
 
         <div className="flex w-full items-center gap-4 md:w-auto">
-          {/* View toggle */}
           <div className="flex shrink-0 rounded-lg bg-gray-100 p-1">
             <Button
               variant="ghost"
@@ -89,7 +87,6 @@ const SearchFilterBar = () => {
 
           <div className="hidden shrink-0 text-gray-400 md:block">|</div>
 
-          {/* Tag filters with horizontal scrolling */}
           <div
             ref={tagsContainerRef}
             className="-mb-1 flex flex-shrink-0 gap-2 overflow-x-auto pb-1"

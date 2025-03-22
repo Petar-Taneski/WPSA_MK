@@ -8,7 +8,7 @@ interface NewsListViewProps {
 
 const NewsListView = ({ articles }: NewsListViewProps) => {
 
-  // Format the date for display
+  //TODO: move to utils
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString(undefined, {
       year: "numeric",

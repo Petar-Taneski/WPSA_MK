@@ -5,14 +5,11 @@ import "./App.css";
 import Navigation from "./components/Navigation";
 import { NewsProvider } from "./contexts/NewsContext";
 
-// Lazy load pages for performance
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
 const News = lazy(() => import("./pages/News"));
 const Events = lazy(() => import("./pages/Events"));
-// Lazy load news details component
 
-// Component to wrap News routes with NewsProvider
 const NewsWithProvider = () => (
   <NewsProvider>
     <News />

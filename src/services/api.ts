@@ -1,4 +1,3 @@
-// API service for fetching news articles
 import mockData from "./mockData.json";
 
 export interface NewsArticle {
@@ -13,10 +12,8 @@ export interface NewsArticle {
   tags: string[];
 }
 
-// Function to fetch all news articles
 export const fetchNewsArticles = async (): Promise<NewsArticle[]> => {
   try {
-    // Replace with actual API endpoint when available
     const response = await fetch("https://api.example.com/news");
     if (!response.ok) {
       throw new Error("Failed to fetch news articles");
@@ -24,17 +21,16 @@ export const fetchNewsArticles = async (): Promise<NewsArticle[]> => {
     return await response.json();
   } catch (error) {
     console.error("Error fetching news articles:", error);
-    // Return mock data from JSON file
     return mockData.articles;
   }
 };
 
-// Function to fetch a single news article by ID
+// TODO: Replace with actual API endpoint when available, remove mock data on error
+//TODO: filtering should be done on backend. currently it is done on frontend
 export const fetchNewsArticle = async (
   id: string
 ): Promise<NewsArticle | null> => {
   try {
-    // Replace with actual API endpoint when available
     const response = await fetch(`https://api.example.com/news/${id}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch news article with ID: ${id}`);
@@ -42,7 +38,6 @@ export const fetchNewsArticle = async (
     return await response.json();
   } catch (error) {
     console.error(`Error fetching news article with ID: ${id}:`, error);
-    // Return mock data from JSON file
     return mockData.articles.find((article) => article.id === id) || null;
   }
 };
