@@ -15,5 +15,21 @@
   "languages": {
     "en": "English",
     "mk": "Macedonian"
+  },
+  "news": {
+    "latestUpdates": "Latest updates from the world of poultry science",
+    "readMore": "Read more",
+    "backToNews": "Back to News",
+    "backToAllNews": "Back to all news",
+    "noArticlesFound": "No articles found",
+    "tryDifferentSearch": "Try a different search term or filter",
+    "searchPlaceholder": "Search articles...",
+    "allTopics": "All Topics",
+    "featured": "Featured",
+    "readFullArticle": "Read Full Article",
+    "loadingArticle": "Loading article...",
+    "articleNotFound": "Article not found",
+    "tryAgainLater": "Please try again later or browse other articles",
+    "shareArticle": "Share this article"
   }
 }

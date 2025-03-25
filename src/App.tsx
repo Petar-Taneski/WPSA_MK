@@ -1,14 +1,20 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navigation from "./components/Navigation";
+import { NewsProvider } from "./contexts/NewsContext";
 
-// Lazy load pages for performance
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
 const News = lazy(() => import("./pages/News"));
 const Events = lazy(() => import("./pages/Events"));
+
+const NewsWithProvider = () => (
+  <NewsProvider>
+    <News />
+  </NewsProvider>
+);
 
 function App() {
   const { t, i18n } = useTranslation();
@@ -56,7 +62,10 @@ function App() {
               />
               <Route path={`/en/${paths.en.home}`} element={<Home />} />
               <Route path={`/en/${paths.en.about}`} element={<About />} />
-              <Route path={`/en/${paths.en.news}`} element={<News />} />
+              <Route
+                path={`/en/${paths.en.news}`}
+                element={<NewsWithProvider />}
+              />
               <Route path={`/en/${paths.en.events}`} element={<Events />} />
 
               {/* Macedonian routes */}
@@ -66,7 +75,10 @@ function App() {
               />
               <Route path={`/mk/${paths.mk.home}`} element={<Home />} />
               <Route path={`/mk/${paths.mk.about}`} element={<About />} />
-              <Route path={`/mk/${paths.mk.news}`} element={<News />} />
+              <Route
+                path={`/mk/${paths.mk.news}`}
+                element={<NewsWithProvider />}
+              />
               <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
 
               {/* Fallback for invalid routes */}
