@@ -5,9 +5,14 @@ import Hero from "@/components/Home/HeroSection/Hero";
 const Home = () => {
   // const { t } = useTranslation();
 
-  return <div className="">
-    <Hero />
-  </div>;
+  return (
+    <div>
+      {/* Parallax Hero Section */}
+      <Hero />
+
+     
+    </div>
+  );
 };
 
 export default Home;

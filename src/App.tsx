@@ -40,7 +40,7 @@ function App() {
       <div className="app">
         <Suspense fallback={<div>Loading...</div>}>
           <Navigation />
-          <div className="container mx-auto p-4">
+          <div className="relative">
             <Routes>
               {/* Default redirect to user's language */}
               <Route
