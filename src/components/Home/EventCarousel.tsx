@@ -108,7 +108,7 @@ const EventCarousel = () => {
   };
 
   return (
-    <div className="relative bg-gradient-to-b from-white to-slate-900 py-20 overflow-hidden">
+    <div className="relative py-20 overflow-hidden">
       {/* Section Heading */}
       <div className="container mx-auto mb-12 px-6">
         <h2 className="text-center text-3xl md:text-4xl font-bold text-slate-900 mb-3">

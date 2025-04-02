@@ -1,6 +1,3 @@
-import React from "react";
-import EventCarousel from "./EventCarousel";
-
 const Hero = () => {
   return (
     <div className="overflow-hidden">
@@ -27,8 +24,8 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Event carousel section */}
-      <EventCarousel />
+
+    
     </div>
   );
 };
