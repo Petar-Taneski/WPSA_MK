@@ -14,9 +14,8 @@ const RecentNews = () => {
   // Get the current language
   const currentLanguage = i18n.language;
   useEffect(() => {
-
     console.log(currentLanguage);
-  },[])
+  }, []);
 
   // Get the correct news path based on current language
   const getNewsPath = () => {
