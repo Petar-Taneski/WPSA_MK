@@ -12,11 +12,11 @@ const Home = () => {
       {/* Parallax Hero Section */}
       <Hero />
 
-      {/* Unified gradient background wrapper */}
-      <div className="bg-gradient-to-b from-white via-slate-500 to-slate-900">
-        <EventCarousel />
-        <FeaturedNews />
-      </div>
+      {/* Event carousel section */}
+      <EventCarousel />
+
+      {/* Recent news section */}
+      <FeaturedNews />
     </div>
   );
 };

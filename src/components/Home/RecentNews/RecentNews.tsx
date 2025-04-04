@@ -13,9 +13,6 @@ const RecentNews = () => {
 
   // Get the current language
   const currentLanguage = i18n.language;
-  useEffect(() => {
-    console.log(currentLanguage);
-  }, []);
 
   // Get the correct news path based on current language
   const getNewsPath = () => {
@@ -58,7 +55,7 @@ const RecentNews = () => {
 
   if (loading) {
     return (
-      <div className="w-full py-12">
+      <div className="w-full py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -70,10 +67,10 @@ const RecentNews = () => {
 
   if (error) {
     return (
-      <div className="w-full py-12">
+      <div className="w-full py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center justify-center h-64">
-            <div className="text-white bg-red-500/20 backdrop-blur-sm px-4 py-3 rounded-lg">
+            <div className="text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
               {error}
             </div>
           </div>
@@ -83,32 +80,31 @@ const RecentNews = () => {
   }
 
   return (
-    <section className="w-full py-16 pb-24">
+    <section className="w-full py-16 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
             {t("news.recentTitle")}
           </h2>
-          <p className="text-lg text-slate-200 max-w-2xl mx-auto">
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             {t("news.recentDescription")}
           </p>
         </div>
 
         {articles.length > 0 ? (
           <>
-            <div className="timeline-container relative max-w-5xl mx-auto pb-12">
-              {/* Timeline line */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-indigo-200 dark:bg-indigo-400 rounded hidden md:block"></div>
-
-              {/* News items */}
-              <div className="space-y-16 md:space-y-24">
+            {/* Equal height card layout */}
+            <div className="max-w-7xl mx-auto">
+              <div className="flex flex-col md:flex-row justify-center items-stretch gap-10 md:gap-16 lg:gap-24">
                 {articles.map((article, index) => (
-                  <NewsItem
+                  <div
                     key={article.id}
-                    article={article}
-                    position={index % 2 === 0 ? "left" : "right"}
-                    index={index}
-                  />
+                    className="flex flex-col w-full md:w-64 lg:w-72"
+                  >
+                    <div className="h-full">
+                      <NewsItem article={article} index={index} />
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -116,7 +112,7 @@ const RecentNews = () => {
             <div className="text-center mt-8">
               <Link
                 to={getNewsPath()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
                 aria-label={t("news.viewAllNews")}
               >
                 {t("news.viewAllNews")}
@@ -125,8 +121,8 @@ const RecentNews = () => {
             </div>
           </>
         ) : (
-          <div className="text-center py-10 bg-white/10 backdrop-blur-sm rounded-lg shadow-md">
-            <p className="text-white">{t("news.noArticlesFound")}</p>
+          <div className="text-center py-10 bg-slate-50 rounded-lg shadow-sm">
+            <p className="text-slate-600">{t("news.noArticlesFound")}</p>
           </div>
         )}
       </div>

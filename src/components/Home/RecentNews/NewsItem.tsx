@@ -1,15 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { NewsArticle } from "../../../services/api";
-import { ArrowRight, Calendar, User } from "lucide-react";
+import { ArrowRight, User } from "lucide-react";
 
 interface NewsItemProps {
   article: NewsArticle;
-  position: "left" | "right";
   index: number;
 }
 
-const NewsItem = ({ article, position }: NewsItemProps) => {
+const NewsItem = ({ article }: NewsItemProps) => {
   const { t } = useTranslation();
 
   const formattedDate = new Date(article.publishDate).toLocaleDateString(
@@ -22,115 +21,79 @@ const NewsItem = ({ article, position }: NewsItemProps) => {
   );
 
   return (
-    <div
-      className={`relative flex md:flex-row flex-col items-center mb-8 md:mb-0 ${
-        position === "right" ? "md:flex-row-reverse" : ""
-      }`}
-    >
-      {/* Timeline dot - visible only in md screens and larger */}
-      <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-indigo-500 rounded-full border-2 border-white shadow-md z-10 items-center justify-center">
-        <div className="w-2 h-2 bg-white rounded-full"></div>
-      </div>
-
-      {/* Date marker - visible only on mobile */}
-      <div className="md:hidden flex items-center space-x-2 mb-3 text-white bg-slate-700 px-3 py-1.5 rounded-full shadow">
-        <Calendar className="w-4 h-4" />
-        <span className="text-sm font-medium">{formattedDate}</span>
-      </div>
-
-      {/* Card - takes full width on mobile, half width on desktop */}
-      <div
-        className={`w-full md:w-5/12 ${
-          position === "right" ? "md:pl-8" : "md:pr-8"
-        }`}
-      >
-        <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col transform hover:-translate-y-1">
-          {/* Image container with fixed height - now clickable */}
+    <div className="flex flex-col h-full">
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 h-full flex flex-col transform hover:-translate-y-1 border border-slate-100">
+        {/* Image container - fixed height */}
+        <div className="w-full h-44 relative">
           <Link
             to={`/news/${article.id}`}
-            className="h-48 sm:h-56 overflow-hidden relative block cursor-pointer group"
+            className="block w-full h-full overflow-hidden relative cursor-pointer group"
             aria-label={`View article: ${article.title}`}
           >
             <div className="absolute inset-0 rounded-t-xl overflow-hidden">
               <img
                 src={article.thumbnailUrl}
                 alt={article.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
 
-              {/* Image overlay on hover */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
+              {/* Image overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-50 group-hover:opacity-70 transition-opacity duration-300"></div>
             </div>
 
-            {/* Overlay with date - desktop only */}
-            <div className="absolute bottom-3 left-3 hidden md:block">
-              <span className="inline-block rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur-sm">
+            {/* Tags overlay - simplified to just one tag */}
+            {article.tags.length > 0 && (
+              <div className="absolute top-3 right-3">
+                <span className="inline-block rounded-md bg-slate-700 px-2 py-1 text-xs font-medium text-white">
+                  {article.tags[0]}
+                </span>
+              </div>
+            )}
+
+            {/* Date overlay */}
+            <div className="absolute bottom-3 left-3">
+              <span className="inline-block rounded-md bg-black/60 px-2 py-1 text-xs text-white backdrop-blur-sm">
                 {formattedDate}
               </span>
             </div>
-
-            {/* Tags overlay */}
-            {article.tags.length > 0 && (
-              <div className="absolute top-3 right-3 flex flex-wrap justify-end gap-1 max-w-[70%]">
-                {article.tags.slice(0, 2).map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-block rounded-md bg-slate-700 px-2 py-1 text-xs font-medium text-white shadow"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
           </Link>
+        </div>
 
-          <div className="p-5 sm:p-6 flex flex-col flex-grow relative z-10">
-            {/* Author - desktop view */}
-            <div className="hidden md:flex items-center space-x-2 mb-3">
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 shadow">
-                <User className="w-3.5 h-3.5 text-slate-500" />
-              </div>
-              <span className="text-xs text-slate-600 italic truncate max-w-[80%]">
-                {article.author}
-              </span>
-            </div>
-
-            {/* Title */}
+        {/* Content section - fixed height layout */}
+        <div className="p-4 flex flex-col flex-grow">
+          {/* Title - fixed height */}
+          <div className="h-12 mb-2">
             <Link to={`/news/${article.id}`} className="group">
-              <h3 className="text-xl font-semibold mb-3 line-clamp-2 text-slate-900 group-hover:text-slate-700 transition-colors">
+              <h3 className="text-base font-medium line-clamp-2 text-slate-900 group-hover:text-slate-700 transition-colors">
                 {article.title}
               </h3>
             </Link>
+          </div>
 
-            {/* Summary */}
-            <p className="text-slate-600 mb-4 line-clamp-3 flex-grow">
+          {/* Summary - fixed height with ellipsis */}
+          <div className="h-12 mb-4">
+            <p className="text-xs text-slate-500 line-clamp-3">
               {article.summary}
             </p>
+          </div>
 
-            {/* Mobile author display */}
-            <div className="md:hidden flex items-center space-x-2 mb-3">
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 shadow">
-                <User className="w-3.5 h-3.5 text-slate-500" />
-              </div>
-              <span className="text-xs text-slate-600 italic truncate max-w-[80%]">
-                {article.author}
-              </span>
-            </div>
+          {/* Author + CTA row - fixed position at bottom */}
+          <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+            <span className="text-xs text-slate-500 italic truncate max-w-[50%] flex items-center">
+              <User className="w-3 h-3 mr-1 text-slate-400 flex-shrink-0" />
+              <span className="truncate">{article.author}</span>
+            </span>
 
-            {/* CTA Button */}
             <Link
               to={`/news/${article.id}`}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-slate-800 text-white font-medium transition-all duration-300 hover:bg-slate-700 hover:shadow w-full md:w-auto"
+              className="inline-flex items-center text-xs text-indigo-600 font-medium hover:text-indigo-800 transition-colors whitespace-nowrap"
             >
               {t("news.readMore")}
-              <ArrowRight className="ml-1 w-4 h-4" />
+              <ArrowRight className="ml-1 w-3 h-3 flex-shrink-0" />
             </Link>
           </div>
         </div>
       </div>
-
-      {/* Empty space for desktop layout */}
-      <div className="hidden md:block w-5/12"></div>
     </div>
   );
 };

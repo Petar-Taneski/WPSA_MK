@@ -108,7 +108,7 @@ const EventCarousel = () => {
   };
 
   return (
-    <div className="relative py-20 overflow-hidden">
+    <div className="relative py-20 bg-white overflow-hidden">
       {/* Section Heading */}
       <div className="container mx-auto mb-12 px-6">
         <h2 className="text-center text-3xl md:text-4xl font-bold text-slate-900 mb-3">
@@ -146,7 +146,7 @@ const EventCarousel = () => {
                 zIndex: position === 0 ? 10 : 10 - Math.abs(position),
               }}
             >
-              <div className="mx-4 h-full overflow-hidden rounded-xl shadow-2xl relative bg-gradient-to-br from-slate-50 to-slate-200 border border-slate-300">
+              <div className="mx-4 h-full overflow-hidden rounded-xl shadow-lg relative bg-white border border-slate-200">
                 {/* Background Image */}
                 <div
                   className="absolute inset-0 w-full h-full bg-cover bg-center"
@@ -155,7 +155,7 @@ const EventCarousel = () => {
 
                 {/* Content overlay with blur effect */}
                 <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-10">
-                  <div className="relative z-10 max-w-md backdrop-blur-md bg-slate-900/50 p-8 rounded-xl text-white shadow-xl border border-white/10">
+                  <div className="relative z-10 max-w-md backdrop-blur-md bg-slate-900/50 p-8 rounded-xl text-white shadow-lg border border-white/10">
                     <div className="inline-block px-4 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full mb-6 text-white w-fit">
                       {slide.date}
                     </div>
@@ -168,7 +168,7 @@ const EventCarousel = () => {
                     <div className="mt-auto">
                       <a
                         href={slide.ctaLink}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 font-medium rounded-lg hover:bg-slate-100 transition-all transform hover:scale-105 hover:shadow-lg active:scale-95"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-all hover:shadow-md"
                       >
                         {slide.ctaText}
                         <svg
@@ -195,7 +195,7 @@ const EventCarousel = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-slate-800/10 hover:bg-slate-800/30 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-lg"
+          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-md"
           aria-label="Previous slide"
         >
           <svg
@@ -216,7 +216,7 @@ const EventCarousel = () => {
 
         <button
           onClick={nextSlide}
-          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-slate-800/10 hover:bg-slate-800/30 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-lg"
+          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-md"
           aria-label="Next slide"
         >
           <svg
@@ -243,7 +243,7 @@ const EventCarousel = () => {
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 currentSlide === index
-                  ? "bg-slate-800 scale-125 shadow-sm"
+                  ? "bg-indigo-600 scale-125 shadow-sm"
                   : "bg-slate-400 hover:bg-slate-600"
               }`}
               aria-label={`Go to slide ${index + 1}`}
