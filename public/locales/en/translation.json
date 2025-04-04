@@ -1,0 +1,39 @@
+{
+  "pages": {
+    "home": "home",
+    "about": "about",
+    "news": "news",
+    "events": "events"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "news": "News",
+    "events": "Events",
+    "language": "Language"
+  },
+  "languages": {
+    "en": "English",
+    "mk": "Macedonian"
+  },
+  "news": {
+    "latestUpdates": "Latest updates from the world of poultry science",
+    "readMore": "Read more",
+    "backToNews": "Back to News",
+    "backToAllNews": "Back to all news",
+    "noArticlesFound": "No articles found",
+    "tryDifferentSearch": "Try a different search term or filter",
+    "searchPlaceholder": "Search articles...",
+    "allTopics": "All Topics",
+    "featured": "Featured News",
+    "readFullArticle": "Read Full Article",
+    "loadingArticle": "Loading article...",
+    "articleNotFound": "Article not found",
+    "tryAgainLater": "Please try again later or browse other articles",
+    "shareArticle": "Share this article",
+    "recentTitle": "Latest News",
+    "recentDescription": "Stay updated with our latest news and developments",
+    "viewAllNews": "View all news",
+    "errorLoading": "Error loading news articles. Please try again later."
+  }
+}
