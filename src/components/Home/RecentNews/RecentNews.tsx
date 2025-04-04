@@ -116,7 +116,7 @@ const RecentNews = () => {
                 aria-label={t("news.viewAllNews")}
               >
                 {t("news.viewAllNews")}
-                <ArrowRight className="w-4 h-4 ml-1" />
+                <ArrowRight className="w-4 h-4 ml-1"/>
               </Link>
             </div>
           </>
