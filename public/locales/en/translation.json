@@ -35,5 +35,18 @@
     "recentDescription": "Stay updated with our latest news and developments",
     "viewAllNews": "View all news",
     "errorLoading": "Error loading news articles. Please try again later."
+  },
+  "post": {
+    "author": "Author",
+    "published": "Published",
+    "tags": "Tags",
+    "loading": "Loading article...",
+    "errorTitle": "Error Loading Article",
+    "errorDefault": "An error occurred while loading the article.",
+    "notFound": "Article not found",
+    "loadError": "Failed to load article",
+    "noIdProvided": "No article ID provided",
+    "goBack": "Go Back",
+    "backToNews": "Back to News"
   }
 }

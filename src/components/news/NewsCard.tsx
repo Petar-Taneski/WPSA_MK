@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { NewsArticle } from "../../services/api";
+import { NewsArticle } from "../../services/interfaces";
+import { useTranslation } from "react-i18next";
 import ReadMoreButton from "../common/ReadMoreButton";
 import {
   Card,
@@ -16,6 +17,7 @@ interface NewsCardProps {
 const NewsCard = ({ article }: NewsCardProps) => {
   const { id, title, summary, thumbnailUrl, publishDate, author, tags } =
     article;
+  const { i18n } = useTranslation();
 
   const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
     year: "numeric",
@@ -23,8 +25,14 @@ const NewsCard = ({ article }: NewsCardProps) => {
     day: "numeric",
   });
 
+  // Get the correct URL path based on language
+  const getPostUrl = () => {
+    const currentLanguage = i18n.language;
+    return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
+  };
+
   return (
-    <Link to={`/news/${id}`} className="block h-full">
+    <Link to={getPostUrl()} className="block h-full">
       <Card className="group h-full transition-all duration-300 hover:shadow-xl pt-0 overflow-clip hover:-translate-y-1">
         <div className="relative rounded-xl overflow-hidden">
           <div className="h-48">

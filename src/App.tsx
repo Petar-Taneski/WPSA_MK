@@ -9,10 +9,17 @@ const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
 const News = lazy(() => import("./pages/News"));
 const Events = lazy(() => import("./pages/Events"));
+const Post = lazy(() => import("./pages/Post"));
 
 const NewsWithProvider = () => (
   <NewsProvider>
     <News />
+  </NewsProvider>
+);
+
+const PostWithProvider = () => (
+  <NewsProvider>
+    <Post />
   </NewsProvider>
 );
 
@@ -66,6 +73,7 @@ function App() {
                 path={`/en/${paths.en.news}`}
                 element={<NewsWithProvider />}
               />
+              <Route path={`/en/news/:id`} element={<PostWithProvider />} />
               <Route path={`/en/${paths.en.events}`} element={<Events />} />
 
               {/* Macedonian routes */}
@@ -79,6 +87,7 @@ function App() {
                 path={`/mk/${paths.mk.news}`}
                 element={<NewsWithProvider />}
               />
+              <Route path={`/mk/вести/:id`} element={<PostWithProvider />} />
               <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
 
               {/* Fallback for invalid routes */}
