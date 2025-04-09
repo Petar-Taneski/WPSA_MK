@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { NewsArticle, fetchNewsArticles } from "../../../services/api";
+import { fetchNewsArticles } from "../../../services/api";
 import NewsItem from "./NewsItem";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { NewsArticle } from "@/services/interfaces";
 
 const RecentNews = () => {
   const { t, i18n } = useTranslation();

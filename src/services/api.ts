@@ -1,16 +1,7 @@
+import { NewsArticle } from "./interfaces";
 import mockData from "./mockData.json";
 
-export interface NewsArticle {
-  id: string;
-  title: string;
-  summary: string;
-  content: string;
-  imageUrl: string;
-  thumbnailUrl: string;
-  publishDate: string;
-  author: string;
-  tags: string[];
-}
+
 
 export const fetchNewsArticles = async (): Promise<NewsArticle[]> => {
   try {
@@ -41,3 +32,5 @@ export const fetchNewsArticle = async (
     return mockData.articles.find((article) => article.id === id) || null;
   }
 };
+
+
