@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navigation from "./components/Navigation";
 import { NewsProvider } from "./contexts/NewsContext";
+import DashboardPost from "./components/Dashboard/Post";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -75,6 +76,7 @@ function App() {
               />
               <Route path={`/en/news/:id`} element={<PostWithProvider />} />
               <Route path={`/en/${paths.en.events}`} element={<Events />} />
+              <Route path="/en/dashboard/post" element={<DashboardPost />} />
 
               {/* Macedonian routes */}
               <Route
@@ -89,6 +91,7 @@ function App() {
               />
               <Route path={`/mk/вести/:id`} element={<PostWithProvider />} />
               <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
+              <Route path="/mk/dashboard/post" element={<DashboardPost />} />
 
               {/* Fallback for invalid routes */}
               <Route path="*" element={<Navigate to="/" replace />} />

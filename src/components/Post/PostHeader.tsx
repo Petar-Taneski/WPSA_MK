@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 interface PostHeaderProps {
   title: string;
@@ -7,7 +6,7 @@ interface PostHeaderProps {
 }
 
 const PostHeader: React.FC<PostHeaderProps> = ({ title, imageUrl }) => {
-  const { t } = useTranslation();
+
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-8 mb-8 p-4">

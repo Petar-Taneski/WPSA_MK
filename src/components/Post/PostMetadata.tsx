@@ -21,7 +21,7 @@ const PostMetadata: React.FC<PostMetadataProps> = ({
   });
 
   return (
-    <div className="flex flex-wrap gap-4 mb-8 p-2 pb-4 border-b border-gray-200">
+    <div className="flex flex-wrap gap-4 mb-8 p-4 pb-4 border-b border-gray-200">
       <div className="flex items-center gap-2">
         <span className="font-bold text-gray-600">{t("post.author")}:</span>{" "}
         {author}
