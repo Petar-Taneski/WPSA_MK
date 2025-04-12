@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { NewsArticle } from "../../../services/api";
 import { ArrowRight, User } from "lucide-react";
+import { NewsArticle } from "@/services/interfaces";
 
 interface NewsItemProps {
   article: NewsArticle;

@@ -145,3 +145,10 @@
     max-width: 100vw;
   }
 }
+.custom-quill {
+  padding: 0 !important; /* Remove padding */
+}
+
+.custom-quill .ql-editor {
+  padding: 0 !important; /* Remove padding from the editor */
+}

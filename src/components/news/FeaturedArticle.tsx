@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { NewsArticle } from "../../services/api";
 import { Card, CardContent, CardHeader, CardFooter } from "../ui/card";
 import ReadMoreButton from "../common/ReadMoreButton";
+import { NewsArticle } from "@/services/interfaces";
 
 interface FeaturedArticleProps {
   article: NewsArticle;

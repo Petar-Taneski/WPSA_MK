@@ -4,15 +4,23 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navigation from "./components/Navigation";
 import { NewsProvider } from "./contexts/NewsContext";
+import DashboardPost from "./components/Dashboard/Post";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
 const News = lazy(() => import("./pages/News"));
 const Events = lazy(() => import("./pages/Events"));
+const Post = lazy(() => import("./pages/Post"));
 
 const NewsWithProvider = () => (
   <NewsProvider>
     <News />
+  </NewsProvider>
+);
+
+const PostWithProvider = () => (
+  <NewsProvider>
+    <Post />
   </NewsProvider>
 );
 
@@ -35,6 +43,7 @@ function App() {
     },
   };
 
+  const unusedFeatures = false;
   return (
     <BrowserRouter>
       <div className="app">
@@ -66,8 +75,11 @@ function App() {
                 path={`/en/${paths.en.news}`}
                 element={<NewsWithProvider />}
               />
+              <Route path={`/en/news/:id`} element={<PostWithProvider />} />
               <Route path={`/en/${paths.en.events}`} element={<Events />} />
-
+              {unusedFeatures && (
+                <Route path="/en/dashboard/post" element={<DashboardPost />} />
+              )}
               {/* Macedonian routes */}
               <Route
                 path="/mk"
@@ -79,7 +91,11 @@ function App() {
                 path={`/mk/${paths.mk.news}`}
                 element={<NewsWithProvider />}
               />
+              <Route path={`/mk/вести/:id`} element={<PostWithProvider />} />
               <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
+              {unusedFeatures && (
+                <Route path="/mk/dashboard/post" element={<DashboardPost />} />
+              )}
 
               {/* Fallback for invalid routes */}
               <Route path="*" element={<Navigate to="/" replace />} />
