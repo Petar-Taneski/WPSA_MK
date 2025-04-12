@@ -43,6 +43,7 @@ function App() {
     },
   };
 
+  const unusedFeatures = false;
   return (
     <BrowserRouter>
       <div className="app">
@@ -76,8 +77,9 @@ function App() {
               />
               <Route path={`/en/news/:id`} element={<PostWithProvider />} />
               <Route path={`/en/${paths.en.events}`} element={<Events />} />
-              <Route path="/en/dashboard/post" element={<DashboardPost />} />
-
+              {unusedFeatures && (
+                <Route path="/en/dashboard/post" element={<DashboardPost />} />
+              )}
               {/* Macedonian routes */}
               <Route
                 path="/mk"
@@ -91,7 +93,9 @@ function App() {
               />
               <Route path={`/mk/вести/:id`} element={<PostWithProvider />} />
               <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
-              <Route path="/mk/dashboard/post" element={<DashboardPost />} />
+              {unusedFeatures && (
+                <Route path="/mk/dashboard/post" element={<DashboardPost />} />
+              )}
 
               {/* Fallback for invalid routes */}
               <Route path="*" element={<Navigate to="/" replace />} />
