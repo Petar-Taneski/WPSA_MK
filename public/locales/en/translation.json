@@ -36,7 +36,7 @@
     "generalInfo": {
       "title": "ABOUT THE ORGANIZATION"
     },
-    "name": "WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH (WPSA - MACEDONIAN BRANCH)",
+    "name": "WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH",
     "shortName": "WPSA",
     "goals": {
       "title": "Goals of the Association",
@@ -54,15 +54,17 @@
       "title": "Mission and Vision",
       "visionLabel": "Vision",
       "missionLabel": "Mission",
-      "vision": "The vision of the Citizens Association WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH Skopje is: to have a high national and international reputation and trust promoting the concept of one health",
-      "mission": "The mission of the Citizens Association WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH Skopje is: to facilitate the exchange of ideas, projects, and initiatives between science, education, and industry in poultry"
+      "visionDeclaration": "The vision of the Citizens Association World Poultry Science Association - Macedonian Branch Skopje is:",
+      "visionContent": "To have a high national and international reputation and trust promoting the concept of one health",
+      "missionDeclaration": "The mission of the Citizens Association World Poultry Science Association - Macedonian Branch Skopje is:",
+      "missionContent": "To facilitate the exchange of ideas, projects, and initiatives between science, education, and industry in poultry"
     },
     "images": {
       "chickenPortrait": "Poultry close-up"
     },
     "membership": {
       "title": "Membership",
-      "description": "Membership in the association is voluntary. The membership in the Association can be:",
+      "description": "Membership in the association is voluntary.",
       "types": {
         "regular": {
           "title": "Regular",
@@ -86,14 +88,57 @@
     "leadership": {
       "title": "Leadership",
       "president": "President",
-      "executiveBoard": "Executive Board"
+      "executiveBoard": "Executive Board",
+      "executives": {
+        "dodovski": {
+          "firstName": "Aleksandar",
+          "lastName": "Dodovski",
+          "role": "President"
+        },
+        "kolevska": {
+          "firstName": "Tanja",
+          "lastName": "Kolevska",
+          "role": "Executive Board"
+        },
+        "dovlev": {
+          "firstName": "Aleksandar",
+          "lastName": "Dovlev",
+          "role": "Executive Board"
+        },
+        "tanevski": {
+          "firstName": "Marjan",
+          "lastName": "Tanevski",
+          "role": "Executive Board"
+        },
+        "popchevski": {
+          "firstName": "Milan",
+          "lastName": "Popchevski",
+          "role": "Executive Board"
+        }
+      }
     },
     "partners": {
       "title": "PARTNERS & RESOURCES",
-      "description": "WPSA Macedonian Branch collaborates with numerous national and international organizations, educational institutions, and industry partners to advance poultry science in North Macedonia and beyond. Below are some of our key partners and resources."
+      "description": "The Macedonian Branch of the World Poultry Science Association collaborates with numerous national and international organizations, educational institutions, and industry partners to advance poultry science in North Macedonia and beyond. Below are some of our key partners and resources.",
+      "wpsa": {
+        "name": "World's Poultry Science Association",
+        "description": "International organization dedicated to advancing poultry science globally."
+      },
+      "europeanFederation": {
+        "name": "European Federation of WPSA Branches",
+        "description": "Coordinating body for European WPSA branches."
+      },
+      "agenda": {
+        "name": "WPSA_EF_EC_2024_Agenda_new",
+        "description": "European Federation of WPSA Branches executive committee agenda document."
+      },
+      "mediterraneanNetwork": {
+        "name": "Mediterranean Poultry Network",
+        "description": "Network connecting poultry science professionals across the Mediterranean region."
+      }
     },
     "contact": {
-      "title": "Contact Information",
+      "title": "Contact Information:",
       "address": "Address",
       "contact": "Contact",
       "addressLines": {

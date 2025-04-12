@@ -1,7 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Container } from "../ui/container";
-import GeneralInformation from "./GeneralInformation";
-import Partners from "./Partners";
+import AboutContent from "./AboutContent";
 
 const AboutUs = () => {
   const { t } = useTranslation();
@@ -13,19 +11,21 @@ const AboutUs = () => {
           alt="WPSA Macedonian Branch"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-end pr-12">
-          <h1 className="text-5xl font-bold text-white">
-            {t("about.shortName")}
-          </h1>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/70 flex items-center justify-end pr-12">
+          <div className="flex flex-col pr-10 gap-2 w-100 text-right">
+            <h1 className="text-6xl font-extrabold text-white">
+              {t("about.shortName")}
+            </h1>
+            <span className="text-gray-200/80 break-words ">
+              {t("about.name")}
+            </span>
+          </div>
         </div>
       </div>
 
-      <Container className="py-12 mx-auto px-4">
-        <div className="space-y-16">
-          <GeneralInformation />
-          <Partners />
-        </div>
-      </Container>
+      <div className="pt-10 w-full px-20">
+        <AboutContent />
+      </div>
     </div>
   );
 };
