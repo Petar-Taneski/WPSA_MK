@@ -1,129 +1,72 @@
-import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { NewsArticle } from "../../../services/interfaces";
 import { fetchNewsArticles } from "../../../services/api";
 import NewsItem from "./NewsItem";
-import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { NewsArticle } from "@/services/interfaces";
 
-const RecentNews = () => {
-  const { t, i18n } = useTranslation();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const RecentNews: React.FC = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Get the current language
-  const currentLanguage = i18n.language;
-
-  // Get the correct news path based on current language
-  const getNewsPath = () => {
-    switch (currentLanguage) {
-      case "mk":
-        return "/mk/вести";
-      case "en":
-      default:
-        return "/en/news";
-    }
-  };
-
-  // Fetch articles from API
   useEffect(() => {
-    const getArticles = async () => {
+    const fetchRecentArticles = async () => {
       try {
         setLoading(true);
-        setError(null);
-        const fetchedArticles = await fetchNewsArticles();
-
-        // Sort articles by publishDate (newest first)
-        const sortedArticles = [...fetchedArticles].sort(
-          (a, b) =>
-            new Date(b.publishDate).getTime() -
-            new Date(a.publishDate).getTime()
-        );
-
-        // Take only the 3 most recent articles
-        setArticles(sortedArticles.slice(0, 3));
+        const data = await fetchNewsArticles({ limit: 3 });
+        setArticles(data);
+        setLoading(false);
       } catch (err) {
-        console.error("Error loading articles:", err);
-        setError(t("news.errorLoading"));
-      } finally {
+        setError("Error loading news articles. Please try again later.");
         setLoading(false);
       }
     };
 
-    getArticles();
-  }, [currentLanguage, t]); // Re-fetch when language changes
-
-  if (loading) {
-    return (
-      <div className="w-full py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-center h-64">
-            <div className="text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
-              {error}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    fetchRecentArticles();
+  }, []);
 
   return (
-    <section className="w-full py-16 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">
-            {t("news.recentTitle")}
-          </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            {t("news.recentDescription")}
-          </p>
+    <section className="py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+              Latest News
+            </h2>
+            <p className="text-gray-600 max-w-2xl">
+              Stay updated with our latest news and developments
+            </p>
+          </div>
+          <Link
+            to="/news"
+            className="inline-flex items-center text-indigo-600 font-medium mt-4 md:mt-0 hover:text-indigo-800 transition-colors"
+            aria-label="View all news"
+          >
+            View all news
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Link>
         </div>
 
-        {articles.length > 0 ? (
-          <>
-            {/* Equal height card layout */}
-            <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row justify-center items-stretch gap-10 md:gap-16 lg:gap-24">
-                {articles.map((article, index) => (
-                  <div
-                    key={article.id}
-                    className="flex flex-col w-full md:w-64 lg:w-72"
-                  >
-                    <div className="h-full">
-                      <NewsItem article={article} index={index} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {loading && (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+          </div>
+        )}
 
-            <div className="text-center mt-8">
-              <Link
-                to={getNewsPath()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
-                aria-label={t("news.viewAllNews")}
-              >
-                {t("news.viewAllNews")}
-                <ArrowRight className="w-4 h-4 ml-1"/>
-              </Link>
-            </div>
-          </>
-        ) : (
-          <div className="text-center py-10 bg-slate-50 rounded-lg shadow-sm">
-            <p className="text-slate-600">{t("news.noArticlesFound")}</p>
+        {error && !loading && (
+          <div className="text-center py-12 text-red-600">{error}</div>
+        )}
+
+        {!loading && !error && articles.length === 0 && (
+          <p className="text-slate-600">No articles found</p>
+        )}
+
+        {!loading && !error && articles.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {articles.map((article) => (
+              <NewsItem key={article.id} article={article} />
+            ))}
           </div>
         )}
       </div>

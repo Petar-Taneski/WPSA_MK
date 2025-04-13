@@ -1,90 +1,64 @@
-import { useTranslation } from "react-i18next";
-import { PARTNERS } from "@/utils/consts";
+import React from "react";
 
-const Partners = () => {
-  const { t } = useTranslation();
+const Partners: React.FC = () => {
+  const partners = [
+    {
+      name: "World's Poultry Science Association",
+      description:
+        "International organization dedicated to advancing poultry science globally.",
+    },
+    {
+      name: "European Federation of WPSA Branches",
+      description: "Coordinating body for European WPSA branches.",
+    },
+    {
+      name: "Mediterranean Poultry Network",
+      description:
+        "Network connecting poultry science professionals across the Mediterranean region.",
+    },
+  ];
 
   return (
-    <section className="partners">
-      <h2 className="text-3xl font-bold text-primary mb-8 border-b pb-4">
-        {t("about.partners.title")}
+    <section className="mb-12">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6">
+        PARTNERS & RESOURCES
       </h2>
+      <p className="text-gray-700 mb-8">
+        The Macedonian Branch of the World Poultry Science Association
+        collaborates with numerous national and international organizations,
+        educational institutions, and industry partners to advance poultry
+        science in North Macedonia and beyond. Below are some of our key
+        partners and resources.
+      </p>
 
-      <p className="text-gray-700/80 mb-8">{t("about.partners.description")}</p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        {/* TODO: Add logo to the partner */}
-        {PARTNERS.map((partner) => (
-          <PartnerLink
-            key={partner.name}
-            name={t(partner.name)}
-            description={t(partner.description)}
-            url={partner.url}
-          />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {partners.map((partner, index) => (
+          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-3">{partner.name}</h3>
+            <p className="text-gray-600">{partner.description}</p>
+          </div>
         ))}
       </div>
 
-      <div className="mb-12 bg-gray-50 p-8 rounded-lg border border-gray-100">
-        <h3 className="text-xl font-semibold text-primary mb-4">
-          {t("about.contact.title")}
-        </h3>
-
+      <div className="mt-12 bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-xl font-semibold mb-4">Contact Information:</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h4 className="font-bold text-primary mb-2">
-              {t("about.contact.address")}
-            </h4>
-            <p className="text-gray-700">
-              {t("about.contact.addressLines.faculty")}
-              <br />
-              {t("about.contact.addressLines.street")}
-              <br />
-              {t("about.contact.addressLines.city")}
-            </p>
+            <h4 className="font-medium mb-2">Address</h4>
+            <address className="not-italic text-gray-600">
+              <p>Faculty of Veterinary Medicine</p>
+              <p>Lazar Pop Trajkov 5-7</p>
+              <p>1000 Skopje, North Macedonia</p>
+            </address>
           </div>
-
           <div>
-            <h4 className="font-bold text-primary mb-2">
-              {t("about.contact.contact")}
-            </h4>
-            <p className="text-gray-700 mb-1">
-              {t("about.contact.email")}: info@wpsa-mk.org
-            </p>
-            <p className="text-gray-700">
-              {t("about.contact.phone")}: +389 2 3240 700
-            </p>
+            <h4 className="font-medium mb-2">Contact</h4>
+            <p className="text-gray-600">Email: info@wpsa-mk.org</p>
+            <p className="text-gray-600">Phone: +389 2 3240 700</p>
           </div>
         </div>
       </div>
     </section>
-  );
-};
-
-interface PartnerLinkProps {
-  name: string;
-  description: string;
-  url: string;
-}
-
-const PartnerLink = ({ name, description, url }: PartnerLinkProps) => {
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-lg border border-gray-100 bg-white hover:shadow-md transition-shadow"
-    >
-      <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center shrink-0">
-        <span className="text-3xl">🏢</span>
-        {/* Use the line below instead of the emoji when you have actual logos */}
-        {/* <img src={logo} alt={name} className="max-w-full max-h-full p-2" /> */}
-      </div>
-
-      <div className="flex-1 text-center sm:text-left">
-        <h3 className="font-medium text-primary-600">{name}</h3>
-        <p className="text-sm text-gray-600/80 mt-1">{description}</p>
-      </div>
-    </a>
   );
 };
 

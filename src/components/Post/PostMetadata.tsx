@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { formatDate } from "../../utils/dateUtils";
 
 interface PostMetadataProps {
   author: string;
@@ -12,39 +12,35 @@ const PostMetadata: React.FC<PostMetadataProps> = ({
   publishDate,
   tags,
 }) => {
-  const { t } = useTranslation();
-
-  const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
   return (
-    <div className="flex flex-wrap gap-4 mb-8 p-4 pb-4 border-b border-gray-200">
-      <div className="flex items-center gap-2">
-        <span className="font-bold text-gray-600">{t("post.author")}:</span>{" "}
-        {author}
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="font-bold text-gray-600">{t("post.published")}:</span>{" "}
-        {formattedDate}
-      </div>
-      {tags.length > 0 && (
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-600">{t("post.tags")}:</span>
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag, index) => (
-              <span
-                key={index}
-                className="bg-gray-100 px-2 py-1 rounded-md text-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+    <div className="max-w-3xl mx-auto my-8 px-4">
+      <div className="flex flex-col md:flex-row justify-between border-t border-b border-gray-200 py-4">
+        <div className="mb-4 md:mb-0">
+          <span className="font-bold text-gray-600">Author:</span>{" "}
+          <span className="text-gray-800">{author}</span>
         </div>
-      )}
+
+        <div className="mb-4 md:mb-0">
+          <span className="font-bold text-gray-600">Published:</span>{" "}
+          <span className="text-gray-800">{formatDate(publishDate)}</span>
+        </div>
+
+        {tags && tags.length > 0 && (
+          <div>
+            <span className="font-bold text-gray-600">Tags:</span>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-block bg-gray-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

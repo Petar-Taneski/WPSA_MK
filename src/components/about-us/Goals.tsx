@@ -1,39 +1,39 @@
-import { useTranslation } from "react-i18next";
+import React from "react";
 
-const Goals = () => {
-  const { t } = useTranslation();
+const Goals: React.FC = () => {
+  const goalPoints = [
+    "Promotion of advancement of knowledge in all aspects of poultry science and the poultry industry",
+    "Promotion of World Poultry Congresses, as well as local and regional meetings",
+    "Organizing professional and scientific gatherings through lectures, public appearances, round tables, forums, and other appropriate means",
+    "Informing the public about the activities of the Association through social networks and other methods",
+    "Development and implementation of scientific national and international projects in the field of poultry",
+    "Dissemination of knowledge in all branches of the poultry industry and facilitating the exchange of economic activities of the Association through organizing scientific meetings, seminars, and lectures, as well as publishing activities",
+  ];
 
   return (
-    <div className="flex gap-8">
-      <div className="md:col-span-6">
-        <h3 className="text-2xl font-bold text-primary mb-8 border-l-4 border-primary pl-4">
-          {t("about.goals.title")}
-        </h3>
-        <p className="text-gray-700/80 leading-relaxed mb-8">
-          {t("about.goals.description")}
-        </p>
-
-        <ul className="space-y-6 border-l border-primary-200 pl-6">
-          {Object.entries({
-            advancement: "✓",
-            congresses: "✓",
-            gatherings: "✓",
-            informing: "✓",
-            projects: "✓",
-            dissemination: "✓",
-          }).map(([key, icon]) => (
-            <li key={key} className="flex items-start">
-              <span className="text-primary h-fit leading-6 font-bold text-lg mr-3">
-                {icon}
-              </span>
-              <span className="text-slate-700/80 leading-tight">
-                {t(`about.goals.points.${key}`)}
-              </span>
+    <section className="mb-12">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6">
+        Goals of the Association
+      </h2>
+      <p className="text-gray-700 mb-8">
+        The Association primarily focuses on the concept of economically
+        acceptable and sustainable development and adapted concept for the
+        protection, promotion, and development of poultry science and the
+        poultry industry. The Association will promote all theoretical knowledge
+        and practical experiences that help realize and advance the basic goals
+        and tasks.
+      </p>
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <ul className="space-y-4">
+          {goalPoints.map((point, index) => (
+            <li key={index} className="flex">
+              <span className="text-indigo-600 mr-3">•</span>
+              <span>{point}</span>
             </li>
           ))}
         </ul>
       </div>
-    </div>
+    </section>
   );
 };
 

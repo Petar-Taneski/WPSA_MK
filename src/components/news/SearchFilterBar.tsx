@@ -1,11 +1,9 @@
-import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { useNews } from "../../contexts/NewsContext";
 import { Search, Grid, List } from "lucide-react";
 import { Button } from "../ui/button";
 
 const SearchFilterBar = () => {
-  const { t } = useTranslation();
   const {
     searchQuery,
     setSearchQuery,
@@ -51,7 +49,7 @@ const SearchFilterBar = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setIsSearchFocused(true)}
-            placeholder={t("news.searchPlaceholder")}
+            placeholder="Search articles..."
             className="w-full py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
           />
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-2.5">
@@ -97,7 +95,7 @@ const SearchFilterBar = () => {
               onClick={() => setActiveFilter(null)}
               className="rounded-full px-4"
             >
-              {t("news.allTopics")}
+              All Topics
             </Button>
 
             {allTags.map((tag) => (

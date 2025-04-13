@@ -1,86 +1,58 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { NewsArticle } from "../../services/interfaces";
-import { useTranslation } from "react-i18next";
-import ReadMoreButton from "../common/ReadMoreButton";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { formatDate } from "../../utils/dateUtils";
 
 interface NewsCardProps {
   article: NewsArticle;
 }
 
-const NewsCard = ({ article }: NewsCardProps) => {
-  const { id, title, summary, thumbnailUrl, publishDate, author, tags } =
-    article;
-  const { i18n } = useTranslation();
+const truncateText = (text: string, maxLength: number): string => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+};
 
-  const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-  // Get the correct URL path based on language
-  const getPostUrl = () => {
-    const currentLanguage = i18n.language;
-    return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
-  };
+const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
+  const { id, title, summary, thumbnailUrl, publishDate, tags } = article;
 
   return (
-    <Link to={getPostUrl()} className="block h-full">
-      <Card className="group h-full transition-all duration-300 hover:shadow-xl pt-0 overflow-clip hover:-translate-y-1">
-        <div className="relative rounded-xl overflow-hidden">
-          <div className="h-48">
-            <img
-              src={thumbnailUrl}
-              alt={title}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          </div>
-
-          {tags.length > 0 && (
-            <div className="absolute right-3 top-3 flex max-w-[70%] flex-wrap justify-end gap-1">
-              {tags.slice(0, 2).map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-block rounded-md bg-indigo-600 px-2 py-1 text-xs font-medium text-white shadow-md"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="absolute bottom-3 left-3">
-            <span className="inline-block rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur-sm">
-              {formattedDate}
+    <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+      <Link to={`/news/${id}`} className="block">
+        <div
+          className="h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${thumbnailUrl})` }}
+        ></div>
+      </Link>
+      <div className="p-6">
+        <div className="flex gap-2 mb-3">
+          {tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="inline-block px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-700 rounded-full"
+            >
+              {tag}
             </span>
-          </div>
+          ))}
         </div>
-
-        <CardHeader>
-          <CardTitle className="line-clamp-2 text-xl group-hover:text-indigo-600">
+        <Link to={`/news/${id}`}>
+          <h3 className="text-xl font-bold mb-2 text-gray-900 hover:text-indigo-600">
             {title}
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <p className="line-clamp-3 flex-grow text-gray-600">{summary}</p>
-        </CardContent>
-
-        <CardFooter className="mt-auto border-t flex justify-between border-gray-100 pt-4">
-          <span className="text-xs text-gray-500 italic truncate max-w-[60%]">
-            {author}
+          </h3>
+        </Link>
+        <p className="text-gray-700 mb-4">{truncateText(summary, 120)}</p>
+        <div className="flex justify-between items-center mt-4">
+          <span className="text-sm text-gray-500">
+            {formatDate(publishDate)}
           </span>
-          <ReadMoreButton articleId={id} />
-        </CardFooter>
-      </Card>
-    </Link>
+          <Link
+            to={`/news/${id}`}
+            className="text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+          >
+            Read more
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 };
 

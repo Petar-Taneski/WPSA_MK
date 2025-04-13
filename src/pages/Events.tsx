@@ -1,12 +1,14 @@
-import { useTranslation } from "react-i18next";
+import EventsComponent from "../components/Events/EventsComponent";
 
 const Events = () => {
-  const { t } = useTranslation();
-
   return (
     <div className="page events-page">
-      <h1 className="text-3xl font-bold mb-4">{t("navigation.events")}</h1>
-      <p>This is the events page content.</p>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">
+          Events
+        </h1>
+        <EventsComponent />
+      </div>
     </div>
   );
 };

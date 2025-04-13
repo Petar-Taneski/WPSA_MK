@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { useNews } from "../contexts/NewsContext";
 
 import EmptyState from "../components/news/EmptyState";
@@ -9,7 +8,6 @@ import NewsListView from "../components/news/NewsListView";
 import SearchFilterBar from "../components/news/SearchFilterBar";
 
 const News = () => {
-  const { t } = useTranslation();
   const { loading, error, featuredArticle, filteredArticles, viewMode } =
     useNews();
 
@@ -17,9 +15,11 @@ const News = () => {
     <div className="page news-page max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-          {t("navigation.news")}
+          News
         </h1>
-        <p className="text-xl text-gray-600">{t("news.latestUpdates")}</p>
+        <p className="text-xl text-gray-600">
+          Latest updates from the world of poultry science
+        </p>
       </div>
 
       {loading && <LoadingState />}

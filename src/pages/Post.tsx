@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { fetchNewsArticle } from "../services/api";
 import { NewsArticle } from "../services/interfaces";
 import {
@@ -14,22 +13,14 @@ import {
 const Post: React.FC = () => {
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
 
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get the news path based on current language
+  // Get the news path
   const getNewsPath = () => {
-    const currentLanguage = i18n.language;
-    switch (currentLanguage) {
-      case "mk":
-        return "/mk/вести";
-      case "en":
-      default:
-        return "/en/news";
-    }
+    return "/news";
   };
 
   useEffect(() => {
@@ -40,12 +31,12 @@ const Post: React.FC = () => {
           const articleData = await fetchNewsArticle(params.id as string);
 
           if (!articleData) {
-            setError(t("post.notFound"));
+            setError("Article not found");
           } else {
             setArticle(articleData);
           }
         } catch (err) {
-          setError(t("post.loadError"));
+          setError("Failed to load article");
           console.error(err);
         } finally {
           setLoading(false);
@@ -54,17 +45,17 @@ const Post: React.FC = () => {
 
       fetchArticle();
     } else {
-      setError(t("post.noIdProvided"));
+      setError("No article ID provided");
       setLoading(false);
     }
-  }, [params.id, t]);
+  }, [params.id]);
 
   if (loading) {
     return <PostLoading />;
   }
 
   if (error || !article) {
-    return <PostError message={error || t("post.notFound")} />;
+    return <PostError message={error || "Article not found"} />;
   }
 
   return (
@@ -84,7 +75,7 @@ const Post: React.FC = () => {
           onClick={() => navigate(getNewsPath())}
           className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
         >
-          {t("post.backToNews")}
+          Back to News
         </button>
       </div>
     </div>

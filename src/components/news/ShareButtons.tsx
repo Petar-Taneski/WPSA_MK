@@ -1,48 +1,54 @@
-import { useTranslation } from "react-i18next";
-import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
-import { Button } from "../ui/button";
+import React from "react";
+import { Facebook, Twitter, Linkedin, Link } from "lucide-react";
 
-const ShareButtons = () => {
-  const { t } = useTranslation();
+const ShareButtons: React.FC<{ url: string; title: string }> = ({
+  url,
+  title,
+}) => {
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(title);
 
   return (
-    <div>
-      <h3 className="mb-3 text-sm font-medium text-gray-500">
-        {t("news.shareArticle")}
-      </h3>
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+    <div className="flex flex-col items-center my-8">
+      <h3 className="text-lg font-medium mb-4">Share this article</h3>
+      <div className="flex space-x-4">
+        <a
+          href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700"
+          aria-label="Share on Facebook"
         >
-          <Facebook className="h-5 w-5" />
-          <span className="sr-only">Share on Facebook</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-sky-500 text-white hover:bg-sky-600 hover:text-white"
+          <Facebook size={20} />
+        </a>
+        <a
+          href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-3 bg-blue-400 text-white rounded-full hover:bg-blue-500"
+          aria-label="Share on Twitter"
         >
-          <Twitter className="h-5 w-5" />
-          <span className="sr-only">Share on Twitter</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-green-600 text-white hover:bg-green-700 hover:text-white"
+          <Twitter size={20} />
+        </a>
+        <a
+          href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-3 bg-blue-800 text-white rounded-full hover:bg-blue-900"
+          aria-label="Share on LinkedIn"
         >
-          <Linkedin className="h-5 w-5" />
-          <span className="sr-only">Share on LinkedIn</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-gray-800 text-white hover:bg-black hover:text-white"
+          <Linkedin size={20} />
+        </a>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(url);
+            alert("Link copied to clipboard!");
+          }}
+          className="p-3 bg-gray-600 text-white rounded-full hover:bg-gray-700"
+          aria-label="Copy link"
         >
-          <Instagram className="h-5 w-5" />
-          <span className="sr-only">Share on Instagram</span>
-        </Button>
+          <Link size={20} />
+        </button>
       </div>
     </div>
   );

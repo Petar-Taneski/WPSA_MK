@@ -1,21 +1,13 @@
-import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router-dom";
-import LanguageSwitcher from "./LanguageSwitcher";
+import { Link } from "react-router-dom";
 
 const Navigation = () => {
-  const { t, i18n } = useTranslation();
-  const location = useLocation();
-
-  // Navigation items with their respective route keys
+  // Navigation items
   const navItems = [
-    { key: "home", label: t("navigation.home") },
-    { key: "about", label: t("navigation.about") },
-    { key: "news", label: t("navigation.news") },
-    { key: "events", label: t("navigation.events") },
+    { key: "home", path: "/home", label: "Home" },
+    { key: "about", path: "/about", label: "About" },
+    { key: "news", path: "/news", label: "News" },
+    { key: "events", path: "/events", label: "Events" },
   ];
-
-  // Get current language from URL or i18n
-  const currentLang = location.pathname.split("/")[1] || i18n.language;
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -24,14 +16,13 @@ const Navigation = () => {
           {navItems.map((item) => (
             <Link
               key={item.key}
-              to={`/${currentLang}/${t(`pages.${item.key}`)}`}
+              to={item.path}
               className="text-white hover:text-gray-300 px-3 py-2 rounded-md"
             >
               {item.label}
             </Link>
           ))}
         </div>
-        <LanguageSwitcher />
       </div>
     </nav>
   );

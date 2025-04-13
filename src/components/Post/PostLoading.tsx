@@ -1,13 +1,10 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 const PostLoading: React.FC = () => {
-  const { t } = useTranslation();
-
   return (
-    <div className="flex flex-col items-center justify-center h-[50vh] w-full">
-      <div className="w-12 h-12 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-      <p>{t("post.loading")}</p>
+    <div className="max-w-7xl mx-auto px-4 py-16 flex flex-col items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mb-4"></div>
+      <p className="text-lg text-gray-600">Loading article...</p>
     </div>
   );
 };

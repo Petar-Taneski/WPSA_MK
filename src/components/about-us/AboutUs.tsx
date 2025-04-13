@@ -1,30 +1,26 @@
-import { useTranslation } from "react-i18next";
-import AboutContent from "./AboutContent";
+import React from "react";
+import Goals from "./Goals";
+import Leadership from "./Leadership";
+import Membership from "./Membership";
+import MissionVision from "./MissionVision";
+import Partners from "./Partners";
 
-const AboutUs = () => {
-  const { t } = useTranslation();
+const AboutUs: React.FC = () => {
   return (
-    <div className="about-page">
-      <div className="relative h-[300px] overflow-hidden">
-        <img
-          src="/images/about/header-chicks.png"
-          alt="WPSA Macedonian Branch"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent from-40% to-black/60 flex items-center justify-end pr-12">
-          <div className="flex flex-col pr-10 gap-2 w-100 text-right">
-            <h1 className="text-6xl font-extrabold text-white">
-              {t("about.shortName")}
-            </h1>
-            <span className="text-gray-200/80 break-words ">
-              {t("about.name")}
-            </span>
-          </div>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="text-center mb-16">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">WPSA</h1>
+        <h2 className="text-2xl md:text-3xl text-gray-700">
+          WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH
+        </h2>
       </div>
 
-      <div className="pt-10 w-full px-20">
-        <AboutContent />
+      <div className="flex flex-col gap-20">
+        <Goals />
+        <MissionVision />
+        <Leadership />
+        <Membership />
+        <Partners />
       </div>
     </div>
   );

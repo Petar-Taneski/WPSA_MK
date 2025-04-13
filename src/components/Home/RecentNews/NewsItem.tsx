@@ -1,97 +1,45 @@
-import { useTranslation } from "react-i18next";
+import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, User } from "lucide-react";
-import { NewsArticle } from "@/services/interfaces";
+import { ArrowRight } from "lucide-react";
+import { NewsArticle } from "../../../services/interfaces";
+import { formatDate } from "../../../utils/dateUtils";
 
 interface NewsItemProps {
   article: NewsArticle;
-  index: number;
 }
 
-const NewsItem = ({ article }: NewsItemProps) => {
-  const { t } = useTranslation();
-
-  const formattedDate = new Date(article.publishDate).toLocaleDateString(
-    undefined,
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }
-  );
+const NewsItem: React.FC<NewsItemProps> = ({ article }) => {
+  const { id, title, summary, thumbnailUrl, publishDate } = article;
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-300 h-full flex flex-col transform hover:-translate-y-1 border border-slate-100">
-        {/* Image container - fixed height */}
-        <div className="w-full h-44 relative">
-          <Link
-            to={`/news/${article.id}`}
-            className="block w-full h-full overflow-hidden relative cursor-pointer group"
-            aria-label={`View article: ${article.title}`}
-          >
-            <div className="absolute inset-0 rounded-t-xl overflow-hidden">
-              <img
-                src={article.thumbnailUrl}
-                alt={article.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-
-              {/* Image overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-50 group-hover:opacity-70 transition-opacity duration-300"></div>
-            </div>
-
-            {/* Tags overlay - simplified to just one tag */}
-            {article.tags.length > 0 && (
-              <div className="absolute top-3 right-3">
-                <span className="inline-block rounded-md bg-slate-700 px-2 py-1 text-xs font-medium text-white">
-                  {article.tags[0]}
-                </span>
-              </div>
-            )}
-
-            {/* Date overlay */}
-            <div className="absolute bottom-3 left-3">
-              <span className="inline-block rounded-md bg-black/60 px-2 py-1 text-xs text-white backdrop-blur-sm">
-                {formattedDate}
-              </span>
-            </div>
-          </Link>
+    <div className="h-full bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+      <Link to={`/news/${id}`} className="block overflow-hidden">
+        <img
+          src={thumbnailUrl}
+          alt={title}
+          className="w-full h-48 object-cover transition-transform hover:scale-105 duration-300"
+        />
+      </Link>
+      <div className="p-5 flex flex-col flex-grow">
+        <div className="mb-2">
+          <span className="text-sm text-gray-500">
+            {formatDate(publishDate)}
+          </span>
         </div>
-
-        {/* Content section - fixed height layout */}
-        <div className="p-4 flex flex-col flex-grow">
-          {/* Title - fixed height */}
-          <div className="h-12 mb-2">
-            <Link to={`/news/${article.id}`} className="group">
-              <h3 className="text-base font-medium line-clamp-2 text-slate-900 group-hover:text-slate-700 transition-colors">
-                {article.title}
-              </h3>
-            </Link>
-          </div>
-
-          {/* Summary - fixed height with ellipsis */}
-          <div className="h-12 mb-4">
-            <p className="text-xs text-slate-500 line-clamp-3">
-              {article.summary}
-            </p>
-          </div>
-
-          {/* Author + CTA row - fixed position at bottom */}
-          <div className="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
-            <span className="text-xs text-slate-500 italic truncate max-w-[50%] flex items-center">
-              <User className="w-3 h-3 mr-1 text-slate-400 flex-shrink-0" />
-              <span className="truncate">{article.author}</span>
-            </span>
-
-            <Link
-              to={`/news/${article.id}`}
-              className="inline-flex items-center text-xs text-indigo-600 font-medium hover:text-indigo-800 transition-colors whitespace-nowrap"
-            >
-              {t("news.readMore")}
-              <ArrowRight className="ml-1 w-3 h-3 flex-shrink-0" />
-            </Link>
-          </div>
+        <Link to={`/news/${id}`} className="block mb-3">
+          <h3 className="font-bold text-xl text-gray-900 hover:text-indigo-600 transition-colors line-clamp-2">
+            {title}
+          </h3>
+        </Link>
+        <p className="text-gray-600 mb-4 line-clamp-3">{summary}</p>
+        <div className="mt-auto">
+          <Link
+            to={`/news/${id}`}
+            className="inline-flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition-colors"
+          >
+            Read more
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </Link>
         </div>
       </div>
     </div>
