@@ -8,7 +8,7 @@
   "navigation": {
     "home": "Почетна",
     "about": "За нас",
-    "news": "Новости",
+    "news": "Вести",
     "events": "Настани",
     "language": "Јазик"
   },
@@ -18,7 +18,7 @@
   },
   "news": {
     "latestUpdates": "Најнови вести од светот на живинарската наука",
-    "readMore": "Прочитај повеќе",
+    "readMore": "Повеќе",
     "backToNews": "Назад кон вести",
     "backToAllNews": "Назад кон сите вести",
     "noArticlesFound": "Не се пронајдени статии",
