@@ -2,7 +2,8 @@ import { lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Navigation from "./components/Navigation";
+import Navigation from "./components/Headers/Navigation";
+import MobileHeader from "./components/Headers/MobileHeader/MobileNavigation";
 import { NewsProvider } from "./contexts/NewsContext";
 import DashboardPost from "./components/Dashboard/Post";
 
@@ -48,7 +49,12 @@ function App() {
     <BrowserRouter>
       <div className="app">
         <Suspense fallback={<div>Loading...</div>}>
-          <Navigation />
+          <div className="hidden lg:block">
+            <Navigation />
+          </div>
+          <div className="block lg:hidden">
+            <MobileHeader />
+          </div>
           <div className="relative">
             <Routes>
               {/* Default redirect to user's language */}
