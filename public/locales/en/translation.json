@@ -48,5 +48,128 @@
     "noIdProvided": "No article ID provided",
     "goBack": "Go Back",
     "backToNews": "Back to News"
+  },
+  "about": {
+    "generalInfo": {
+      "title": "ABOUT THE ORGANIZATION"
+    },
+    "name": "WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH",
+    "shortName": "WPSA",
+    "goals": {
+      "title": "Goals of the Association",
+      "description": "The Association primarily focuses on the concept of economically acceptable and sustainable development and adapted concept for the protection, promotion, and development of poultry science and the poultry industry. The Association will promote all theoretical knowledge and practical experiences that help realize and advance the basic goals and tasks.",
+      "points": {
+        "advancement": "Promotion of advancement of knowledge in all aspects of poultry science and the poultry industry",
+        "congresses": "Promotion of World Poultry Congresses, as well as local and regional meetings",
+        "gatherings": "Organizing professional and scientific gatherings through lectures, public appearances, round tables, forums, and other appropriate means",
+        "informing": "Informing the public about the activities of the Association through social networks and other methods",
+        "projects": "Development and implementation of scientific national and international projects in the field of poultry",
+        "dissemination": "Dissemination of knowledge in all branches of the poultry industry and facilitating the exchange of economic activities of the Association through organizing scientific meetings, seminars, and lectures, as well as publishing activities"
+      }
+    },
+    "mission": {
+      "title": "Mission and Vision",
+      "visionLabel": "Vision",
+      "missionLabel": "Mission",
+      "visionDeclaration": "The vision of the Citizens Association World Poultry Science Association - Macedonian Branch Skopje is:",
+      "visionContent": "To have a high national and international reputation and trust promoting the concept of one health",
+      "missionDeclaration": "The mission of the Citizens Association World Poultry Science Association - Macedonian Branch Skopje is:",
+      "missionContent": "To facilitate the exchange of ideas, projects, and initiatives between science, education, and industry in poultry"
+    },
+    "images": {
+      "chickenPortrait": "Poultry close-up"
+    },
+    "membership": {
+      "title": "Membership",
+      "description": "Membership in the association is voluntary.",
+      "types": {
+        "regular": {
+          "title": "Regular",
+          "description": "Any individual who is 18 years or older"
+        },
+        "student": {
+          "title": "Student",
+          "description": "Individuals enrolled in undergraduate, graduate or doctoral studies in the relevant scientific field. Student members do not pay membership fees"
+        },
+        "honorary": {
+          "title": "Honorary",
+          "description": "Individuals who have been selected by the Assembly of the Association for special merits, following a proposal by the President"
+        },
+        "associate": {
+          "title": "Associate",
+          "description": "Any legal entity that helps and supports the Association's operations"
+        }
+      },
+      "fee": "Members pay membership fees (except student members) by April 30th each year. The amount of the membership fee is determined by the Assembly based on the President's proposal."
+    },
+    "leadership": {
+      "title": "Leadership",
+      "president": "President",
+      "executiveBoard": "Executive Board",
+      "executives": {
+        "dodovski": {
+          "firstName": "Aleksandar",
+          "lastName": "Dodovski",
+          "role": "President"
+        },
+        "kolevska": {
+          "firstName": "Tanja",
+          "lastName": "Kolevska",
+          "role": "Executive Board"
+        },
+        "dovlev": {
+          "firstName": "Aleksandar",
+          "lastName": "Dovlev",
+          "role": "Executive Board"
+        },
+        "tanevski": {
+          "firstName": "Marjan",
+          "lastName": "Tanevski",
+          "role": "Executive Board"
+        },
+        "popchevski": {
+          "firstName": "Milan",
+          "lastName": "Popchevski",
+          "role": "Executive Board"
+        }
+      }
+    },
+    "partners": {
+      "title": "PARTNERS & RESOURCES",
+      "description": "The Macedonian Branch of the World Poultry Science Association collaborates with numerous national and international organizations, educational institutions, and industry partners to advance poultry science in North Macedonia and beyond. Below are some of our key partners and resources.",
+      "wpsa": {
+        "name": "World's Poultry Science Association",
+        "description": "International organization dedicated to advancing poultry science globally."
+      },
+      "europeanFederation": {
+        "name": "European Federation of WPSA Branches",
+        "description": "Coordinating body for European WPSA branches."
+      },
+      "agenda": {
+        "name": "WPSA_EF_EC_2024_Agenda_new",
+        "description": "European Federation of WPSA Branches executive committee agenda document."
+      },
+      "mediterraneanNetwork": {
+        "name": "Mediterranean Poultry Network",
+        "description": "Network connecting poultry science professionals across the Mediterranean region."
+      }
+    },
+    "contact": {
+      "title": "Contact Information:",
+      "address": "Address",
+      "contact": "Contact",
+      "addressLines": {
+        "faculty": "Faculty of Veterinary Medicine",
+        "street": "Lazar Pop Trajkov 5-7",
+        "city": "1000 Skopje, North Macedonia"
+      },
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "join": {
+      "title": "Join Us",
+      "description": "We welcome new members who are interested in poultry science and the poultry industry. By joining WPSA Macedonian Branch, you'll gain access to a network of professionals, educational resources, and opportunities to collaborate on research projects.",
+      "button": "Learn More About Membership"
+    }
   }
 }
