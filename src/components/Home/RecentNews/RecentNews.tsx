@@ -59,7 +59,7 @@ const RecentNews = () => {
       <div className="w-full py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         </div>
       </div>
@@ -113,11 +113,11 @@ const RecentNews = () => {
             <div className="text-center mt-8">
               <Link
                 to={getNewsPath()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
                 aria-label={t("news.viewAllNews")}
               >
                 {t("news.viewAllNews")}
-                <ArrowRight className="w-4 h-4 ml-1"/>
+                <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </div>
           </>

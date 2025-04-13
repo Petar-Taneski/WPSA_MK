@@ -20,7 +20,7 @@ const Leadership = () => {
               <img
                 src={executive.image}
                 alt={`${t(executive.firstName)} ${t(executive.lastName)}`}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover hover:scale-102 transition-transform duration-300"
                 onError={(e) => {
                   e.currentTarget.src = `https://ui-avatars.com/api/?name=${t(
                     executive.firstName

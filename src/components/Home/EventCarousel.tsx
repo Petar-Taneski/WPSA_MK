@@ -168,7 +168,7 @@ const EventCarousel = () => {
                     <div className="mt-auto">
                       <a
                         href={slide.ctaLink}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-all hover:shadow-md"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all hover:shadow-md"
                       >
                         {slide.ctaText}
                         <svg
@@ -243,7 +243,7 @@ const EventCarousel = () => {
               onClick={() => goToSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 currentSlide === index
-                  ? "bg-indigo-600 scale-125 shadow-sm"
+                  ? "bg-primary-600 scale-125 shadow-sm"
                   : "bg-slate-400 hover:bg-slate-600"
               }`}
               aria-label={`Go to slide ${index + 1}`}

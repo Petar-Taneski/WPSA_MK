@@ -34,7 +34,7 @@ const NewsItem = ({ article }: NewsItemProps) => {
               <img
                 src={article.thumbnailUrl}
                 alt={article.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
               />
 
               {/* Image overlay */}
@@ -86,7 +86,7 @@ const NewsItem = ({ article }: NewsItemProps) => {
 
             <Link
               to={`/news/${article.id}`}
-              className="inline-flex items-center text-xs text-indigo-600 font-medium hover:text-indigo-800 transition-colors whitespace-nowrap"
+              className="inline-flex items-center text-xs text-primary-600 font-medium hover:text-primary-800 transition-colors whitespace-nowrap"
             >
               {t("news.readMore")}
               <ArrowRight className="ml-1 w-3 h-3 flex-shrink-0" />
