@@ -5,9 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-
+import { fetchNewsArticles } from "../services/api";
 import { NewsArticle } from "@/services/interfaces";
-import { fetchNewsArticles } from "@/services/api";
 
 interface NewsContextType {
   articles: NewsArticle[];
@@ -18,8 +17,6 @@ interface NewsContextType {
   setActiveFilter: (filter: string | null) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  viewMode: "grid" | "list";
-  setViewMode: (mode: "grid" | "list") => void;
   allTags: string[];
   featuredArticle: NewsArticle | null;
 }
@@ -44,7 +41,6 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
     const getNewsArticles = async () => {
@@ -95,8 +91,6 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     setActiveFilter,
     searchQuery,
     setSearchQuery,
-    viewMode,
-    setViewMode,
     allTags,
     featuredArticle,
   };

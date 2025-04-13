@@ -9,7 +9,7 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1622021142947-da7dedc7c39a?q=80&w=400",
       "publishDate": "2023-10-15",
       "author": "Dr. Jane Smith",
-      "tags": ["research", "nutrition", "efficiency"]
+      "tags": ["Courses"]
     },
     {
       "id": "2",
@@ -20,7 +20,7 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1591824438708-ce405f36ba3d?q=80&w=400",
       "publishDate": "2023-11-20",
       "author": "Conference Committee",
-      "tags": ["event", "conference", "international"]
+      "tags": ["Webinars"]
     },
     {
       "id": "3",
@@ -31,7 +31,7 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?q=80&w=400",
       "publishDate": "2023-12-05",
       "author": "WPSA Committee on Sustainability",
-      "tags": ["sustainability", "guidelines", "environment"]
+      "tags": ["Courses"]
     },
     {
       "id": "4",
@@ -42,7 +42,7 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1612170153139-6f881ff067e0?q=80&w=400",
       "publishDate": "2024-01-18",
       "author": "Dr. Michael Johnson",
-      "tags": ["research", "welfare", "free-range"]
+      "tags": ["Webinars"]
     },
     {
       "id": "5",
@@ -53,7 +53,7 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1622021142947-da7dedc7c39a?q=80&w=400",
       "publishDate": "2024-02-10",
       "author": "Tech Innovation Team",
-      "tags": ["technology", "health", "monitoring"]
+      "tags": ["Webinars"]
     }
   ]
 }

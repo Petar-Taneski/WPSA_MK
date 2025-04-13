@@ -18,7 +18,7 @@ const PostError: React.FC<PostErrorProps> = ({ message }) => {
       <p className="mb-6 text-gray-700">{message || t("post.errorDefault")}</p>
       <button
         onClick={() => navigate(-1)}
-        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+        className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors"
       >
         {t("post.goBack")}
       </button>

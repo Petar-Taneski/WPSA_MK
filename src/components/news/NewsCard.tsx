@@ -1,23 +1,16 @@
-import { Link } from "react-router-dom";
-import { NewsArticle } from "../../services/interfaces";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { NewsArticle } from "../../services/interfaces";
 import ReadMoreButton from "../common/ReadMoreButton";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 
 interface NewsCardProps {
   article: NewsArticle;
 }
 
 const NewsCard = ({ article }: NewsCardProps) => {
-  const { id, title, summary, thumbnailUrl, publishDate, author, tags } =
-    article;
+  const { id, title, summary, thumbnailUrl, publishDate, author } = article;
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
     year: "numeric",
@@ -25,62 +18,52 @@ const NewsCard = ({ article }: NewsCardProps) => {
     day: "numeric",
   });
 
-  // Get the correct URL path based on language
   const getPostUrl = () => {
     const currentLanguage = i18n.language;
     return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
   };
 
+  const displayImageUrl = thumbnailUrl || "/placeholder.jpg";
+
   return (
-    <Link to={getPostUrl()} className="block h-full">
-      <Card className="group h-full transition-all duration-300 hover:shadow-xl pt-0 overflow-clip hover:-translate-y-1">
-        <div className="relative rounded-xl overflow-hidden">
-          <div className="h-48">
-            <img
-              src={thumbnailUrl}
-              alt={title}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          </div>
-
-          {tags.length > 0 && (
-            <div className="absolute right-3 top-3 flex max-w-[70%] flex-wrap justify-end gap-1">
-              {tags.slice(0, 2).map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-block rounded-md bg-indigo-600 px-2 py-1 text-xs font-medium text-white shadow-md"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="absolute bottom-3 left-3">
-            <span className="inline-block rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur-sm">
-              {formattedDate}
-            </span>
-          </div>
+    <div
+      className="block h-full focus:outline-none focus:ring-2 focus:ring-primary/50"
+      tabIndex={0}
+      role="link"
+      aria-label={`Read article: ${title}`}
+    >
+      <div className="group bg-white h-full flex flex-col overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+        <div
+          onClick={() => navigate(getPostUrl())}
+          className="relative h-48 max-md:h-80 overflow-hidden cursor-pointer"
+        >
+          <img
+            src={displayImageUrl}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-102"
+          />
         </div>
 
-        <CardHeader>
-          <CardTitle className="line-clamp-2 text-xl group-hover:text-indigo-600">
+        <div className="p-4 flex flex-col flex-grow">
+          <div className="text-xs text-gray-500 mb-2">{formattedDate}</div>
+
+          <h3 className="text-lg font-semibold text-gray-800/80 mb-2 line-clamp-2">
             {title}
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <p className="line-clamp-3 flex-grow text-gray-600">{summary}</p>
-        </CardContent>
-
-        <CardFooter className="mt-auto border-t flex justify-between border-gray-100 pt-4">
-          <span className="text-xs text-gray-500 italic truncate max-w-[60%]">
-            {author}
-          </span>
-          <ReadMoreButton articleId={id} />
-        </CardFooter>
-      </Card>
-    </Link>
+          </h3>
+          <p className="text-sm text-gray-600/80 line-clamp-3 flex-grow mb-4 leading-relaxed">
+            {summary}
+          </p>
+          <div className="mt-auto border-t border-gray-100 pt-3 flex justify-between items-center">
+            <span className="text-xs text-gray-500 italic truncate max-w-[60%]">
+              {author || "WPSA MK"}
+            </span>
+            <div onClick={(e) => e.stopPropagation()}>
+              <ReadMoreButton articleId={id} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
