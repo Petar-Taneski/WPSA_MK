@@ -23,7 +23,7 @@ const ReadMoreButton = ({ articleId, className = "" }: ReadMoreButtonProps) => {
   return (
     <button
       onClick={handleClick}
-      className={`pl-2 pr-1.5 py-2 flex gap-2 items-center cursor-pointer border-b-2 hover:border-primary border-transparent text-primary text-sm sm:text-base ${className}`}
+      className={`pl-2 pr-1.5 py-2 flex gap-2 items-center cursor-pointer border-b-[1.5px] hover:border-primary border-transparent text-primary text-sm sm:text-base ${className}`}
     >
       {t("news.readMore")}
       <ArrowRight className="w-4 h-4" />
