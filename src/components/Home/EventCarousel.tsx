@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import ArrowButton from "../common/ArrowButton";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type EventSlide = {
   id: number;
@@ -67,6 +70,7 @@ const EventCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const navigate = useNavigate();
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === eventSlides.length - 1 ? 0 : prev + 1));
@@ -166,24 +170,11 @@ const EventCarousel = () => {
                       {slide.description}
                     </p>
                     <div className="mt-auto">
-                      <a
-                        href={slide.ctaLink}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-all hover:shadow-md"
-                      >
-                        {slide.ctaText}
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </a>
+                      <ArrowButton
+                        className="hover:scale-105 bg-white text-primary"
+                        text={slide.ctaText}
+                        onClick={() => navigate(slide.ctaLink)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -198,20 +189,7 @@ const EventCarousel = () => {
           className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-md"
           aria-label="Previous slide"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-5 h-5 md:w-6 md:h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
+          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
         </button>
 
         <button
@@ -219,20 +197,7 @@ const EventCarousel = () => {
           className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-md"
           aria-label="Next slide"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-5 h-5 md:w-6 md:h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
         </button>
 
         {/* Slide Indicators */}
