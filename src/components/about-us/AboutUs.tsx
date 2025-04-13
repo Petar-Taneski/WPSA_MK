@@ -23,7 +23,7 @@ const AboutUs = () => {
         </div>
       </div>
 
-      <div className="pt-10 w-full px-20">
+      <div className="pt-10 w-full px-20 max-sm:px-6 max-md:px-10">
         <AboutContent />
       </div>
     </div>
