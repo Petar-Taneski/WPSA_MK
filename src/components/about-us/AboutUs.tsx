@@ -7,11 +7,11 @@ const AboutUs = () => {
     <div className="about-page">
       <div className="relative h-[300px] overflow-hidden">
         <img
-          src="/images/about/header-chicks.jpg"
+          src="/images/about/header-chicks.png"
           alt="WPSA Macedonian Branch"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/70 flex items-center justify-end pr-12">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent from-40% to-black/60 flex items-center justify-end pr-12">
           <div className="flex flex-col pr-10 gap-2 w-100 text-right">
             <h1 className="text-6xl font-extrabold text-white">
               {t("about.shortName")}

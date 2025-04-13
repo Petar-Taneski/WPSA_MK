@@ -10,10 +10,15 @@ interface ReadMoreButtonProps {
 
 const ReadMoreButton = ({ articleId, className = "" }: ReadMoreButtonProps) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handleClick = () => {
-    navigate(`/news/${articleId}`);
+    const currentLanguage = i18n.language;
+    const path =
+      currentLanguage === "mk"
+        ? `/mk/вести/${articleId}`
+        : `/en/news/${articleId}`;
+    navigate(path);
   };
 
   return (
