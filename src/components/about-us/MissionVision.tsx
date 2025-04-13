@@ -22,7 +22,7 @@ const MissionVision = () => {
               “
             </span>
             <p className="pl-6 pr-6 italic">{t("about.mission.visionContent")}</p>
-            <span className="font-serif text-5xl text-primary/60 absolute -right-0 -bottom-6">
+            <span className="font-serif text-5xl text-primary/60 absolute -right-0 -bottom-10">
               ”
             </span>
           </div>
@@ -40,7 +40,7 @@ const MissionVision = () => {
               “
             </span>
             <p className="pl-6 pr-6 italic">{t("about.mission.missionContent")}</p>
-            <span className="font-serif text-5xl text-primary/60 absolute -right-0 -bottom-6">
+            <span className="font-serif text-5xl text-primary/60 absolute -right-0 -bottom-10">
               ”
             </span>
           </div>

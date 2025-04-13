@@ -115,10 +115,10 @@ const EventCarousel = () => {
     <div className="relative py-20 bg-white overflow-hidden">
       {/* Section Heading */}
       <div className="container mx-auto mb-12 px-6">
-        <h2 className="text-center text-3xl md:text-4xl font-bold text-slate-900 mb-3">
+        <h2 className="text-center text-3xl md:text-4xl font-bold text-slate-800/90 mb-3">
           Upcoming Events
         </h2>
-        <p className="text-center text-slate-700 max-w-2xl mx-auto">
+        <p className="text-center text-slate-700/80 max-w-2xl mx-auto">
           Discover our seasonal activities and workshops dedicated to
           sustainable farming
         </p>
@@ -150,7 +150,7 @@ const EventCarousel = () => {
                 zIndex: position === 0 ? 10 : 10 - Math.abs(position),
               }}
             >
-              <div className="mx-4 h-full overflow-hidden rounded-xl shadow-lg relative bg-white border border-slate-200">
+              <div className="mx-4 h-full overflow-hidden rounded-sm shadow-lg relative bg-white border border-slate-200">
                 {/* Background Image */}
                 <div
                   className="absolute inset-0 w-full h-full bg-cover bg-center"

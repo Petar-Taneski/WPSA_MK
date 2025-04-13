@@ -11,10 +11,9 @@ const NewsContent = () => {
   return (
     <div className="page news-page max-sm:px-4 max-lg:px-20 max-xl:px-10 px-20 py-8">
       <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+        <h1 className="border-l-4 border-primary pl-4 text-4xl md:text-4xl font-bold text-primary-600 mb-2">
           {t("navigation.news")}
         </h1>
-        <p className="text-xl text-gray-600">{t("news.latestUpdates")}</p>
       </div>
 
       {loading && <LoadingState />}

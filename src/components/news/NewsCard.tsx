@@ -47,10 +47,10 @@ const NewsCard = ({ article }: NewsCardProps) => {
         <div className="p-4 flex flex-col flex-grow">
           <div className="text-xs text-gray-500 mb-2">{formattedDate}</div>
 
-          <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">
+          <h3 className="text-lg font-semibold text-gray-800/80 mb-2 line-clamp-2">
             {title}
           </h3>
-          <p className="text-sm text-gray-600 line-clamp-3 flex-grow mb-4 leading-relaxed">
+          <p className="text-sm text-gray-600/80 line-clamp-3 flex-grow mb-4 leading-relaxed">
             {summary}
           </p>
           <div className="mt-auto border-t border-gray-100 pt-3 flex justify-between items-center">
