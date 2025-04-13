@@ -5,7 +5,9 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { fetchNewsArticles, NewsArticle } from "../services/api";
+
+import { NewsArticle } from "@/services/interfaces";
+import { fetchNewsArticles } from "@/services/api";
 
 interface NewsContextType {
   articles: NewsArticle[];

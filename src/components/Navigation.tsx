@@ -18,22 +18,25 @@ const Navigation = () => {
   const currentLang = location.pathname.split("/")[1] || i18n.language;
 
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="flex space-x-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.key}
-              to={`/${currentLang}/${t(`pages.${item.key}`)}`}
-              className="text-white hover:text-gray-300 px-3 py-2 rounded-md"
-            >
-              {item.label}
-            </Link>
-          ))}
+    <header className="px-[5vw] h-[13vh] sticky top-0 z-50 bg-white shadow-[0_4px_15px_-3px] shadow-primary/40">
+      <div className="container mx-auto h-full flex justify-between items-center ">
+        <div className="flex items-center ">
+          <img src="/Logo-WPSA.png" alt="WPSA Logo" className="h-[10vh] mr-6 mix-blend-multiply" />
+          <div className="flex space-x-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.key}
+                to={`/${currentLang}/${t(`pages.${item.key}`)}`}
+                className="text-gray-800 hover:text-primary px-3 py-2 rounded-md text-lg font-medium"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
         <LanguageSwitcher />
       </div>
-    </nav>
+    </header>
   );
 };
 
