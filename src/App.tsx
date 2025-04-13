@@ -49,7 +49,7 @@ function App() {
     <BrowserRouter>
       <div className="app">
         <Suspense fallback={<div>Loading...</div>}>
-          <div className="hidden lg:block">
+          <div className="hidden lg:block h-[13vh]">
             <Navigation />
           </div>
           <div className="block lg:hidden">

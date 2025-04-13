@@ -18,7 +18,7 @@ const Navigation = () => {
   const currentLang = location.pathname.split("/")[1] || i18n.language;
 
   return (
-    <header className="max-[1024px]:hidden px-[5vw] h-[13vh] sticky top-0 z-50 bg-white shadow-[0_4px_15px_-3px] shadow-primary/40">
+    <header className="max-[1024px]:hidden px-[5vw] h-[13vh] fixed w-screen top-0 z-50 bg-white shadow-[0_4px_15px_-3px] shadow-primary/40">
       <div className="container mx-auto h-full flex justify-between items-center ">
         <div className="flex items-center ">
           <img
