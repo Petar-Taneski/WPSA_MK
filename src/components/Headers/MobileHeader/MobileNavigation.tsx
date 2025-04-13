@@ -14,7 +14,7 @@ const MobileHeader = () => {
   };
 
   return (
-    <div className="fixed top-0 w-full flex items-end justify-center min-h-[70px] h-[93px] max-h-[15vh] z-[1000] backdrop-blur-md">
+    <div className="fixed top-0 w-full flex items-end justify-center min-h-[70px] h-[93px] max-h-[15vh] z-[1000] bg-white">
       <div className="flex items-center justify-between w-full h-fit z-[1001] pb-[20px] border-b-[0.5px] border-b-white border-opacity-50 px-[5vw]">
         <Link
           to="/"
@@ -45,7 +45,7 @@ const MobileHeader = () => {
           />
         </button>
       </div>
-      {isOpen && <OpenHeader setIsOpen={setIsOpen} isOpen={isOpen} />}
+      <OpenHeader setIsOpen={setIsOpen} isOpen={isOpen} />
     </div>
   );
 };
