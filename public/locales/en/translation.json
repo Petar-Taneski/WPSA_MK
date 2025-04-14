@@ -16,6 +16,26 @@
     "en": "English",
     "mk": "Macedonian"
   },
+  "events": {
+    "upcomingEvents": "Upcoming Events",
+    "allEvents": "All Events",
+    "filterAll": "All Events",
+    "filterUpcoming": "Upcoming Events",
+    "filterPast": "Past Events",
+    "noEventsFound": "No events found",
+    "tryDifferentFilter": "Try a different filter",
+    "pastEvent": "Past Event",
+    "eventsDescription": "Discover our seasonal activities and workshops dedicated to poultry science",
+    "readMore": "Read More",
+    "registerNow": "Register Now",
+    "eventDetails": "Event Details",
+    "location": "Location",
+    "organizer": "Organizer",
+    "eventDate": "Date",
+    "eventTime": "Time",
+    "contactInfo": "Contact Information",
+    "joinEvent": "Join Event"
+  },
   "news": {
     "latestUpdates": "Latest updates from the world of poultry science",
     "readMore": "More",

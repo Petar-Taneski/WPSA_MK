@@ -1,40 +1,40 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { NewsArticle } from "../../services/interfaces";
-import ReadMoreButton from "../common/ReadMoreButton";
+import { EventSlide } from "../Home/EventCarousel";
+import ArrowButton from "../common/ArrowButton";
 
-interface NewsCardProps {
-  article: NewsArticle;
+interface EventCardProps {
+  event: EventSlide;
+  isPast?: boolean;
 }
 
-const NewsCard = ({ article }: NewsCardProps) => {
-  const { id, title, summary, thumbnailUrl, publishDate, author } = article;
+const EventCard = ({ event }: EventCardProps) => {
+  const { id, title, description, date, image, ctaText, ctaLink } = event;
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
+  const getEventUrl = () => {
+    const currentLanguage = i18n.language;
+    return currentLanguage === "mk" ? `/mk/настани/${id}` : `/en/events/${id}`;
+  };
+
+  const displayImageUrl = image || "/placeholder.jpg";
+  const formattedDate = new Date(date).toLocaleDateString(undefined, {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-
-  const getPostUrl = () => {
-    const currentLanguage = i18n.language;
-    return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
-  };
-
-  const displayImageUrl = thumbnailUrl || "/placeholder.jpg";
 
   return (
     <div
       className="block h-full focus:outline-none focus:ring-2 focus:ring-primary/50"
       tabIndex={0}
       role="link"
-      aria-label={`Read article: ${title}`}
+      aria-label={`View event: ${title}`}
     >
       <div className="group bg-white h-full flex flex-col overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
         <div
-          onClick={() => navigate(getPostUrl())}
+          onClick={() => navigate(getEventUrl())}
           className="relative h-48 max-md:h-80 overflow-hidden cursor-pointer"
         >
           <img
@@ -42,24 +42,24 @@ const NewsCard = ({ article }: NewsCardProps) => {
             alt=""
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-102"
           />
+          <div className="absolute top-0 right-0 bg-primary/90 text-white px-3 py-1 m-3 rounded text-sm font-medium">
+            {formattedDate}
+          </div>
         </div>
 
         <div className="p-4 flex flex-col flex-grow">
-          <div className="text-xs text-primary/85 mb-2">{formattedDate}</div>
-
           <h3 className="text-lg font-semibold text-gray-800/85 mb-2 line-clamp-2">
             {title}
           </h3>
           <p className="text-sm text-gray-600/80 line-clamp-3 flex-grow mb-4 leading-relaxed">
-            {summary}
+            {description}
           </p>
-          <div className="mt-auto border-t border-gray-100 pt-3 flex justify-between items-center">
-            <span className="text-xs text-gray-500 italic truncate max-w-[60%]">
-              {author || "WPSA MK"}
-            </span>
-            <div onClick={(e) => e.stopPropagation()}>
-              <ReadMoreButton articleId={id} />
-            </div>
+          <div className="mt-auto pt-3 flex justify-end">
+            <ArrowButton
+              text={ctaText}
+              onClick={() => navigate(ctaLink)}
+              className="text-sm"
+            />
           </div>
         </div>
       </div>
@@ -67,4 +67,4 @@ const NewsCard = ({ article }: NewsCardProps) => {
   );
 };
 
-export default NewsCard;
+export default EventCard;
