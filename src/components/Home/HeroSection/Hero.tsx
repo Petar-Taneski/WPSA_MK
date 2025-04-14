@@ -6,7 +6,7 @@ const Hero = () => {
         {/* Parallax background div - full screen width */}
         <div
           className="parallax"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+          style={{ backgroundImage: "url('/images/header.png')" }}
         >
           {/* Content overlay */}
           <div className="h-full min-h-screen flex items-center justify-center text-white">
@@ -23,9 +23,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-
-
-    
     </div>
   );
 };

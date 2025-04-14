@@ -20,7 +20,7 @@ const eventSlides: EventSlide[] = [
     description:
       "Join us for our annual celebration of sustainable farming with local produce and activities.",
     date: "June 15, 2024",
-    image: "/images/hero-bg.jpg",
+    image: "/images/header.png",
     ctaText: "Learn More",
     ctaLink: "/events/harvest-festival",
   },
@@ -30,7 +30,7 @@ const eventSlides: EventSlide[] = [
     description:
       "Learn how to prepare delicious meals using fresh ingredients straight from our farm.",
     date: "July 8, 2024",
-    image: "/images/hero-bg.jpg",
+    image: "/images/header.png",
     ctaText: "Register Now",
     ctaLink: "/events/farm-to-table",
   },
@@ -40,7 +40,7 @@ const eventSlides: EventSlide[] = [
     description:
       "Experience our ethical farming practices and see how we maintain a balanced ecosystem.",
     date: "August 12, 2024",
-    image: "/images/hero-bg.jpg",
+    image: "/images/header.png",
     ctaText: "Book Tour",
     ctaLink: "/events/farm-tour",
   },
@@ -50,7 +50,7 @@ const eventSlides: EventSlide[] = [
     description:
       "A family-friendly day where kids can learn about animals and sustainable farming.",
     date: "September 5, 2024",
-    image: "/images/hero-bg.jpg",
+    image: "/images/header.png",
     ctaText: "Family Tickets",
     ctaLink: "/events/kids-day",
   },
@@ -60,7 +60,7 @@ const eventSlides: EventSlide[] = [
     description:
       "Master the art of cooking with organic ingredients in this hands-on culinary experience.",
     date: "October 20, 2024",
-    image: "/images/hero-bg.jpg",
+    image: "/images/header.png",
     ctaText: "Join Class",
     ctaLink: "/events/cooking-class",
   },
