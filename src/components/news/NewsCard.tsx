@@ -45,7 +45,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
         </div>
 
         <div className="p-4 flex flex-col flex-grow">
-          <div className="text-xs text-gray-500 mb-2">{formattedDate}</div>
+          <div className="text-xs text-primary/85 mb-2">{formattedDate}</div>
 
           <h3 className="text-lg font-semibold text-gray-800/85 mb-2 line-clamp-2">
             {title}

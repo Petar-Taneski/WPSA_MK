@@ -1,4 +1,7 @@
+import { useTranslation } from "react-i18next";
+
 const Hero = () => {
+  const { t } = useTranslation();
   return (
     <div className="overflow-hidden">
       {/* Parallax hero section */}
@@ -11,13 +14,13 @@ const Hero = () => {
           {/* Content overlay */}
           <div className="h-full min-h-screen flex items-center justify-center text-white">
             <div className="container mx-auto px-4">
-              <div className="max-w-2xl mx-auto text-center">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg">
-                  Free Range Farming
+              <div className="flex flex-col pr-10 gap-2 pb-30 w-full text-center">
+                <h1 className="text-6xl font-extrabold text-white/98">
+                  {t("about.shortName")}
                 </h1>
-                <p className="text-xl md:text-2xl mb-8 drop-shadow-md">
-                  Natural and sustainable poultry farming
-                </p>
+                <span className="text-gray-100/80 text-lg break-words ">
+                  {t("about.name")}
+                </span>
               </div>
             </div>
           </div>

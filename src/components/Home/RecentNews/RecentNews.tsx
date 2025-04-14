@@ -1,5 +1,5 @@
 import ArrowButton from "@/components/common/ArrowButton";
-import NewsCard from "@/components/news/NewsCard";
+import NewsCard from "@/components/News/NewsCard";
 import { NewsArticle } from "@/services/interfaces";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -84,7 +84,7 @@ const RecentNews = () => {
     <section className="w-full py-16 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-800/85">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary/85">
             {t("news.recentTitle")}
           </h2>
           <p className="text-lg text-slate-600/80 max-w-2xl mx-auto">

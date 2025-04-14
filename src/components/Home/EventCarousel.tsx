@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import ArrowButton from "../common/ArrowButton";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { eventSlides } from "../../data/eventData";
+import { useTranslation } from "react-i18next";
 
 export type EventSlide = {
   id: number;
@@ -13,60 +15,8 @@ export type EventSlide = {
   ctaLink: string;
 };
 
-const eventSlides: EventSlide[] = [
-  {
-    id: 1,
-    title: "Seasonal Harvest Festival",
-    description:
-      "Join us for our annual celebration of sustainable farming with local produce and activities.",
-    date: "June 15, 2024",
-    image: "/images/header.png",
-    ctaText: "Learn More",
-    ctaLink: "/events/harvest-festival",
-  },
-  {
-    id: 2,
-    title: "Farm-to-Table Workshop",
-    description:
-      "Learn how to prepare delicious meals using fresh ingredients straight from our farm.",
-    date: "July 8, 2024",
-    image: "/images/header.png",
-    ctaText: "Register Now",
-    ctaLink: "/events/farm-to-table",
-  },
-  {
-    id: 3,
-    title: "Sustainable Farming Tour",
-    description:
-      "Experience our ethical farming practices and see how we maintain a balanced ecosystem.",
-    date: "August 12, 2024",
-    image: "/images/header.png",
-    ctaText: "Book Tour",
-    ctaLink: "/events/farm-tour",
-  },
-  {
-    id: 4,
-    title: "Children's Day on the Farm",
-    description:
-      "A family-friendly day where kids can learn about animals and sustainable farming.",
-    date: "September 5, 2024",
-    image: "/images/header.png",
-    ctaText: "Family Tickets",
-    ctaLink: "/events/kids-day",
-  },
-  {
-    id: 5,
-    title: "Organic Cooking Class",
-    description:
-      "Master the art of cooking with organic ingredients in this hands-on culinary experience.",
-    date: "October 20, 2024",
-    image: "/images/header.png",
-    ctaText: "Join Class",
-    ctaLink: "/events/cooking-class",
-  },
-];
-
 const EventCarousel = () => {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -115,14 +65,13 @@ const EventCarousel = () => {
     <div className="relative py-20 bg-white overflow-hidden">
       {/* Section Heading */}
       <div className="container mx-auto mb-12 px-6">
-        <h2 className="text-center text-3xl md:text-4xl font-bold text-slate-800/90 mb-3">
-          Upcoming Events
+        <h2 className="text-center text-3xl md:text-4xl font-bold text-primary/85 mb-3">
+          {t("events.upcomingEvents")}
         </h2>
         <p className="text-center text-slate-700/80 max-w-2xl mx-auto">
-          Discover our seasonal activities and workshops dedicated to
-          sustainable farming
+          {t("events.eventsDescription")}
         </p>
-        <div className="mx-auto mt-4 h-1 w-24 bg-slate-400 rounded"></div>
+        <div className="mx-auto mt-4 h-1 w-24 bg-primary rounded"></div>
       </div>
 
       {/* Carousel container */}
@@ -159,7 +108,7 @@ const EventCarousel = () => {
 
                 {/* Content overlay with blur effect */}
                 <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-10">
-                  <div className="relative z-10 max-w-md backdrop-blur-md bg-slate-900/50 p-8 rounded-xl text-white shadow-lg border border-white/10">
+                  <div className="relative z-10 max-w-md backdrop-blur-md bg-primary/40 p-8 rounded-xl text-white shadow-lg border border-white/10">
                     <div className="inline-block px-4 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full mb-6 text-white w-fit">
                       {slide.date}
                     </div>

@@ -1,4 +1,4 @@
-import NewsContent from "@/components/news/NewsContent";
+import NewsContent from "@/components/News/NewsContent";
 
 const News = () => {
   return <NewsContent />;

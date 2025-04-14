@@ -16,6 +16,26 @@
     "en": "Англиски",
     "mk": "Македонски"
   },
+  "events": {
+    "upcomingEvents": "Претстојни настани",
+    "allEvents": "Сите настани",
+    "filterAll": "Сите настани",
+    "filterUpcoming": "Претстојни настани",
+    "filterPast": "Минати настани",
+    "noEventsFound": "Не се пронајдени настани",
+    "tryDifferentFilter": "Обидете се со друг филтер",
+    "pastEvent": "Минат настан",
+    "eventsDescription": "Откријте ги нашите сезонски активности и работилници посветени на живинарската наука",
+    "readMore": "Прочитај повеќе",
+    "registerNow": "Регистрирај се сега",
+    "eventDetails": "Детали за настанот",
+    "location": "Локација",
+    "organizer": "Организатор",
+    "eventDate": "Датум",
+    "eventTime": "Време",
+    "contactInfo": "Контакт информации",
+    "joinEvent": "Придружи се"
+  },
   "news": {
     "latestUpdates": "Најнови вести од светот на живинарската наука",
     "readMore": "Повеќе",
