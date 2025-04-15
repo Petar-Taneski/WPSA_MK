@@ -62,7 +62,7 @@ function App() {
             <Navigation openContactModal={openContactModal} />
           </div>
           <div className="block lg:hidden">
-            <MobileHeader />
+            <MobileHeader openContactModal={openContactModal} />
           </div>
           <div className="relative">
             <Routes>

@@ -3,13 +3,17 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
-const OpenHeader = ({
-  isOpen,
-  setIsOpen,
-}: {
+interface OpenHeaderProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+  openContactModal: () => void;
+}
+
+const OpenHeader: React.FC<OpenHeaderProps> = ({
+  isOpen,
+  setIsOpen,
+  openContactModal,
+}: OpenHeaderProps) => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
 
@@ -54,7 +58,7 @@ const OpenHeader = ({
             <Link
               key={item.key}
               to={`/${currentLang}/${t(`pages.${item.key}`)}`}
-              className={`flex items-center justify-between w-full gap-2 py-3 text-primary font-medium rounded-sm shadow-b-lg`}
+              className={`flex items-center justify-between w-full gap-2 py-3 text-lg font-medium rounded-md text-gray-800/85 `}
               onClick={() => setIsOpen(false)}
             >
               {item.label}
@@ -62,17 +66,29 @@ const OpenHeader = ({
             </Link>
           ))}
         </div>
-        <div className="mt-8 flex justify-center">
-          <div className="w-full relative">
+        <div className="mt-5">
+          <button
+            onClick={() => {
+              openContactModal();
+              setIsOpen(false);
+            }}
+            className={`flex items-center justify-between w-full gap-2 py-3 text-lg font-medium rounded-md text-gray-800/85 `}
+          >
+            {t("navigation.contact")}
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </button>
+        </div>
+        <div className="flex justify-center mt-8">
+          <div className="relative w-full">
             <select
               value={i18n.language}
               onChange={(e) => handleLanguageChange(e.target.value)}
-              className="w-full text-primary font-medium bg-transparent border-none focus:outline-none focus:ring-0 pl-0 pr-8 appearance-none [&>option]:bg-white [&>option]:text-primary [&>option]:p-0 [&>option]:m-0"
+              className="w-full text-gray-800/85 font-medium bg-transparent border-none focus:outline-none focus:ring-0 pl-0 pr-8 appearance-none [&>option]:bg-white [&>option]:text-gray-800/85 [&>option]:p-0 [&>option]:m-0"
             >
               <option value="en">{t("languages.en")}</option>
               <option value="mk">{t("languages.mk")}</option>
             </select>
-            <ChevronDown className="w-4 h-4 absolute right-0 top-1/2 -translate-y-1/2 text-primary pointer-events-none" />
+            <ChevronDown className="absolute right-0 w-4 h-4 -translate-y-1/2 pointer-events-none top-1/2 text-gray-800/85" />
           </div>
         </div>
       </div>

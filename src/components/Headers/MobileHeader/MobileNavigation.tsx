@@ -3,7 +3,12 @@ import { useState } from "react";
 import OpenHeader from "./OpenHeader";
 import { toTop } from "@/lib/utils";
 
-const MobileHeader = () => {
+// Define props interface
+interface MobileHeaderProps {
+  openContactModal: () => void;
+}
+
+const MobileHeader: React.FC<MobileHeaderProps> = ({ openContactModal }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -45,7 +50,11 @@ const MobileHeader = () => {
           />
         </button>
       </div>
-      <OpenHeader setIsOpen={setIsOpen} isOpen={isOpen} />
+      <OpenHeader
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        openContactModal={openContactModal}
+      />
     </div>
   );
 };
