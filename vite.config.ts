@@ -5,7 +5,6 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/WPSA_MK/",
   plugins: [react(), tailwindcss()],
   publicDir: "public",
   server: {
