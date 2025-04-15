@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Event } from "../../data/eventData";
 import ArrowButton from "../common/ArrowButton";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, MapPin, Clock, Award, Share2, Copy } from "lucide-react";
+import { CalendarDays, MapPin, Clock, Award, Copy, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import { FacebookShareButton, LinkedinShareButton } from "react-share";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -17,15 +16,16 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const { t, i18n } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const [shareOpen, setShareOpen] = useState(false);
   const [urlCopied, setUrlCopied] = useState(false);
 
-  // Current URL to share
-  const currentURL = typeof window !== "undefined" ? window.location.href : "";
+  // Create a proper URL for sharing
+  const eventUrl = event
+    ? `${window.location.origin}/${i18n.language}/events/${event.id}`
+    : "";
 
   // Copy to clipboard function
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(eventUrl).then(
       () => {
         setUrlCopied(true);
         setTimeout(() => {
@@ -65,7 +65,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   // Reset share state when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setShareOpen(false);
       setUrlCopied(false);
     }
   }, [isOpen]);
@@ -147,47 +146,25 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             </div>
           </div>
 
-          {/* Share Functionality */}
-          <div className="flex items-center gap-2 my-4">
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setShareOpen(!shareOpen)}
-                className="flex items-center justify-center px-3 py-1.5 text-sm border border-primary rounded-md hover:bg-primary/10 transition-colors"
-                aria-label="Share this event"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                {t("common.share", "Share")}
-              </button>
-
-              {/* Social Media Sharing */}
-              {shareOpen && (
-                <div className="flex items-center space-x-2">
-                  <FacebookShareButton url={currentURL}>
-                    <div className="flex items-center justify-center p-1.5 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition-colors">
-                      <span className="text-sm font-medium">Facebook</span>
-                    </div>
-                  </FacebookShareButton>
-
-                  <LinkedinShareButton url={currentURL}>
-                    <div className="flex items-center justify-center p-1.5 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors">
-                      <span className="text-sm font-medium">LinkedIn</span>
-                    </div>
-                  </LinkedinShareButton>
-
-                  <button
-                    onClick={() => copyToClipboard(currentURL)}
-                    className="flex items-center justify-center p-1.5 border border-gray-500 text-gray-500 rounded-md hover:bg-gray-500 hover:text-white transition-colors"
-                  >
-                    <Copy className="w-4 h-4 mr-1" />
-                    <span className="text-sm font-medium">
-                      {urlCopied
-                        ? t("common.copied", "Copied!")
-                        : t("common.copyLink", "Copy Link")}
-                    </span>
-                  </button>
-                </div>
+          {/* Copy URL Button */}
+          <div className="my-4">
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center justify-center px-3 py-1.5 text-sm border border-primary rounded-md hover:bg-primary/10 transition-colors"
+              aria-label={urlCopied ? "URL copied" : "Copy event URL"}
+            >
+              {urlCopied ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  {t("common.copied", "Copied!")}
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />
+                  {t("common.copyLink", "Copy Link")}
+                </>
               )}
-            </div>
+            </button>
           </div>
 
           {/* Event Summary */}
