@@ -31,3 +31,8 @@ export const toTop = () => {
 //   navigator.clipboard.writeText(text);
 //   toast.success(`${text} copied to clipboard.`, toastDefaultOptions);
 // };
+
+export const validateEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};

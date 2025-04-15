@@ -1,0 +1,188 @@
+import React, { useState, useRef, useEffect } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+// import { toastDefaultOptions } from 'lib/consts';
+import { toast } from "react-toastify";
+// import { validateEmail } from 'lib/utils';
+import { useTranslation } from "react-i18next";
+
+interface ContactFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const recaptcha = useRef<ReCAPTCHA>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const sitekey = import.meta.env.VITE_RECAPTCHA_SITEKEY;
+
+  // Simple email validation
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  // Mock handleSubmit function
+  const handleSubmit = () => {
+    // const token = recaptcha?.current?.getValue();
+    if (name === "" || email === "" || message === "") {
+      toast.error(t("contact.errors.emptyFields"));
+      return;
+    }
+    if (!validateEmail(email)) {
+      toast.error(t("contact.errors.invalidEmail"));
+      return;
+    }
+
+    // Mock successful submission
+    toast.success(t("contact.success.messageSent"));
+
+    // Reset form
+    setName("");
+    setEmail("");
+    setMessage("");
+
+    // Close modal
+    onClose();
+  };
+
+  // Disable body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save the current overflow value
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      // Disable scrolling on body
+      document.body.style.overflow = "hidden";
+
+      // Re-enable scrolling when component unmounts or modal closes
+      return () => {
+        document.body.style.overflow = originalStyle;
+      };
+    }
+  }, [isOpen]);
+
+  // const handleSubmit = async () => {
+  //   const token = recaptcha?.current?.getValue();
+  //   if (name === "" || email === "" || message === "" || !token) {
+  //     toast.error("Please fill in all fields.", toastDefaultOptions);
+  //     return;
+  //   }
+  //   if (!validateEmail(email)) {
+  //     toast.error("Please enter a valid email address.", toastDefaultOptions);
+  //     return;
+  //   }
+  //   try {
+  //     await sendContactEmail({ name, email, message, token });
+  //     toast.success("Message sent successfully!", toastDefaultOptions);
+  //     setName("");
+  //     setEmail("");
+  //     setMessage("");
+  //   } catch (error: any) {
+  //     toast.error(
+  //       error.message || "Failed to send message. Please try again.",
+  //       toastDefaultOptions
+  //     );
+  //   }
+  // };
+
+  const handleClickOutside = (e: React.MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[1001] flex items-center justify-center bg-gray-800/50 overflow-hidden"
+      onClick={handleClickOutside}
+      aria-modal="true"
+      role="dialog"
+    >
+      <div
+        ref={modalRef}
+        className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto z-[1002] relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">
+            {t("contact.title")}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+            aria-label={t("common.close")}
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="w-full text-gray-800/85 h-fit">
+          <form
+            className="flex flex-col"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t("contact.form.namePlaceholder")}
+              className="w-full bg-white text-gray-800/85 placeholder:text-gray-800/85 border-b border-primary laptop-l:mt-[15px] mt-[10px] focus:outline-none focus:border-primary"
+            />
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("contact.form.emailPlaceholder")}
+              className="laptop-l:mt-[30px] mt-[21px] w-full bg-white text-gray-800/85 placeholder:text-gray-800/85 border-b border-primary focus:outline-none focus:border-primary"
+            />
+            <label
+              htmlFor="message"
+              className="laptop-l:mt-[30px] mt-[21px] text-gray-800/85"
+            >
+              {t("contact.form.messageLabel")}
+            </label>
+
+            <textarea
+              id="message"
+              name="message"
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                e.target.style.height = "auto"; // Reset height
+                e.target.style.height = `${e.target.scrollHeight}px`; // Set height based on content
+              }}
+              className="border-b border-primary w-full h-fit bg-white text-gray-800/85 resize-none overflow-hidden laptop-l:mt-[15px] mt-[10px] focus:outline-none focus:border-primary"
+              rows={1}
+            />
+            {sitekey && (
+              <div className="my-2">
+                {<ReCAPTCHA ref={recaptcha} sitekey={sitekey} />}
+              </div>
+            )}
+            <button
+              type="submit"
+              className="self-center px-6 py-3 mt-2 font-medium transition-all duration-300 rounded-sm shadow-lg cursor-pointer hover:scale-101 w-fit text-primary hover:shadow-xl"
+            >
+              {t("contact.form.submitButton")}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ContactForm;

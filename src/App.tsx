@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -7,6 +7,9 @@ import MobileHeader from "./components/Headers/MobileHeader/MobileNavigation";
 import { NewsProvider } from "./contexts/NewsContext";
 import DashboardPost from "./components/Dashboard/Post";
 import Footer from "./components/Footer/Footer";
+import UpperSection from "./components/ContactForm";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -28,6 +31,10 @@ const PostWithProvider = () => (
 
 function App() {
   const { t, i18n } = useTranslation();
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const openContactModal = () => setIsContactModalOpen(true);
+  const closeContactModal = () => setIsContactModalOpen(false);
 
   // Get page paths for both languages
   const paths = {
@@ -48,10 +55,11 @@ function App() {
   const unusedFeatures = false;
   return (
     <BrowserRouter>
-      <div className="app">
+      <div className="app overflow-x-clip">
+        <ToastContainer position="top-right" autoClose={5000} />
         <Suspense fallback={<div>Loading...</div>}>
           <div className="hidden lg:block h-[13vh]">
-            <Navigation />
+            <Navigation openContactModal={openContactModal} />
           </div>
           <div className="block lg:hidden">
             <MobileHeader />
@@ -109,9 +117,13 @@ function App() {
             </Routes>
           </div>
           <div className=" h-[13vh]">
-           <Footer />
+            <Footer openContactModal={openContactModal} />
           </div>
 
+          <UpperSection
+            isOpen={isContactModalOpen}
+            onClose={closeContactModal}
+          />
         </Suspense>
       </div>
     </BrowserRouter>

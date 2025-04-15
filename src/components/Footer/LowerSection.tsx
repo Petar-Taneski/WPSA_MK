@@ -1,7 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
-const LowerSection = () => {
+interface LowerSectionProps {
+  openContactModal: () => void;
+}
+
+const LowerSection: React.FC<LowerSectionProps> = ({ openContactModal }) => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
 
@@ -32,6 +36,12 @@ const LowerSection = () => {
               {item.label}
             </Link>
           ))}
+          <button
+            onClick={openContactModal}
+            className="px-3 py-2 text-lg font-medium text-gray-800 rounded-md hover:text-primary"
+          >
+            {t("navigation.contact") || "Contact"}
+          </button>
         </div>
       </div>
     </div>
