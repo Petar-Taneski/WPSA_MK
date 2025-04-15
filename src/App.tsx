@@ -6,6 +6,7 @@ import Navigation from "./components/Headers/Navigation";
 import MobileHeader from "./components/Headers/MobileHeader/MobileNavigation";
 import { NewsProvider } from "./contexts/NewsContext";
 import DashboardPost from "./components/Dashboard/Post";
+import Footer from "./components/Footer/Footer";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -107,6 +108,10 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
+          <div className=" h-[13vh]">
+           <Footer />
+          </div>
+
         </Suspense>
       </div>
     </BrowserRouter>
