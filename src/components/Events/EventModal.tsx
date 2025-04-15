@@ -1,10 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { Event } from "../../data/eventData";
 import ArrowButton from "../common/ArrowButton";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, MapPin, Clock, Award, Copy, Check } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { useEffect, useRef, useState } from "react";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -15,7 +14,6 @@ interface EventModalProps {
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const { t, i18n } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
   const [urlCopied, setUrlCopied] = useState(false);
 
   // Create a proper URL for sharing
@@ -77,10 +75,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
   if (!isOpen || !event) return null;
 
-  // Format event dates
-  const eventDate = new Date(event.eventDate);
-  const publishDate = new Date(event.publishDate);
-
   return (
     <div
       className="fixed inset-0 z-[1001] flex items-center justify-center bg-gray-800/50 overflow-y-auto p-4"
@@ -94,7 +88,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800/85 pr-8">
+          <h2 className="pr-8 text-xl font-bold text-gray-800/85">
             {event.title}
           </h2>
           <button
@@ -110,7 +104,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           {/* Featured Badge */}
           {event.isFeatured && (
             <div className="mb-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+              <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">
                 <Award className="w-3 h-3 mr-1" />
                 Featured Event
               </span>
@@ -169,15 +163,15 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
           {/* Event Summary */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2 text-gray-700">
+            <h3 className="mb-2 text-lg font-semibold text-gray-700">
               Summary
             </h3>
             <p className="text-gray-700">{event.summary}</p>
           </div>
 
           {/* Event Content */}
-          <div className="mb-8 prose prose-sm max-w-none">
-            <h3 className="text-lg font-semibold mb-2 text-gray-700">
+          <div className="mb-8 prose-sm prose max-w-none">
+            <h3 className="mb-2 text-lg font-semibold text-gray-700">
               Details
             </h3>
             <div className="markdown-content">{event.content}</div>

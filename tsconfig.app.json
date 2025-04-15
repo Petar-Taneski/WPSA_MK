@@ -25,7 +25,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Case sensitivity */
+    "forceConsistentCasingInFileNames": false
   },
-  "include": ["src", "src/components/Home/RecentNews/RecentNews.tsx"]
+  "include": ["src"]
 }

@@ -57,9 +57,9 @@ const RecentNews = () => {
   if (loading) {
     return (
       <div className="w-full py-12 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="container px-4 mx-auto">
           <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="w-12 h-12 border-b-2 rounded-full animate-spin border-primary-600"></div>
           </div>
         </div>
       </div>
@@ -69,9 +69,9 @@ const RecentNews = () => {
   if (error) {
     return (
       <div className="w-full py-12 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="container px-4 mx-auto">
           <div className="flex flex-col items-center justify-center h-64">
-            <div className="text-red-600 bg-red-50 px-4 py-3 rounded-lg border border-red-200">
+            <div className="px-4 py-3 text-red-600 border border-red-200 rounded-lg bg-red-50">
               {error}
             </div>
           </div>
@@ -82,12 +82,12 @@ const RecentNews = () => {
 
   return (
     <section className="w-full py-16 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container px-4 mx-auto sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primary/85">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl text-primary/85">
             {t("news.recentTitle")}
           </h2>
-          <p className="text-lg text-slate-600/80 max-w-2xl mx-auto">
+          <p className="max-w-2xl mx-auto text-lg text-slate-600/80">
             {t("news.recentDescription")}
           </p>
         </div>
@@ -95,8 +95,8 @@ const RecentNews = () => {
         {articles.length > 0 ? (
           <>
             {/* Equal height card layout */}
-            <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col md:flex-row justify-center items-stretch gap-10 lg:gap-12">
+            <div className="mx-auto max-w-7xl">
+              <div className="flex flex-col items-stretch justify-center gap-10 md:flex-row lg:gap-12">
                 {articles.map((article) => (
                   <div
                     key={article.id}
@@ -110,7 +110,7 @@ const RecentNews = () => {
               </div>
             </div>
 
-            <div className="text-center mt-8">
+            <div className="mt-8 text-center">
               <ArrowButton
                 text={t("news.viewAllNews")}
                 onClick={() => navigate(getNewsPath())}
@@ -118,7 +118,7 @@ const RecentNews = () => {
             </div>
           </>
         ) : (
-          <div className="text-center py-10 bg-slate-50 rounded-lg shadow-sm">
+          <div className="py-10 text-center rounded-lg shadow-sm bg-slate-50">
             <p className="text-slate-600">{t("news.noArticlesFound")}</p>
           </div>
         )}
