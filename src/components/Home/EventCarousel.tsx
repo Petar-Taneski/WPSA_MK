@@ -30,10 +30,6 @@ const EventCarousel = () => {
     setCurrentSlide((prev) => (prev === 0 ? eventSlides.length - 1 : prev - 1));
   };
 
-  const goToSlide = (slideIndex: number) => {
-    setCurrentSlide(slideIndex);
-  };
-
   // Setup auto-scroll
   useEffect(() => {
     if (!isPaused) {
@@ -76,7 +72,7 @@ const EventCarousel = () => {
 
       {/* Carousel container */}
       <div
-        className="relative h-[500px] md:h-[480px] w-full mx-auto max-w-7xl px-4 overflow-hidden"
+        className="relative h-[450px] sm:h-[480px] md:h-[500px] w-full mx-auto max-w-7xl px-4 overflow-hidden"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -107,20 +103,20 @@ const EventCarousel = () => {
                 ></div>
 
                 {/* Content overlay with blur effect */}
-                <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-10">
-                  <div className="relative z-10 max-w-md p-8 text-white border shadow-lg backdrop-blur-md bg-primary/40 rounded-xl border-white/10">
-                    <div className="inline-block px-4 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full mb-6 text-white w-fit">
+                <div className="absolute inset-0 flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-10">
+                  <div className="relative z-10 w-full p-4 text-white border shadow-lg sm:p-6 md:p-8 backdrop-blur-md bg-primary/40 rounded-xl border-white/10 sm:w-4/5 md:max-w-md">
+                    <div className="inline-block px-2 py-1 mb-3 text-xs font-medium text-white rounded-full sm:text-sm bg-white/20 backdrop-blur-sm sm:mb-6 w-fit">
                       {slide.date}
                     </div>
-                    <h3 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
+                    <h3 className="mb-2 text-xl font-bold tracking-tight sm:mb-4 sm:text-2xl md:text-3xl lg:text-4xl">
                       {slide.title}
                     </h3>
-                    <p className="mb-8 text-base text-slate-100">
+                    <p className="mb-4 text-sm sm:mb-8 sm:text-base text-slate-100">
                       {slide.description}
                     </p>
                     <div className="mt-auto">
                       <ArrowButton
-                        className="bg-white hover:scale-105 text-primary"
+                        className="text-sm bg-white hover:scale-105 text-primary sm:text-base"
                         text={slide.ctaText}
                         onClick={() => navigate(slide.ctaLink)}
                       />
@@ -135,32 +131,28 @@ const EventCarousel = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute z-20 p-3 transition-all duration-300 -translate-y-1/2 rounded-full cursor-pointer left-4 md:left-8 top-1/2 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 md:p-4 hover:shadow-md"
+          className="absolute z-20 p-2 transition-all duration-300 -translate-y-1/2 rounded-full cursor-pointer sm:p-3 md:p-4 left-2 sm:left-4 md:left-8 top-1/2 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 hover:shadow-md"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
         </button>
 
         <button
           onClick={nextSlide}
-          className="absolute z-20 p-3 transition-all duration-300 -translate-y-1/2 rounded-full cursor-pointer right-4 md:right-8 top-1/2 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 md:p-4 hover:shadow-md"
+          className="absolute z-20 p-2 transition-all duration-300 -translate-y-1/2 rounded-full cursor-pointer sm:p-3 md:p-4 right-2 sm:right-4 md:right-8 top-1/2 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 hover:shadow-md"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
         </button>
 
-        {/* Slide Indicators */}
-        <div className="absolute left-0 right-0 z-20 flex justify-center space-x-3 -bottom-10">
+        {/* Indicator Dots */}
+        <div className="absolute left-0 right-0 z-20 flex justify-center gap-2 bottom-4">
           {eventSlides.map((_, index) => (
-            <button
+            <div
               key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                currentSlide === index
-                  ? "bg-primary-600 scale-125 shadow-sm"
-                  : "bg-slate-400 hover:bg-slate-600"
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
+                currentSlide === index ? "bg-white" : "bg-white/40"
               }`}
-              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
