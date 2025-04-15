@@ -7,7 +7,7 @@ import MobileHeader from "./components/Headers/MobileHeader/MobileNavigation";
 import { NewsProvider } from "./contexts/NewsContext";
 import DashboardPost from "./components/Dashboard/Post";
 import Footer from "./components/Footer/Footer";
-import UpperSection from "./components/ContactForm";
+import ContactForm from "./components/ContactForm";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -116,11 +116,11 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
-          <div className=" h-[13vh]">
+          <div className=" h-[13vh] max-md:hidden">
             <Footer openContactModal={openContactModal} />
           </div>
 
-          <UpperSection
+          <ContactForm
             isOpen={isContactModalOpen}
             onClose={closeContactModal}
           />
