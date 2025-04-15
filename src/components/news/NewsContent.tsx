@@ -9,9 +9,9 @@ const NewsContent = () => {
   const { loading, error, featuredArticle } = useNews();
 
   return (
-    <div className="page news-page max-sm:px-4 max-lg:px-20 max-xl:px-10 px-20 py-8">
+    <div className="px-20 py-8 page news-page max-sm:px-4 max-lg:px-20 max-xl:px-10">
       <div className="mb-8">
-        <h1 className="border-l-4 border-primary pl-4 text-4xl md:text-4xl font-bold text-primary-600 mb-2">
+        <h1 className="pl-4 mb-2 text-4xl font-bold border-l-4 border-primary md:text-4xl text-primary-600">
           {t("navigation.news")}
         </h1>
       </div>
@@ -19,7 +19,7 @@ const NewsContent = () => {
       {loading && <LoadingState />}
 
       {error && !loading && (
-        <div className="bg-red-50 p-4 rounded-md border border-red-200 text-red-700">
+        <div className="p-4 text-red-700 border border-red-200 rounded-md bg-red-50">
           {error}
         </div>
       )}

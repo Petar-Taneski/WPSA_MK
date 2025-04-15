@@ -10,7 +10,11 @@
     "about": "About",
     "news": "News",
     "events": "Events",
+    "contact": "Contact",
     "language": "Language"
+  },
+  "common": {
+    "close": "Close"
   },
   "languages": {
     "en": "English",
@@ -190,6 +194,22 @@
       "title": "Join Us",
       "description": "We welcome new members who are interested in poultry science and the poultry industry. By joining WPSA Macedonian Branch, you'll gain access to a network of professionals, educational resources, and opportunities to collaborate on research projects.",
       "button": "Learn More About Membership"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "form": {
+      "namePlaceholder": "Name",
+      "emailPlaceholder": "E-mail",
+      "messageLabel": "Message",
+      "submitButton": "Submit"
+    },
+    "errors": {
+      "emptyFields": "Please fill in all fields.",
+      "invalidEmail": "Please enter a valid email address."
+    },
+    "success": {
+      "messageSent": "Message sent successfully!"
     }
   }
 }
