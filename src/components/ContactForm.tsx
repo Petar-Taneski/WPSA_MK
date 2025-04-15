@@ -49,6 +49,18 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  // Copy to clipboard function
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        toast.success(t("contact.clipboard.success", { type }));
+      },
+      (err) => {
+        toast.error(t("contact.clipboard.error", { error: err }));
+      }
+    );
+  };
+
   // Disable body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -96,6 +108,10 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+  // Contact information
+  const phoneNumber = "+389 71 234 567";
+  const emailAddress = "contact@example.com";
+
   return (
     <div
       className="fixed inset-0 z-[1001] flex items-center justify-center bg-gray-800/50 overflow-hidden"
@@ -105,20 +121,24 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
     >
       <div
         ref={modalRef}
-        className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto z-[1002] relative"
+        className="bg-white rounded-lg shadow-xl p-8 md:p-10 max-w-md w-full max-h-[90vh] overflow-y-auto z-[1002] relative"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800/85">
-            {t("contact.title")}
-          </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="ml-auto text-gray-500 hover:text-gray-700"
             aria-label={t("common.close")}
           >
             ✕
           </button>
+        </div>
+
+        {/* Localized Title */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold md:text-3xl text-primary">
+            {t("contact.mainTitle")}
+          </h1>
         </div>
 
         <div className="w-full text-gray-800/85 h-fit">
@@ -174,11 +194,38 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
             )} */}
             <button
               type="submit"
-              className="self-center px-6 py-3 mt-2 font-medium transition-all duration-300 rounded-sm shadow-lg cursor-pointer hover:scale-101 w-fit text-primary hover:shadow-xl"
+              className="self-center px-6 py-3 mt-6 font-medium transition-all duration-300 rounded-sm shadow-lg cursor-pointer hover:scale-101 w-fit text-primary hover:shadow-xl"
             >
               {t("contact.form.submitButton")}
             </button>
           </form>
+
+          {/* Contact Info Section */}
+          <div className="pt-6 mt-8 border-t border-gray-200">
+            <div className="space-y-3">
+              <div
+                className="flex items-center space-x-2 transition-colors cursor-pointer hover:text-primary"
+                onClick={() =>
+                  copyToClipboard(phoneNumber, t("contact.info.phone"))
+                }
+              >
+                <span className="material-icons text-primary">phone</span>
+                <span>{phoneNumber}</span>
+              </div>
+              <div
+                className="flex items-center space-x-2 transition-colors cursor-pointer hover:text-primary"
+                onClick={() =>
+                  copyToClipboard(emailAddress, t("contact.info.email"))
+                }
+              >
+                <span className="material-icons text-primary">email</span>
+                <span>{emailAddress}</span>
+              </div>
+              <p className="mt-2 text-sm text-gray-500">
+                {t("contact.info.clickToCopy")}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

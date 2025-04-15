@@ -201,6 +201,7 @@
   },
   "contact": {
     "title": "Contact Us",
+    "mainTitle": "Send us an email, learn more!",
     "form": {
       "namePlaceholder": "Name",
       "emailPlaceholder": "E-mail",
@@ -213,6 +214,15 @@
     },
     "success": {
       "messageSent": "Message sent successfully!"
+    },
+    "clipboard": {
+      "success": "{{type}} copied to clipboard!",
+      "error": "Could not copy: {{error}}"
+    },
+    "info": {
+      "phone": "Phone number",
+      "email": "Email",
+      "clickToCopy": "Click to copy to clipboard"
     }
   }
 }
