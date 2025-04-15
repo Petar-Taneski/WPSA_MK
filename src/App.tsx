@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navigation from "./components/Headers/Navigation";
 import MobileHeader from "./components/Headers/MobileHeader/MobileNavigation";
@@ -54,7 +54,7 @@ function App() {
 
   const unusedFeatures = false;
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="app overflow-x-clip">
         <ToastContainer position="top-right" autoClose={5000} />
         <Suspense fallback={<div>Loading...</div>}>
@@ -126,7 +126,7 @@ function App() {
           />
         </Suspense>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
