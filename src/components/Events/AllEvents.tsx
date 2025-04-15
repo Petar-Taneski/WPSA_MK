@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { EventSlide } from "../Home/EventCarousel";
+import { Event } from "../../data/eventData";
 import EventsList from "./EventsList";
 import {
   getUpcomingEvents,
@@ -10,10 +10,11 @@ import {
 import EmptyState from "../News/EmptyState";
 
 interface AllEventsProps {
-  events: EventSlide[];
+  events: Event[];
+  onEventClick?: (event: Event) => void;
 }
 
-const AllEvents = ({ events }: AllEventsProps) => {
+const AllEvents = ({ events, onEventClick }: AllEventsProps) => {
   const { t } = useTranslation();
   const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
 
@@ -30,7 +31,7 @@ const AllEvents = ({ events }: AllEventsProps) => {
   return (
     <div>
       {/* Filter Controls */}
-      <div className="mb-8 flex flex-wrap gap-4 justify-center sm:justify-start">
+      <div className="flex flex-wrap justify-center gap-4 mb-8 sm:justify-start">
         <button
           className={`px-4 py-2 rounded-full text-sm font-medium transition ${
             filter === "all"
@@ -67,7 +68,7 @@ const AllEvents = ({ events }: AllEventsProps) => {
       {filteredEvents.length === 0 ? (
         <EmptyState />
       ) : (
-        <EventsList events={filteredEvents} />
+        <EventsList events={filteredEvents} onEventClick={onEventClick} />
       )}
     </div>
   );
