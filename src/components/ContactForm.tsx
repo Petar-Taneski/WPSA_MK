@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 // import { toastDefaultOptions } from 'lib/consts';
 import { toast } from "react-toastify";
 // import { validateEmail } from 'lib/utils';
@@ -15,10 +15,10 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const recaptcha = useRef<ReCAPTCHA>(null);
+  // const recaptcha = useRef<ReCAPTCHA>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const sitekey = import.meta.env.VITE_RECAPTCHA_SITEKEY;
+  // const sitekey = import.meta.env.VITE_RECAPTCHA_SITEKEY;
 
   // Simple email validation
   const validateEmail = (email: string) => {
@@ -167,11 +167,11 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
               className="border-b border-primary w-full h-fit bg-white text-gray-800/85 resize-none overflow-hidden laptop-l:mt-[15px] mt-[10px] focus:outline-none focus:border-primary"
               rows={1}
             />
-            {sitekey && (
+            {/* {sitekey && (
               <div className="my-2">
                 {<ReCAPTCHA ref={recaptcha} sitekey={sitekey} />}
               </div>
-            )}
+            )} */}
             <button
               type="submit"
               className="self-center px-6 py-3 mt-2 font-medium transition-all duration-300 rounded-sm shadow-lg cursor-pointer hover:scale-101 w-fit text-primary hover:shadow-xl"
