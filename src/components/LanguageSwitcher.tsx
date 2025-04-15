@@ -1,6 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 
+// Define types for the page key mapping
+interface PageKeyMap {
+  [key: string]: string;
+}
+
 const LanguageSwitcher = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -9,19 +14,68 @@ const LanguageSwitcher = () => {
   const changeLanguage = () => {
     // Get the current path segments
     const pathSegments = location.pathname.split("/").filter(Boolean);
+    console.log("Current path:", location.pathname);
+    console.log("Path segments:", pathSegments);
 
     // Determine the next language (toggle between 'en' and 'mk')
     const nextLang = i18n.language === "en" ? "mk" : "en";
+    console.log("Switching from", i18n.language, "to", nextLang);
 
-    // Get the current page (second segment or empty for home)
-    const currentPage = pathSegments[1] || "home";
+    // Get the route key by matching the current URL segment to a known route
+    const currentLang = pathSegments[0]; // 'en' or 'mk'
+    // URL decode the current page slug to handle encoded characters like spaces
+    const currentPageSlug = pathSegments[1]
+      ? decodeURIComponent(pathSegments[1])
+      : "home";
+    console.log("Current page slug (decoded):", currentPageSlug);
 
-    // Get translated page name for the next language
+    // Map of Macedonian page slugs to their page keys
+    const mkPageKeyMap: PageKeyMap = {
+      почетна: "home",
+      "за нас": "about",
+      вести: "news",
+      настани: "events",
+      // Add other page mappings as needed
+    };
+
+    // Reverse mapping for direct slug lookup (for handling encoding differences)
+    const pageKeysToCheck = ["home", "about", "news", "events"];
+
+    // Get the correct page key based on the current language and slug
+    let pageKey = currentPageSlug;
+
+    if (currentLang === "mk") {
+      // First try direct mapping
+      if (mkPageKeyMap[currentPageSlug]) {
+        pageKey = mkPageKeyMap[currentPageSlug];
+      } else {
+        // Fallback: try to match by comparing with translated values
+        for (const key of pageKeysToCheck) {
+          const translatedValue = t(`pages.${key}`, { lng: "mk" });
+          if (currentPageSlug === translatedValue) {
+            pageKey = key;
+            break;
+          }
+        }
+      }
+      console.log(
+        "Found page key:",
+        pageKey,
+        "for Macedonian slug:",
+        currentPageSlug
+      );
+    }
+
+    // Change the language first
     i18n.changeLanguage(nextLang);
-    const translatedPage = t(`pages.${currentPage}`);
+
+    // Get translated page name for the next language using the correct key
+    const translatedPage = t(`pages.${pageKey}`);
+    console.log("Translated page name:", translatedPage, "for key:", pageKey);
 
     // Build new path with new language
     const newPath = `/${nextLang}/${translatedPage}`;
+    console.log("Navigating to:", newPath);
 
     // Navigate to translated route
     navigate(newPath);

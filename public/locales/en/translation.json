@@ -20,6 +20,7 @@
     "en": "English",
     "mk": "Macedonian"
   },
+  "switchTo": "Switch to {{lang}}",
   "events": {
     "upcomingEvents": "Upcoming Events",
     "allEvents": "All Events",
