@@ -62,16 +62,16 @@ const EventCarousel = () => {
   };
 
   return (
-    <div className="relative py-20 bg-white overflow-hidden">
+    <div className="relative py-20 overflow-hidden bg-white">
       {/* Section Heading */}
-      <div className="container mx-auto mb-12 px-6">
-        <h2 className="text-center text-3xl md:text-4xl font-bold text-primary/85 mb-3">
+      <div className="container px-6 mx-auto mb-12">
+        <h2 className="mb-3 text-3xl font-bold text-center md:text-4xl text-primary/85">
           {t("events.upcomingEvents")}
         </h2>
-        <p className="text-center text-slate-700/80 max-w-2xl mx-auto">
+        <p className="max-w-2xl mx-auto text-center text-slate-700/80">
           {t("events.eventsDescription")}
         </p>
-        <div className="mx-auto mt-4 h-1 w-24 bg-primary rounded"></div>
+        <div className="w-24 h-1 mx-auto mt-4 rounded bg-primary"></div>
       </div>
 
       {/* Carousel container */}
@@ -99,28 +99,28 @@ const EventCarousel = () => {
                 zIndex: position === 0 ? 10 : 10 - Math.abs(position),
               }}
             >
-              <div className="mx-4 h-full overflow-hidden rounded-sm shadow-lg relative bg-white border border-slate-200">
+              <div className="relative h-full mx-4 overflow-hidden bg-white border rounded-sm shadow-lg border-slate-200">
                 {/* Background Image */}
                 <div
-                  className="absolute inset-0 w-full h-full bg-cover bg-center"
+                  className="absolute inset-0 w-full h-full bg-center bg-cover"
                   style={{ backgroundImage: `url(${slide.image})` }}
                 ></div>
 
                 {/* Content overlay with blur effect */}
                 <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-10">
-                  <div className="relative z-10 max-w-md backdrop-blur-md bg-primary/40 p-8 rounded-xl text-white shadow-lg border border-white/10">
+                  <div className="relative z-10 max-w-md p-8 text-white border shadow-lg backdrop-blur-md bg-primary/40 rounded-xl border-white/10">
                     <div className="inline-block px-4 py-1.5 text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full mb-6 text-white w-fit">
                       {slide.date}
                     </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-4">
+                    <h3 className="mb-4 text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl">
                       {slide.title}
                     </h3>
-                    <p className="text-slate-100 text-base mb-8">
+                    <p className="mb-8 text-base text-slate-100">
                       {slide.description}
                     </p>
                     <div className="mt-auto">
                       <ArrowButton
-                        className="hover:scale-105 bg-white text-primary"
+                        className="bg-white hover:scale-105 text-primary"
                         text={slide.ctaText}
                         onClick={() => navigate(slide.ctaLink)}
                       />
@@ -135,7 +135,7 @@ const EventCarousel = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-md"
+          className="absolute z-20 p-3 transition-all duration-300 -translate-y-1/2 rounded-full cursor-pointer left-4 md:left-8 top-1/2 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 md:p-4 hover:shadow-md"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
@@ -143,14 +143,14 @@ const EventCarousel = () => {
 
         <button
           onClick={nextSlide}
-          className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 rounded-full p-3 md:p-4 transition-all duration-300 hover:shadow-md"
+          className="absolute z-20 p-3 transition-all duration-300 -translate-y-1/2 rounded-full cursor-pointer right-4 md:right-8 top-1/2 bg-white/70 hover:bg-white/90 backdrop-blur-sm text-slate-800 md:p-4 hover:shadow-md"
           aria-label="Next slide"
         >
           <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
         </button>
 
         {/* Slide Indicators */}
-        <div className="absolute -bottom-10 left-0 right-0 z-20 flex justify-center space-x-3">
+        <div className="absolute left-0 right-0 z-20 flex justify-center space-x-3 -bottom-10">
           {eventSlides.map((_, index) => (
             <button
               key={index}
