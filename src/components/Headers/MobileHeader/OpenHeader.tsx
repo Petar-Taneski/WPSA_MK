@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -58,8 +58,10 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
     return false;
   };
 
-  const handleLanguageChange = (lng: string) => {
-    i18n.changeLanguage(lng);
+  const handleLanguageChange = () => {
+    // Toggle language
+    const nextLang = i18n.language === "en" ? "mk" : "en";
+    i18n.changeLanguage(nextLang);
     setIsOpen(false);
   };
 
@@ -119,17 +121,23 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
             <ArrowRight className="w-4 h-4 ml-1" />
           </button>
         </div>
-        <div className="mt-8 flex justify-center">
-          <div className="w-full relative">
-            <select
-              value={i18n.language}
-              onChange={(e) => handleLanguageChange(e.target.value)}
-              className="w-full text-gray-800/85 font-medium bg-transparent border-none focus:outline-none focus:ring-0 pl-0 pr-8 appearance-none [&>option]:bg-white [&>option]:text-gray-800/85 [&>option]:p-0 [&>option]:m-0"
+        <div className="flex justify-center mt-8">
+          <div className="flex justify-end w-full">
+            <button
+              onClick={handleLanguageChange}
+              className="flex items-center justify-center p-2 "
+              aria-label={
+                i18n.language === "en" ? t("languages.mk") : t("languages.en")
+              }
             >
-              <option value="en">{t("languages.en")}</option>
-              <option value="mk">{t("languages.mk")}</option>
-            </select>
-            <ChevronDown className="absolute right-0 w-4 h-4 -translate-y-1/2 pointer-events-none top-1/2 text-gray-800/85" />
+              <img
+                src={`/images/langs/${
+                  i18n.language === "en" ? "gb.svg" : "mk.svg"
+                }`}
+                alt={i18n.language}
+                className="w-auto h-5"
+              />
+            </button>
           </div>
         </div>
       </div>

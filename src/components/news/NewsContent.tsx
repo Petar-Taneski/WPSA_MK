@@ -10,10 +10,14 @@ const NewsContent = () => {
 
   return (
     <div className="px-20 py-8 page news-page max-sm:px-4 max-lg:px-20 max-xl:px-10">
-      <div className="mb-8">
-        <h1 className="pl-4 mb-2 text-4xl font-bold border-l-4 border-primary md:text-4xl text-primary-600">
-          {t("navigation.news")}
-        </h1>
+      <div className="container px-6 mx-auto mb-12">
+        <h2 className="mb-3 text-3xl font-bold text-center md:text-4xl text-primary/85">
+          {t("news.recentTitle")}
+        </h2>
+        <p className="max-w-2xl mx-auto text-center text-slate-700/80">
+          {t("news.recentDescription")}
+        </p>
+        <div className="w-24 h-1 mx-auto mt-4 rounded bg-primary"></div>
       </div>
 
       {loading && <LoadingState />}
