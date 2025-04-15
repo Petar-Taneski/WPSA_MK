@@ -201,6 +201,7 @@
   },
   "contact": {
     "title": "Контактирајте не",
+    "mainTitle": "Испрати ни мејл, дознај повеќе!",
     "form": {
       "namePlaceholder": "Име",
       "emailPlaceholder": "Е-пошта",
@@ -213,6 +214,15 @@
     },
     "success": {
       "messageSent": "Пораката е успешно испратена!"
+    },
+    "clipboard": {
+      "success": "{{type}} е копиран во клипборд!",
+      "error": "Не може да се копира: {{error}}"
+    },
+    "info": {
+      "phone": "Телефонски број",
+      "email": "Е-пошта",
+      "clickToCopy": "Кликнете за копирање"
     }
   }
 }
