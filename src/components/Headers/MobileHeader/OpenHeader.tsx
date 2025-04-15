@@ -26,6 +26,38 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
 
   const currentLang = location.pathname.split("/")[1] || i18n.language;
 
+  // Get current page path without language prefix
+  const currentPath = location.pathname.split("/").slice(2).join("/");
+
+  // Function to check if a nav item is active
+  const isItemActive = (itemKey: string) => {
+    // Special case for home
+    if (
+      itemKey === "home" &&
+      (location.pathname === `/${currentLang}` ||
+        location.pathname ===
+          `/${currentLang}/${t(`pages.home`, { lng: currentLang })}`)
+    ) {
+      return true;
+    }
+
+    // Check for exact path match first
+    if (currentPath === t(`pages.${itemKey}`, { lng: currentLang })) {
+      return true;
+    }
+
+    // Check for news item detail pages
+    if (
+      itemKey === "news" &&
+      ((currentLang === "en" && location.pathname.includes("/news/")) ||
+        (currentLang === "mk" && location.pathname.includes("/вести/")))
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
   const handleLanguageChange = (lng: string) => {
     i18n.changeLanguage(lng);
     setIsOpen(false);
@@ -54,17 +86,26 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
         } h-full`}
       >
         <div className="flex flex-col space-y-5">
-          {navItems.map((item) => (
-            <Link
-              key={item.key}
-              to={`/${currentLang}/${t(`pages.${item.key}`)}`}
-              className={`flex items-center justify-between w-full gap-2 py-3 text-lg font-medium rounded-md text-gray-800/85 `}
-              onClick={() => setIsOpen(false)}
-            >
-              {item.label}
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const path = `/${currentLang}/${t(`pages.${item.key}`, {
+              lng: currentLang,
+            })}`;
+            return (
+              <Link
+                key={item.key}
+                to={path}
+                className={`flex items-center justify-between w-full gap-2 py-3 text-lg rounded-md ${
+                  isItemActive(item.key)
+                    ? "font-bold text-primary/85"
+                    : "font-medium text-gray-800/85"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            );
+          })}
         </div>
         <div className="mt-5">
           <button
@@ -78,8 +119,8 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
             <ArrowRight className="w-4 h-4 ml-1" />
           </button>
         </div>
-        <div className="flex justify-center mt-8">
-          <div className="relative w-full">
+        <div className="mt-8 flex justify-center">
+          <div className="w-full relative">
             <select
               value={i18n.language}
               onChange={(e) => handleLanguageChange(e.target.value)}

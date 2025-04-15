@@ -61,7 +61,7 @@ function App() {
           <div className="hidden lg:block h-[13vh]">
             <Navigation openContactModal={openContactModal} />
           </div>
-          <div className="block lg:hidden">
+          <div className="block lg:hidden h-[15vh]">
             <MobileHeader openContactModal={openContactModal} />
           </div>
           <div className="relative">
