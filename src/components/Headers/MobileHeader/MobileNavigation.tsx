@@ -1,10 +1,17 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import OpenHeader from "./OpenHeader";
 import { toTop } from "@/lib/utils";
 
-const MobileHeader = () => {
+// Define props interface
+interface MobileHeaderProps {
+  openContactModal: () => void;
+}
+
+const MobileHeader: React.FC<MobileHeaderProps> = ({ openContactModal }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   const handleLogoClick = (e: React.MouseEvent) => {
     if (window.location.pathname === "/") {
@@ -13,8 +20,38 @@ const MobileHeader = () => {
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+
+      // If menu is open, always show header
+      if (isOpen) {
+        setIsVisible(true);
+        setScrollPosition(currentScrollPos);
+        return;
+      }
+
+      // Determine visibility based on scroll direction
+      // Only hide if we've scrolled down a bit (to avoid jumping behavior)
+      const isScrollingDown = currentScrollPos > scrollPosition;
+      setIsVisible(!isScrollingDown || currentScrollPos < 50);
+
+      // Update position for next comparison
+      setScrollPosition(currentScrollPos);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollPosition, isOpen]);
+
   return (
-    <div className="fixed top-0 w-full flex items-end justify-center h-[15vh] z-[1000] bg-white">
+    <div
+      className={`fixed top-0 w-full flex items-end justify-center h-[15vh] z-[1000] bg-white transition-transform duration-300 ${
+        isVisible || isOpen ? "transform-none" : "transform -translate-y-full"
+      }`}
+    >
       <div className="flex items-center justify-between w-full h-fit z-[1001] pb-[20px] border-b-[0.5px] border-b-white border-opacity-50 px-[5vw]">
         <Link
           to="/"
@@ -45,7 +82,11 @@ const MobileHeader = () => {
           />
         </button>
       </div>
-      <OpenHeader setIsOpen={setIsOpen} isOpen={isOpen} />
+      <OpenHeader
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        openContactModal={openContactModal}
+      />
     </div>
   );
 };

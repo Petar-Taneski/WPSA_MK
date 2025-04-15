@@ -3,13 +3,17 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 
-const OpenHeader = ({
-  isOpen,
-  setIsOpen,
-}: {
+interface OpenHeaderProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+  openContactModal: () => void;
+}
+
+const OpenHeader: React.FC<OpenHeaderProps> = ({
+  isOpen,
+  setIsOpen,
+  openContactModal,
+}: OpenHeaderProps) => {
   const { t, i18n } = useTranslation();
   const location = useLocation();
 
@@ -21,6 +25,38 @@ const OpenHeader = ({
   ];
 
   const currentLang = location.pathname.split("/")[1] || i18n.language;
+
+  // Get current page path without language prefix
+  const currentPath = location.pathname.split("/").slice(2).join("/");
+
+  // Function to check if a nav item is active
+  const isItemActive = (itemKey: string) => {
+    // Special case for home
+    if (
+      itemKey === "home" &&
+      (location.pathname === `/${currentLang}` ||
+        location.pathname ===
+          `/${currentLang}/${t(`pages.home`, { lng: currentLang })}`)
+    ) {
+      return true;
+    }
+
+    // Check for exact path match first
+    if (currentPath === t(`pages.${itemKey}`, { lng: currentLang })) {
+      return true;
+    }
+
+    // Check for news item detail pages
+    if (
+      itemKey === "news" &&
+      ((currentLang === "en" && location.pathname.includes("/news/")) ||
+        (currentLang === "mk" && location.pathname.includes("/вести/")))
+    ) {
+      return true;
+    }
+
+    return false;
+  };
 
   const handleLanguageChange = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -50,29 +86,50 @@ const OpenHeader = ({
         } h-full`}
       >
         <div className="flex flex-col space-y-5">
-          {navItems.map((item) => (
-            <Link
-              key={item.key}
-              to={`/${currentLang}/${t(`pages.${item.key}`)}`}
-              className={`flex items-center justify-between w-full gap-2 py-3 text-primary font-medium rounded-sm shadow-b-lg`}
-              onClick={() => setIsOpen(false)}
-            >
-              {item.label}
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const path = `/${currentLang}/${t(`pages.${item.key}`, {
+              lng: currentLang,
+            })}`;
+            return (
+              <Link
+                key={item.key}
+                to={path}
+                className={`flex items-center justify-between w-full gap-2 py-3 text-lg rounded-md ${
+                  isItemActive(item.key)
+                    ? "font-bold text-primary/85"
+                    : "font-medium text-gray-800/85"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            );
+          })}
+        </div>
+        <div className="mt-5">
+          <button
+            onClick={() => {
+              openContactModal();
+              setIsOpen(false);
+            }}
+            className={`flex items-center justify-between w-full gap-2 py-3 text-lg font-medium rounded-md text-gray-800/85 `}
+          >
+            {t("navigation.contact")}
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </button>
         </div>
         <div className="mt-8 flex justify-center">
           <div className="w-full relative">
             <select
               value={i18n.language}
               onChange={(e) => handleLanguageChange(e.target.value)}
-              className="w-full text-primary font-medium bg-transparent border-none focus:outline-none focus:ring-0 pl-0 pr-8 appearance-none [&>option]:bg-white [&>option]:text-primary [&>option]:p-0 [&>option]:m-0"
+              className="w-full text-gray-800/85 font-medium bg-transparent border-none focus:outline-none focus:ring-0 pl-0 pr-8 appearance-none [&>option]:bg-white [&>option]:text-gray-800/85 [&>option]:p-0 [&>option]:m-0"
             >
               <option value="en">{t("languages.en")}</option>
               <option value="mk">{t("languages.mk")}</option>
             </select>
-            <ChevronDown className="w-4 h-4 absolute right-0 top-1/2 -translate-y-1/2 text-primary pointer-events-none" />
+            <ChevronDown className="absolute right-0 w-4 h-4 -translate-y-1/2 pointer-events-none top-1/2 text-gray-800/85" />
           </div>
         </div>
       </div>
