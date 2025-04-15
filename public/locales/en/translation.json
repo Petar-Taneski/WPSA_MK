@@ -20,6 +20,7 @@
     "en": "English",
     "mk": "Macedonian"
   },
+  "switchTo": "Switch to {{lang}}",
   "events": {
     "upcomingEvents": "Upcoming Events",
     "allEvents": "All Events",
@@ -38,7 +39,9 @@
     "eventDate": "Date",
     "eventTime": "Time",
     "contactInfo": "Contact Information",
-    "joinEvent": "Join Event"
+    "joinEvent": "Join Event",
+    "applyNow": "Apply Now",
+    "loadingEvent": "Loading event details..."
   },
   "news": {
     "latestUpdates": "Latest updates from the world of poultry science",

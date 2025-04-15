@@ -8,13 +8,13 @@ interface PostContentProps {
 
 const PostContent: React.FC<PostContentProps> = ({ content }) => {
   return (
-    <div className="px-4">
-      <div className="prose prose-lg max-w-3xl " />
+    <div className="md:px-4">
+      <div className="max-w-3xl prose prose-lg " />
       <ReactQuill
         theme="bubble"
         readOnly={true}
         value={content}
-        className="custom-quill px-4"
+        className="px-4 custom-quill"
       />
     </div>
   );
