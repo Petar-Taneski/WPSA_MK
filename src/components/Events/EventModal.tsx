@@ -1,10 +1,11 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Event } from "../../data/eventData";
 import ArrowButton from "../common/ArrowButton";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, MapPin, Clock, Award } from "lucide-react";
+import { CalendarDays, MapPin, Clock, Award, Share2, Copy } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { FacebookShareButton, LinkedinShareButton } from "react-share";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -16,6 +17,26 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
   const { t, i18n } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [shareOpen, setShareOpen] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
+
+  // Current URL to share
+  const currentURL = typeof window !== "undefined" ? window.location.href : "";
+
+  // Copy to clipboard function
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        setUrlCopied(true);
+        setTimeout(() => {
+          setUrlCopied(false);
+        }, 3000); // Reset after 3 seconds
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+      }
+    );
+  };
 
   // Format date
   const formatDate = (dateString: string) => {
@@ -38,6 +59,14 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
       return () => {
         document.body.style.overflow = originalStyle;
       };
+    }
+  }, [isOpen]);
+
+  // Reset share state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setShareOpen(false);
+      setUrlCopied(false);
     }
   }, [isOpen]);
 
@@ -115,6 +144,49 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <div className="flex items-center text-gray-600">
               <Clock className="w-5 h-5 mr-2 text-primary" />
               <span>Published: {formatDate(event.publishDate)}</span>
+            </div>
+          </div>
+
+          {/* Share Functionality */}
+          <div className="flex items-center gap-2 my-4">
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShareOpen(!shareOpen)}
+                className="flex items-center justify-center px-3 py-1.5 text-sm border border-primary rounded-md hover:bg-primary/10 transition-colors"
+                aria-label="Share this event"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                {t("common.share", "Share")}
+              </button>
+
+              {/* Social Media Sharing */}
+              {shareOpen && (
+                <div className="flex items-center space-x-2">
+                  <FacebookShareButton url={currentURL}>
+                    <div className="flex items-center justify-center p-1.5 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition-colors">
+                      <span className="text-sm font-medium">Facebook</span>
+                    </div>
+                  </FacebookShareButton>
+
+                  <LinkedinShareButton url={currentURL}>
+                    <div className="flex items-center justify-center p-1.5 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors">
+                      <span className="text-sm font-medium">LinkedIn</span>
+                    </div>
+                  </LinkedinShareButton>
+
+                  <button
+                    onClick={() => copyToClipboard(currentURL)}
+                    className="flex items-center justify-center p-1.5 border border-gray-500 text-gray-500 rounded-md hover:bg-gray-500 hover:text-white transition-colors"
+                  >
+                    <Copy className="w-4 h-4 mr-1" />
+                    <span className="text-sm font-medium">
+                      {urlCopied
+                        ? t("common.copied", "Copied!")
+                        : t("common.copyLink", "Copy Link")}
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

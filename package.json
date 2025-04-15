@@ -25,6 +25,7 @@
     "react-i18next": "^15.4.1",
     "react-quill-new": "^3.4.6",
     "react-router-dom": "^7.2.0",
+    "react-share": "^5.2.2",
     "react-toastify": "^11.0.5",
     "swr": "^2.3.3",
     "tailwind-merge": "^3.0.2",
