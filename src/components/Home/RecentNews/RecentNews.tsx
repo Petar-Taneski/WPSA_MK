@@ -56,7 +56,7 @@ const RecentNews = () => {
 
   if (loading) {
     return (
-      <div className="w-full py-12 bg-white">
+      <div className="w-full bg-white">
         <div className="container px-4 mx-auto">
           <div className="flex items-center justify-center h-64">
             <div className="w-12 h-12 border-b-2 rounded-full animate-spin border-primary-600"></div>
@@ -68,7 +68,7 @@ const RecentNews = () => {
 
   if (error) {
     return (
-      <div className="w-full py-12 bg-white">
+      <div className="w-full bg-white">
         <div className="container px-4 mx-auto">
           <div className="flex flex-col items-center justify-center h-64">
             <div className="px-4 py-3 text-red-600 border border-red-200 rounded-lg bg-red-50">
@@ -81,7 +81,7 @@ const RecentNews = () => {
   }
 
   return (
-    <section className="w-full py-16 bg-white">
+    <section className="w-full bg-white">
       <div className="container px-4 mx-auto sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl text-primary/85">

@@ -82,7 +82,7 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
   }
 
   return (
-    <div className="relative py-20 overflow-hidden bg-white">
+    <div className="relative w-full overflow-hidden bg-white">
       {/* Section Heading */}
       <div className="container px-6 mx-auto mb-12">
         <h2 className="mb-3 text-3xl font-bold text-center md:text-4xl text-primary/85">
