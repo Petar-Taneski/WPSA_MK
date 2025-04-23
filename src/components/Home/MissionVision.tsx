@@ -5,11 +5,11 @@ const MissionVision = () => {
 
   return (
     <div>
-      <h2 className="mb-4 text-3xl text-center w-full pb-6 font-bold md:text-4xl text-primary/85">
+      <h2 className="mb-4 text-3xl text-center w-full pb- font-bold md:text-4xl text-primary/85">
         {t("about.mission.title")}
       </h2>
 
-      <div className="flex h-full justify-between max-md:gap-14 max-md:flex-col">
+      <div className="flex h-full justify-between max-w-6xl max-md:gap-14 max-md:flex-col">
         <div className="md:w-[45%]">
           <h4 className="text-xl font-bold text-primary mb-4">
             {t("about.mission.missionLabel")}

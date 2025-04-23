@@ -11,13 +11,12 @@ const AboutUs = () => {
           alt="WPSA Macedonian Branch"
           className="object-cover w-full h-full"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent from-40% to-black/60 flex items-center justify-end md:pr-12">
-          <div className="flex flex-col gap-2 pr-10 text-right w-100">
-            <h1 className="text-6xl font-extrabold text-white">
-              {t("about.shortName")}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent from-40% to-black/60 flex items-center justify-end">
+          <div className="flex flex-col gap-2 pr-10 text-right w-200">
+            <h1 className="sm:text-2xl text-xl font-bold text-white/80">
+              {t("about.nameWithoutDashes")}
             </h1>
             <span className="break-words text-gray-200/80 ">
-              {t("about.name")}
             </span>
           </div>
         </div>

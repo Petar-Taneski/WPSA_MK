@@ -117,12 +117,12 @@ const EventsContent = () => {
   }, [location.search]);
 
   return (
-    <div className="events-page">
+    <div className="events-page pt-8 pb-16">
       {/* Featured Events Carousel */}
       <EventCarousel onEventClick={openEventModal} />
 
       {/* All Events Section */}
-      <div className="bg-slate-50 py-12">
+      <div className="pt-12">
         <div className="w-full lg:px-20 sm:px-10 px-4">
           <h2 className="text-3xl font-bold text-slate-800/90 mb-8">
             {t("events.allEvents")}

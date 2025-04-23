@@ -1,16 +1,12 @@
 import React from "react";
-import LowerSection from "./LowerSection";
+import ContactInfo from "../ContactInfo";
 
-interface FooterProps {
-  openContactModal: () => void;
-}
-
-const Footer: React.FC<FooterProps> = ({ openContactModal }) => {
+const Footer: React.FC = () => {
   return (
-    <div className="flex flex-col items-center w-screen text-gray-800/85 ">
-      <div className="w-[90vw] h-[1px] bg-gray-800/15"></div>
-      <LowerSection openContactModal={openContactModal} />
-    </div>
+    <footer className="w-[90vw] mx-auto bg-white mt-auto">
+      <div className="w-[90vw] h-[1px] mx-auto bg-gray-800/15"></div>
+      <ContactInfo />
+    </footer>
   );
 };
 
