@@ -163,7 +163,7 @@
     },
     "partners": {
       "title": "PARTNERS & RESOURCES",
-      "description": "The Macedonian Branch of the World Poultry Science Association collaborates with numerous national and international organizations, educational institutions, and industry partners to advance poultry science in North Macedonia and beyond. Below are some of our key partners and resources.",
+      "description": "The Macedonian Branch of the World Poultry Science Association collaborates with numerous national and international organizations, educational institutions, and industry partners to advance poultry science in Macedonia and beyond. Below are some of our key partners and resources.",
       "wpsa": {
         "name": "World's Poultry Science Association",
         "description": "International organization dedicated to advancing poultry science globally."
@@ -188,7 +188,7 @@
       "addressLines": {
         "faculty": "Faculty of Veterinary Medicine",
         "street": "Lazar Pop Trajkov 5-7",
-        "city": "1000 Skopje, North Macedonia"
+        "city": "1000 Skopje, Macedonia"
       },
       "email": "Email",
       "phone": "Phone"

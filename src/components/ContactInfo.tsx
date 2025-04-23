@@ -34,10 +34,10 @@ const ContactInfo = () => {
               {t("about.contact.contact")}
             </h4>
             <p className="text-gray-700 mb-1">
-              {t("about.contact.email")}: info@wpsa-mk.org
+              {t("about.contact.email")}: zivinarskozdruzenie@gmail.com
             </p>
             <p className="text-gray-700">
-              {t("about.contact.phone")}: +389 2 3240 700
+              {t("about.contact.phone")}: +389 2 3240 700 //getphone
             </p>
           </div>
         </div>

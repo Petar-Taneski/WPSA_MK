@@ -5,7 +5,7 @@ const MissionVision = () => {
 
   return (
     <div>
-      <h2 className="mb-4 text-3xl text-center w-full pb- font-bold md:text-4xl text-primary/85">
+      <h2 className="mb-12 text-3xl text-center w-full pb- font-bold md:text-4xl text-primary/85">
         {t("about.mission.title")}
       </h2>
 
