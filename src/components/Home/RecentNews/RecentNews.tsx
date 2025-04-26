@@ -82,47 +82,40 @@ const RecentNews = () => {
 
   return (
     <section className="w-full bg-white">
-      <div className="container px-4 mx-auto sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl text-primary/85">
-            {t("news.recentTitle")}
-          </h2>
-          <p className="max-w-2xl mx-auto text-lg text-slate-600/80">
-            {t("news.recentDescription")}
-          </p>
-        </div>
-
-        {articles.length > 0 ? (
-          <>
-            {/* Equal height card layout */}
-            <div className="mx-auto max-w-7xl">
-              <div className="flex flex-col items-stretch justify-center gap-10 md:flex-row lg:gap-12">
-                {articles.map((article) => (
-                  <div
-                    key={article.id}
-                    className="flex flex-col w-full md:w-64 lg:w-72"
-                  >
-                    <div className="h-full">
-                      <NewsCard article={article} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-8 text-center">
-              <ArrowButton
-                text={t("news.viewAllNews")}
-                onClick={() => navigate(getNewsPath())}
-              />
-            </div>
-          </>
-        ) : (
-          <div className="py-10 text-center rounded-lg shadow-sm bg-slate-50">
-            <p className="text-slate-600">{t("news.noArticlesFound")}</p>
-          </div>
-        )}
+      <div className="mb-12 text-center">
+        <h2 className="mb-4 text-3xl font-bold md:text-4xl text-primary/85">
+          {t("news.recentTitle")}
+        </h2>
+        <p className="max-w-2xl mx-auto text-lg text-slate-600/80">
+          {t("news.recentDescription")}
+        </p>
       </div>
+
+      {articles.length > 0 ? (
+        <>
+          {/* Equal height card layout */}
+          <div className="mx-auto max-w-6xl">
+            <div className="flex flex-col items-stretch justify-center gap-10 md:grid md:grid-cols-3 lg:gap-12">
+              {articles.map((article) => (
+                <div key={article.id} className="flex flex-col">
+                  <NewsCard article={article} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 text-center">
+            <ArrowButton
+              text={t("news.viewAllNews")}
+              onClick={() => navigate(getNewsPath())}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="py-10 text-center rounded-lg shadow-sm bg-slate-50">
+          <p className="text-slate-600">{t("news.noArticlesFound")}</p>
+        </div>
+      )}
     </section>
   );
 };

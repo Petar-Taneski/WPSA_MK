@@ -1,14 +1,14 @@
 import { useNews } from "@/contexts/NewsContext";
 import EmptyState from "./EmptyState";
 import NewsCard from "./NewsCard";
-import SearchFilterBar from "./SearchFilterBar";
+import FilterBar from "./FilterBar";
 
 export default function NewsArticles() {
   const { filteredArticles } = useNews();
 
   return (
     <>
-      <SearchFilterBar />
+      <FilterBar />
 
       {filteredArticles.length === 0 && <EmptyState />}
 
