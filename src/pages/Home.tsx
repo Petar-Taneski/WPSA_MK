@@ -3,7 +3,7 @@
 import EventCarousel from "@/components/Home/EventCarousel";
 import FeaturedNews from "@/components/Home/RecentNews/RecentNews";
 import Hero from "@/components/Home/HeroSection/Hero";
-import MissionVision from "@/components/AboutUs/MissionVision";
+import MissionVision from "@/components/Home/MissionVision";
 
 const Home = () => {
   // const { t } = useTranslation();
@@ -13,8 +13,8 @@ const Home = () => {
       {/* Parallax Hero Section */}
       <Hero />
       {/* Mission Vision section */}
-      <div className="flex py-16 flex-col gap-28 w-4/5 mx-auto justify-center items-center ">
-        <div className="my-2 overflow-visible">
+      <div className="flex py-16 flex-col gap-28 xl:w-4/5 lg:w-5/6 w-11/12 mx-auto justify-center items-center ">
+        <div className="my-2 max-md:px-4 overflow-visible">
           <MissionVision />
         </div>
 

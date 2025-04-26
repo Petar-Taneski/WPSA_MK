@@ -18,7 +18,7 @@ const FullWidthImage = () => {
                 <h2 className="text-3xl text-white">{t("about.shortName")}</h2>
               </div>
               <div className="md:col-span-8 lg:col-span-7">
-                <p className="text-white text-lg leading-relaxed md:p-6 md:border-l-2 border-gray-200">
+                <p className="text-white text-lg xl:text-xl leading-relaxed md:p-6 md:border-l-2 border-gray-200">
                   {t("about.partners.description")}
                 </p>
               </div>
