@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import LanguageSwitcher from "../LanguageSwitcher";
+import "../Headers/MobileHeader/navigation.css";
 
 interface NavigationProps {
   openContactModal: () => void;
@@ -21,33 +22,42 @@ const Navigation: React.FC<NavigationProps> = ({ openContactModal }) => {
   // Get current language from URL or i18n
   const currentLang = location.pathname.split("/")[1] || i18n.language;
 
-  // Get current page path without language prefix
-  const currentPath = location.pathname.split("/").slice(2).join("/");
-
   // Function to check if a nav item is active
   const isItemActive = (itemKey: string) => {
+    // Normalize the current path (decode URL-encoded characters)
+    const normalizedPath = decodeURIComponent(location.pathname);
+
+    // Get the translated path for this item
+    const itemPath = t(`pages.${itemKey}`, { lng: currentLang });
+
     // Special case for home
-    if (
-      itemKey === "home" &&
-      (location.pathname === `/${currentLang}` ||
-        location.pathname ===
-          `/${currentLang}/${t(`pages.home`, { lng: currentLang })}`)
-    ) {
-      return true;
+    if (itemKey === "home") {
+      return (
+        normalizedPath === `/${currentLang}` ||
+        normalizedPath === `/${currentLang}/${itemPath}`
+      );
     }
 
-    // Check for exact path match first
-    if (currentPath === t(`pages.${itemKey}`, { lng: currentLang })) {
+    // Check for exact path match (after normalization)
+    if (normalizedPath === `/${currentLang}/${itemPath}`) {
       return true;
     }
 
     // Check for news item detail pages
-    if (
-      itemKey === "news" &&
-      ((currentLang === "en" && location.pathname.includes("/news/")) ||
-        (currentLang === "mk" && location.pathname.includes("/вести/")))
-    ) {
-      return true;
+    if (itemKey === "news") {
+      // For English news detail pages
+      if (currentLang === "en" && normalizedPath.includes("/news/")) {
+        return true;
+      }
+
+      // For Macedonian news detail pages - handle Cyrillic "вести" consistently
+      if (
+        currentLang === "mk" &&
+        (normalizedPath.includes("/вести/") ||
+          normalizedPath.includes("/%D0%B2%D0%B5%D1%81%D1%82%D0%B8/"))
+      ) {
+        return true;
+      }
     }
 
     return false;
@@ -74,9 +84,15 @@ const Navigation: React.FC<NavigationProps> = ({ openContactModal }) => {
                 to={path}
                 className={`px-3 py-2 text-lg rounded-md ${
                   isItemActive(item.key)
-                    ? "font-bold text-primary/85"
+                    ? "nav-item-active font-bold !text-primary"
                     : "font-medium text-gray-800/85 hover:text-primary"
                 }`}
+                style={{
+                  color: isItemActive(item.key)
+                    ? "var(--color-primary, #4F46E5)"
+                    : "",
+                  fontWeight: isItemActive(item.key) ? "700" : "500",
+                }}
               >
                 {item.label}
               </Link>

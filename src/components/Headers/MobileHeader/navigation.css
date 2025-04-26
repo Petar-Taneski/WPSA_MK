@@ -1,0 +1,18 @@
+/* Safari-compatible navigation styling */
+.nav-item-active {
+  color: var(--color-primary, #4f46e5) !important;
+  font-weight: 700 !important;
+}
+
+/* Force important to override any browser-specific styling */
+.nav-item-active * {
+  color: var(--color-primary, #4f46e5) !important;
+}
+
+/* For Safari and Firefox specific fixes */
+@supports (-webkit-touch-callout: none) or (-moz-appearance: none) {
+  .nav-item-active {
+    color: var(--color-primary, #4f46e5) !important;
+    font-weight: 700 !important;
+  }
+}
