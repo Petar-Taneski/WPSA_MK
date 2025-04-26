@@ -14,8 +14,8 @@ interface NewsContextType {
   filteredArticles: NewsArticle[];
   loading: boolean;
   error: string | null;
-  activeFilter: string;
-  setActiveFilter: (filter: string) => void;
+  activeFilter: string | null;
+  setActiveFilter: (filter: string | null) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   allTags: string[];
@@ -41,7 +41,7 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>("");
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const { i18n } = useTranslation();

@@ -5,7 +5,7 @@ export interface NewsArticle {
   content: string;
   imageUrl: string;
   thumbnailUrl: string;
-  publishDate: number;
+  publishDate: string;
   author: string;
   tags: string[];
 }

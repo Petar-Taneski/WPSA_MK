@@ -18,7 +18,7 @@ const FilterBar = () => {
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
-    setActiveFilter(value === "" ? null : value);
+    setActiveFilter(value);
   };
 
   return (

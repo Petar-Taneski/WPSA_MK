@@ -20,7 +20,7 @@ export const fetchNewsArticlesFromFirebase = async ({
   fetchOffset,
 }: {
   lang: string;
-  tag?: string;
+  tag: string | null;
   fetchLimit?: number;
   fetchOffset?: number;
 }): Promise<NewsArticle[]> => {
@@ -48,8 +48,9 @@ export const fetchNewsArticlesFromFirebase = async ({
       query(newsQuery, orderBy("publishDate", "desc"))
     );
     const newsList = newsSnapshot.docs.map((doc) => ({
-      id: doc.id,
       ...doc.data(),
+      id: doc.id,
+      publishDate: formatDate(doc.data().publishDate.toDate()),
     })) as NewsArticle[];
     return newsList;
   } catch (error) {
@@ -70,8 +71,9 @@ export const fetchNewsArticleFromFirebase = async (
     }
 
     return {
-      id: newsSnapshot.id,
       ...newsSnapshot.data(),
+      id: newsSnapshot.id,
+      publishDate: formatDate(newsSnapshot.data().publishDate.toDate()),
     } as NewsArticle;
   } catch (error) {
     console.error(
