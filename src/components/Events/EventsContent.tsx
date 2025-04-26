@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import EventCarousel from "../Home/EventCarousel";
 import { useState, useEffect } from "react";
-import LoadingState from "../News/LoadingState";
+import LoadingState from "../../components/news/LoadingState";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // Get events from the data file

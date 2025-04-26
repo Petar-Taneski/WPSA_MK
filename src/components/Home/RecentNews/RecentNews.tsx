@@ -1,5 +1,5 @@
 import ArrowButton from "@/components/common/ArrowButton";
-import NewsCard from "@/components/News/NewsCard";
+import NewsCard from "../../news/NewsCard";
 import { NewsArticle } from "@/services/interfaces";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -94,7 +94,7 @@ const RecentNews = () => {
       {articles.length > 0 ? (
         <>
           {/* Equal height card layout */}
-          <div className="mx-auto max-w-6xl">
+          <div className="max-w-6xl mx-auto">
             <div className="flex flex-col items-stretch justify-center gap-10 md:grid md:grid-cols-3 lg:gap-12">
               {articles.map((article) => (
                 <div key={article.id} className="flex flex-col">

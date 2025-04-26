@@ -7,7 +7,7 @@ import {
   getPastEvents,
   sortEventsByDate,
 } from "../../data/eventData";
-import EmptyState from "../News/EmptyState";
+import EmptyState from "../../components/news/EmptyState";
 
 interface AllEventsProps {
   events: Event[];
