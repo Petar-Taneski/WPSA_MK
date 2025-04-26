@@ -117,7 +117,7 @@ function App() {
             </Routes>
           </div>
           <div className=" h-[13vh] max-md:hidden">
-            <Footer openContactModal={openContactModal} />
+            <Footer />
           </div>
 
           <ContactForm

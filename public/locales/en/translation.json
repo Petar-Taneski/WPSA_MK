@@ -80,8 +80,12 @@
     "generalInfo": {
       "title": "ABOUT THE ORGANIZATION"
     },
+    "nameFirstPart": "World Poultry Science Association -",
+    "nameFirstPartNoDashes": "World Poultry Science Association",
+    "nameSecondPart": "Macedonian Branch",
     "name": "WORLD POULTRY SCIENCE ASSOCIATION - MACEDONIAN BRANCH",
     "shortName": "WPSA",
+    "nameWithoutDashes": "WORLD POULTRY SCIENCE ASSOCIATION MACEDONIAN BRANCH",
     "goals": {
       "title": "Goals of the Association",
       "description": "The Association primarily focuses on the concept of economically acceptable and sustainable development and adapted concept for the protection, promotion, and development of poultry science and the poultry industry. The Association will promote all theoretical knowledge and practical experiences that help realize and advance the basic goals and tasks.",
@@ -186,7 +190,6 @@
       "address": "Address",
       "contact": "Contact",
       "addressLines": {
-        "faculty": "Faculty of Veterinary Medicine",
         "street": "Lazar Pop Trajkov 5-7",
         "city": "1000 Skopje, Macedonia"
       },

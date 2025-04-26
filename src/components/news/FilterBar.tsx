@@ -10,7 +10,7 @@ const newsCategories = [
   "WPSA Events",
 ];
 
-const SearchFilterBar = () => {
+const FilterBar = () => {
   const { t } = useTranslation();
   const { activeFilter, setActiveFilter } = useNews();
 
@@ -22,7 +22,7 @@ const SearchFilterBar = () => {
   };
 
   return (
-    <div className="sticky top-[13vh] max-md:top-[15vh] z-10 bg-white/90 backdrop-blur-sm py-8 border-gray-100">
+    <div className="md:sticky top-[13vh] z-10 bg-white/90 backdrop-blur-sm py-8 border-gray-100">
       <div className="flex justify-center items-center gap-4 md:gap-8 px-4 md:px-0">
         <div
           ref={tagsContainerRef}
@@ -74,4 +74,4 @@ const SearchFilterBar = () => {
   );
 };
 
-export default SearchFilterBar;
+export default FilterBar;

@@ -14,10 +14,12 @@ const AboutUs = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent from-40% to-black/60 flex items-center justify-end">
           <div className="flex flex-col gap-2 pr-10 text-right w-200">
             <h1 className="sm:text-2xl text-xl font-bold text-white/80">
-              {t("about.nameWithoutDashes")}
+              {t("about.nameFirstPart")}
             </h1>
-            <span className="break-words text-gray-200/80 ">
-            </span>
+            <h1 className="sm:text-2xl text-xl -mt-2 font-bold text-white/80">
+              {t("about.nameSecondPart")}
+            </h1>
+            <span className="break-words text-gray-200/80 "></span>
           </div>
         </div>
       </div>
