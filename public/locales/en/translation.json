@@ -224,5 +224,23 @@
       "email": "Email",
       "clickToCopy": "Click to copy to clipboard"
     }
+  },
+  "joinUs": {
+    "mainTitle": "Join Us",
+    "form": {
+      "imePlaceholder": "First Name",
+      "prezimePlaceholder": "Last Name",
+      "emailPlaceholder": "Email",
+      "telefonPlaceholder": "Phone",
+      "zvanjePlaceholder": "Title",
+      "polPlaceholder": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "datumNaRagjanjePlaceholder": "Date of Birth",
+      "kompanijaPlaceholder": "Company",
+      "adresaPlaceholder": "Address",
+      "postenskiBrojPlaceholder": "Postal Code",
+      "gradPlaceholder": "City"
+    }
   }
 }

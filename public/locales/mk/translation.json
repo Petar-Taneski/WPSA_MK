@@ -225,5 +225,23 @@
       "email": "Е-пошта",
       "clickToCopy": "Кликнете за копирање"
     }
+  },
+  "joinUs": {
+    "mainTitle": "Придружете ни се",
+    "form": {
+      "imePlaceholder": "Име",
+      "prezimePlaceholder": "Презиме",
+      "emailPlaceholder": "Е-пошта",
+      "telefonPlaceholder": "Телефон",
+      "zvanjePlaceholder": "Звање",
+      "polPlaceholder": "Пол",
+      "male": "Машки",
+      "female": "Женски",
+      "datumNaRagjanjePlaceholder": "Датум на раѓање",
+      "kompanijaPlaceholder": "Компанија",
+      "adresaPlaceholder": "Адреса",
+      "postenskiBrojPlaceholder": "Поштенски број",
+      "gradPlaceholder": "Град"
+    }
   }
 }
