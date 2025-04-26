@@ -34,14 +34,14 @@ const MobileHeader = () => {
           onClick={handleLogoClick}
         >
           <img
-            src="/Logo-WPSA.png"
+            src="/Logo-WPSA.svg"
             alt="WPSA Logo"
             className="h-[8vh] mix-blend-multiply"
           />
         </Link>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="relative flex flex-col justify-center items-center w-8 h-8"
+          className="relative flex flex-col items-center justify-center w-8 h-8"
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           <span
@@ -68,18 +68,18 @@ const MobileHeader = () => {
           isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         } ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}
       >
-        <nav className="flex flex-col space-y-6 mt-8">
+        <nav className="flex flex-col mt-8 space-y-6">
           {navItems.map((item) => (
             <Link
               key={item.key}
               to={`/${currentLang}/${t(`pages.${item.key}`)}`}
-              className="text-2xl font-medium text-gray-800 hover:text-primary flex justify-between items-center border-b border-gray-200 pb-3"
+              className="flex items-center justify-between pb-3 text-2xl font-medium text-gray-800 border-b border-gray-200 hover:text-primary"
               onClick={() => setIsOpen(false)}
             >
               <span>{item.label}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-primary"
+                className="w-5 h-5 text-primary"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -97,7 +97,7 @@ const MobileHeader = () => {
           <div className="flex justify-center mb-6">
             <LanguageSwitcher />
           </div>
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-sm text-center text-gray-600">
             <p>© {new Date().getFullYear()} WPSA MK</p>
           </div>
         </div>

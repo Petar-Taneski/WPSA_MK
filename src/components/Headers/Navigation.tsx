@@ -58,7 +58,7 @@ const Navigation: React.FC<NavigationProps> = ({ openContactModal }) => {
       <div className="container flex items-center justify-between h-full mx-auto ">
         <Link to="/">
           <img
-            src="/Logo-WPSA.png"
+            src="/Logo-WPSA.svg"
             alt="WPSA Logo"
             className="h-[10vh] mr-6 mix-blend-multiply"
           />
