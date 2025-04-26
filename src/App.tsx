@@ -14,11 +14,11 @@ import JoinUs from "./components/joinUs/JoinUs";
 import FloatingButton from "./components/joinUs/FloatingButton";
 import LoadingState from "./components/news/LoadingState";
 
-const Home = lazy(() => import("./pages/home"));
-const About = lazy(() => import("./pages/about"));
-const News = lazy(() => import("./pages/news"));
-const Events = lazy(() => import("./pages/events"));
-const Post = lazy(() => import("./pages/post"));
+const Home = lazy(() => import("./pagess/home"));
+const About = lazy(() => import("./pagess/about"));
+const News = lazy(() => import("./pagess/news"));
+const Events = lazy(() => import("./pagess/events"));
+const Post = lazy(() => import("./pagess/post"));
 
 const NewsWithProvider = () => (
   <NewsProvider>
