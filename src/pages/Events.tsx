@@ -1,4 +1,4 @@
-import EventsContent from "@/components/Events/EventsContent";
+import EventsContent from "@/components/events/EventsContent";
 const Events = () => {
   return (
     <div className="page events-page">

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { CalendarDays, MapPin } from "lucide-react";
 import { Event } from "@/services/interfaces";
 import { fetchEventsFromFirebase } from "@/services/api";
-import EventModal from "../Events/EventModal";
+import EventModal from "../events/EventModal";
 
 interface EventCarouselProps {
   onEventClick?: (event: Event) => void;
@@ -231,7 +231,7 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
           setIsModalOpen(false);
           setSelectedEvent(null);
           // Remove query parameter when closing modal
-          
+
           const url = new URL(window.location.href);
           url.searchParams.delete("event");
           window.history.pushState({}, "", url);

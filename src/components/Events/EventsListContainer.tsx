@@ -1,6 +1,6 @@
 import { Event } from "@/services/interfaces";
 import { useTranslation } from "react-i18next";
-import EmptyState from "../News/EmptyState";
+import EmptyState from "../news/EmptyState";
 import EventsList from "./EventsList";
 
 interface EventsListContainerProps {
@@ -10,7 +10,12 @@ interface EventsListContainerProps {
   setFilter: (filter: "all" | "upcoming" | "past") => void;
 }
 
-const EventsListContainer = ({ events, filter, setFilter, onEventClick }: EventsListContainerProps) => {
+const EventsListContainer = ({
+  events,
+  filter,
+  setFilter,
+  onEventClick,
+}: EventsListContainerProps) => {
   const { t } = useTranslation();
 
   return (

@@ -2,23 +2,23 @@ import { lazy, Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Navigation from "./components/Headers/Navigation";
-import MobileHeader from "./components/Headers/MobileHeader/MobileNavigation";
+import Navigation from "./components/headers/Navigation";
+import MobileHeader from "./components/headers/mobileHeader/MobileNavigation";
 import { NewsProvider } from "./contexts/NewsContext";
-import DashboardPost from "./components/Dashboard/Post";
-import Footer from "./components/Footer/Footer";
+import DashboardPost from "./components/dashboard/Post";
+import Footer from "./components/footer/Footer";
 import ContactForm from "./components/ContactForm";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import JoinUs from "./components/JoinUs/JoinUs";
-import FloatingButton from "./components/JoinUs/FloatingButton";
-import LoadingState from "./components/News/LoadingState";
+import JoinUs from "./components/joinUs/JoinUs";
+import FloatingButton from "./components/joinUs/FloatingButton";
+import LoadingState from "./components/news/LoadingState";
 
-const Home = lazy(() => import("./pages/Home"));
-const About = lazy(() => import("./pages/About"));
-const News = lazy(() => import("./pages/News"));
-const Events = lazy(() => import("./pages/Events"));
-const Post = lazy(() => import("./pages/Post"));
+const Home = lazy(() => import("./pages/home"));
+const About = lazy(() => import("./pages/about"));
+const News = lazy(() => import("./pages/news"));
+const Events = lazy(() => import("./pages/events"));
+const Post = lazy(() => import("./pages/post"));
 
 const NewsWithProvider = () => (
   <NewsProvider>

@@ -20,7 +20,7 @@ export const fetchNewsArticlesFromFirebase = async ({
   fetchOffset,
 }: {
   lang: string;
-  tag: string | null;
+  tag?: string | null;
   fetchLimit?: number;
   fetchOffset?: number;
 }): Promise<NewsArticle[]> => {

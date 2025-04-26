@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import EventCarousel from "../Home/EventCarousel";
+import EventCarousel from "../home/EventCarousel";
 import { useState, useEffect } from "react";
-import LoadingState from "../News/LoadingState";
+import LoadingState from "../news/LoadingState";
 import { useLocation } from "react-router-dom";
 import {
   fetchEventFromFirebase,
