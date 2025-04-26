@@ -1,5 +1,4 @@
-
-import { Event } from "../../data/eventData";
+import { Event } from "@/services/interfaces";
 import ArrowButton from "../common/ArrowButton";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, MapPin, Clock, Award, Copy, Check } from "lucide-react";
@@ -12,18 +11,13 @@ interface EventModalProps {
 }
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
   const [urlCopied, setUrlCopied] = useState(false);
 
-  // Create a proper URL for sharing
-  const eventUrl = event
-    ? `${window.location.origin}/${i18n.language}/events/${event.id}`
-    : "";
-
   // Copy to clipboard function
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(eventUrl).then(
+    navigator.clipboard.writeText(window.location.href).then(
       () => {
         setUrlCopied(true);
         setTimeout(() => {
@@ -34,15 +28,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
         console.error("Could not copy text: ", err);
       }
     );
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(i18n.language, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
   };
 
   // Disable body scroll when modal is open
@@ -124,7 +109,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="flex items-center text-gray-600">
               <CalendarDays className="w-5 h-5 mr-2 text-primary" />
-              <span>{formatDate(event.eventDate)}</span>
+              <span>{event.eventDate}</span>
             </div>
 
             {event.location && (
@@ -136,7 +121,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
             <div className="flex items-center text-gray-600">
               <Clock className="w-5 h-5 mr-2 text-primary" />
-              <span>Published: {formatDate(event.publishDate)}</span>
+              <span>Published: {event.publishDate}</span>
             </div>
           </div>
 

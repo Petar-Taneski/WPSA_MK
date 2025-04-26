@@ -14,8 +14,6 @@ const LanguageSwitcher = () => {
   const changeLanguage = () => {
     // Get the current path segments
     const pathSegments = location.pathname.split("/").filter(Boolean);
-    console.log("Current path:", location.pathname);
-    console.log("Path segments:", pathSegments);
 
     // Determine the next language (toggle between 'en' and 'mk')
     const nextLang = i18n.language === "en" ? "mk" : "en";
@@ -56,12 +54,6 @@ const LanguageSwitcher = () => {
           }
         }
       }
-      console.log(
-        "Found page key:",
-        pageKey,
-        "for Macedonian slug:",
-        currentPageSlug
-      );
     }
 
     // Change the language first

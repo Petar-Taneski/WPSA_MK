@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { fetchNewsArticle } from "../services/api";
+import { fetchNewsArticleFromFirebase } from "../services/api";
 import { NewsArticle } from "../services/interfaces";
 import { Copy, Check } from "lucide-react";
 import {
@@ -57,8 +57,9 @@ const Post: React.FC = () => {
       const fetchArticle = async () => {
         try {
           setLoading(true);
-          const articleData = await fetchNewsArticle(params.id as string);
-
+          const articleData = await fetchNewsArticleFromFirebase(
+            params.id as string
+          );
           if (!articleData) {
             setError(t("post.notFound"));
           } else {

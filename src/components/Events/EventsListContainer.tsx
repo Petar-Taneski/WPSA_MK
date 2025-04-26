@@ -1,32 +1,17 @@
-import { useState } from "react";
+import { Event } from "@/services/interfaces";
 import { useTranslation } from "react-i18next";
-import { Event } from "../../data/eventData";
+import EmptyState from "../News/EmptyState";
 import EventsList from "./EventsList";
-import {
-  getUpcomingEvents,
-  getPastEvents,
-  sortEventsByDate,
-} from "../../data/eventData";
-import EmptyState from "../../components/news/EmptyState";
 
-interface AllEventsProps {
+interface EventsListContainerProps {
   events: Event[];
   onEventClick?: (event: Event) => void;
+  filter: "all" | "upcoming" | "past";
+  setFilter: (filter: "all" | "upcoming" | "past") => void;
 }
 
-const AllEvents = ({ events, onEventClick }: AllEventsProps) => {
+const EventsListContainer = ({ events, filter, setFilter, onEventClick }: EventsListContainerProps) => {
   const { t } = useTranslation();
-  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
-
-  const upcomingEvents = sortEventsByDate(getUpcomingEvents(events));
-  const pastEvents = sortEventsByDate(getPastEvents(events));
-
-  const filteredEvents =
-    filter === "all"
-      ? sortEventsByDate(events)
-      : filter === "upcoming"
-      ? upcomingEvents
-      : pastEvents;
 
   return (
     <div>
@@ -65,13 +50,13 @@ const AllEvents = ({ events, onEventClick }: AllEventsProps) => {
       </div>
 
       {/* Events List */}
-      {filteredEvents.length === 0 ? (
+      {events.length === 0 ? (
         <EmptyState />
       ) : (
-        <EventsList events={filteredEvents} onEventClick={onEventClick} />
+        <EventsList events={events} onEventClick={onEventClick} />
       )}
     </div>
   );
 };
 
-export default AllEvents;
+export default EventsListContainer;

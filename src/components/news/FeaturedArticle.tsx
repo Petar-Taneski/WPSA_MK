@@ -15,6 +15,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
     const currentLanguage = i18n.language;
     return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
   };
+  console.log(article);
 
   const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
     year: "numeric",
@@ -52,7 +53,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
           onClick={() => navigate(getPostUrl())}
           className="lg:w-1/2 mb-4 lg:mb-0 order-1 lg:order-2 cursor-pointer"
         >
-          <div className="aspect-video lg:aspect-auto lg:h-full rounded-sm overflow-hidden">
+          <div className="aspect-video lg:h-full rounded-sm overflow-hidden">
             <img
               src={displayImageUrl}
               alt={title}

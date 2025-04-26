@@ -5,7 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { fetchNewsArticles } from "../services/api";
+import { fetchNewsArticlesFromFirebase } from "../services/api";
 import { NewsArticle } from "@/services/interfaces";
 import { useTranslation } from "react-i18next";
 
@@ -14,8 +14,8 @@ interface NewsContextType {
   filteredArticles: NewsArticle[];
   loading: boolean;
   error: string | null;
-  activeFilter: string | null;
-  setActiveFilter: (filter: string | null) => void;
+  activeFilter: string;
+  setActiveFilter: (filter: string) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   allTags: string[];
@@ -41,14 +41,18 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const { i18n } = useTranslation();
   useEffect(() => {
     const getNewsArticles = async () => {
       try {
         setLoading(true);
-        const data = await fetchNewsArticles();
+        const data = await fetchNewsArticlesFromFirebase({
+          lang: i18n.language,
+          tag: activeFilter,
+        });
         setArticles(data);
       } catch (err) {
         setError(t("news.loadError"));
@@ -59,7 +63,7 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     };
 
     getNewsArticles();
-  }, [t]);
+  }, [i18n.language, activeFilter]);
 
   // Extract all unique tags from articles
   const allTags = Array.from(

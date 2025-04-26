@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import ArrowButton from "../common/ArrowButton";
-import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { events, getFeaturedEvents, Event } from "../../data/eventData";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, MapPin } from "lucide-react";
+import { Event } from "@/services/interfaces";
+import { fetchEventsFromFirebase } from "@/services/api";
+import EventModal from "../Events/EventModal";
 
 interface EventCarouselProps {
   onEventClick?: (event: Event) => void;
@@ -14,11 +15,29 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
   const { t, i18n } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const timerRef = useRef<number | null>(null);
-  const navigate = useNavigate();
+  const [featuredEvents, setFeaturedEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    window.onpopstate = () => {
+      setIsModalOpen(false);
+      setSelectedEvent(null);
+    };
+  }, []);
 
   // Get only featured events for the carousel
-  const featuredEvents = getFeaturedEvents(events);
+  useEffect(() => {
+    const fetchFeaturedEvents = async () => {
+      const featuredEvents = await fetchEventsFromFirebase({
+        lang: i18n.language,
+        isFeatured: true,
+      });
+      setFeaturedEvents(featuredEvents);
+    };
+    fetchFeaturedEvents();
+  }, [i18n.language]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) =>
@@ -42,10 +61,12 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
       const language = i18n.language || "en";
       // Get the events path based on language
       const eventsPath = t("pages.events", { lng: language });
-      // Navigate to the correct language-specific events page with query param
-      navigate(
-        `/${language}/${eventsPath}?event=${encodeURIComponent(event.title)}`
-      );
+      const newUrl = `/${language}/${eventsPath}?event=${encodeURIComponent(
+        event.id
+      )}`;
+      window.history.pushState({}, "", newUrl);
+      setSelectedEvent(event);
+      setIsModalOpen(true);
     }
   };
 
@@ -156,7 +177,7 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
                     <div className="mt-auto">
                       <ArrowButton
                         className="text-sm bg-white hover:scale-105 text-primary sm:text-base"
-                        text={event.callToAction || t("events.learnMore")}
+                        text={event.callToAction || t("events.applyNow")}
                         onClick={() => handleEventClick(event)}
                       />
                     </div>
@@ -202,6 +223,21 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
           </div>
         )}
       </div>
+
+      {/* Add Modal */}
+      <EventModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedEvent(null);
+          // Remove query parameter when closing modal
+          
+          const url = new URL(window.location.href);
+          url.searchParams.delete("event");
+          window.history.pushState({}, "", url);
+        }}
+        event={selectedEvent}
+      />
     </div>
   );
 };

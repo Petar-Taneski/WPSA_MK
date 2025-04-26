@@ -12,6 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import JoinUs from "./components/JoinUs/JoinUs";
 import FloatingButton from "./components/JoinUs/FloatingButton";
+import LoadingState from "./components/News/LoadingState";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -62,7 +63,7 @@ function App() {
     <BrowserRouter>
       <div className="app overflow-x-clip">
         <ToastContainer position="top-right" autoClose={5000} />
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingState />}>
           <div className="hidden lg:block h-[13vh]">
             <Navigation openContactModal={openContactModal} />
           </div>

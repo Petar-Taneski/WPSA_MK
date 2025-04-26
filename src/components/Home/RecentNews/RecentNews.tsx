@@ -4,7 +4,7 @@ import { NewsArticle } from "@/services/interfaces";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { fetchNewsArticles } from "../../../services/api";
+import { fetchNewsArticlesFromFirebase } from "../../../services/api";
 
 const RecentNews = () => {
   const { t, i18n } = useTranslation();
@@ -32,7 +32,10 @@ const RecentNews = () => {
       try {
         setLoading(true);
         setError(null);
-        const fetchedArticles = await fetchNewsArticles();
+        const fetchedArticles = await fetchNewsArticlesFromFirebase({
+          lang: currentLanguage,
+          fetchLimit: 3,
+        });
 
         // Sort articles by publishDate (newest first)
         const sortedArticles = [...fetchedArticles].sort(
