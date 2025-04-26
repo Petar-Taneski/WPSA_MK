@@ -23,8 +23,8 @@ const Hero = () => {
           <div
             className={`relative flex items-center justify-center h-[calc(100vh+70px)]  text-white`}
           >
-            <div className="absolute top-1/3 flex flex-col w-full gap-2 text-center md:pr-10">
-              <h1 className="text-4xl font-extrabold max-md:text-2xl max-md:w-11/12 w-4/5 mx-auto leading-snug text-white/90">
+            <div className="absolute flex flex-col w-full gap-2 text-center top-1/3 ">
+              <h1 className="w-4/5 mx-auto text-4xl font-extrabold leading-snug max-md:text-2xl max-md:w-11/12 text-white/90">
                 {t("about.nameFirstPartNoDashes")} <br />
                 {t("about.nameSecondPart")}
               </h1>
