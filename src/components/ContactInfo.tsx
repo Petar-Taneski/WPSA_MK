@@ -6,7 +6,7 @@ const ContactInfo = () => {
   return (
     <div className="bg-gray-100 flex flex-col md:flex-row items-center justify-between py-6 px-[5vw]">
       {/* Logo Section */}
-      <div className="mb-4 md:mb-0 md:mr-6 flex-shrink-0">
+      <div className="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
         <img
           src="/Logo-WPSA.png"
           alt="WPSA Logo"
@@ -15,18 +15,18 @@ const ContactInfo = () => {
       </div>
 
       {/* Contact Details Section */}
-      <div className="flex flex-col md:flex-row text-center md:text-left w-full md:w-auto">
+      <div className="flex flex-col w-full text-center md:flex-row md:text-left md:w-auto">
         {/* Address */}
-        <div className="mb-4 w-3/4 md:mb-0 md:mr-8">
-          <h4 className="font-bold text-primary mb-1">
+        <div className="w-3/4 mb-4 md:mb-0 md:mr-8">
+          <h4 className="mb-1 font-bold text-primary">
             {t("about.contact.address")}
           </h4>
-          <p className="text-sm whitespace-normal pb-1 leading-tight text-gray-600">
+          <p className="pb-1 text-sm leading-tight text-gray-600 whitespace-normal">
             {t("about.nameFirstPart")}
             <br />
             {t("about.nameSecondPart")}
           </p>
-          <p className="text-sm whitespace-normal text-gray-600">
+          <p className="text-sm text-gray-600 whitespace-normal">
             {t("about.contact.addressLines.street")}
             <br />
             {t("about.contact.addressLines.city")}
@@ -35,10 +35,10 @@ const ContactInfo = () => {
 
         {/* Contact Info */}
         <div>
-          <h4 className="font-bold text-primary mb-1">
+          <h4 className="mb-1 font-bold text-primary">
             {t("about.contact.contact")}
           </h4>
-          <p className="text-sm text-gray-600 mb-1">
+          <p className="mb-1 text-sm text-gray-600">
             {t("about.contact.email")}: zivinarskozdruzenie@gmail.com
           </p>
           <p className="text-sm text-gray-600">

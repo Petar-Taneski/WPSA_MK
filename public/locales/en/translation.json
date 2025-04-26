@@ -229,21 +229,21 @@
     }
   },
   "joinUs": {
-    "mainTitle": "Join Us",
+    "mainTitle": "Придружете ни се",
     "form": {
-      "imePlaceholder": "First Name",
-      "prezimePlaceholder": "Last Name",
-      "emailPlaceholder": "Email",
-      "telefonPlaceholder": "Phone",
-      "zvanjePlaceholder": "Title",
-      "polPlaceholder": "Gender",
-      "male": "Male",
-      "female": "Female",
-      "datumNaRagjanjePlaceholder": "Date of Birth",
-      "kompanijaPlaceholder": "Company",
-      "adresaPlaceholder": "Address",
-      "postenskiBrojPlaceholder": "Postal Code",
-      "gradPlaceholder": "City"
+      "imePlaceholder": "Име",
+      "prezimePlaceholder": "Презиме",
+      "emailPlaceholder": "Е-пошта",
+      "telefonPlaceholder": "Телефон",
+      "zvanjePlaceholder": "Звање",
+      "polPlaceholder": "Пол",
+      "male": "Машки",
+      "female": "Женски",
+      "datumNaRagjanjePlaceholder": "Датум на раѓање",
+      "kompanijaPlaceholder": "Компанија",
+      "adresaPlaceholder": "Адреса",
+      "postenskiBrojPlaceholder": "Поштенски број",
+      "gradPlaceholder": "Град"
     }
   }
 }
