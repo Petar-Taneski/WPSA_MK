@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
+import "./navigation.css";
 
 interface OpenHeaderProps {
   isOpen: boolean;
@@ -31,28 +32,40 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
 
   // Function to check if a nav item is active
   const isItemActive = (itemKey: string) => {
+    // Normalize the current path (decode URL-encoded characters)
+    const normalizedPath = decodeURIComponent(location.pathname);
+
+    // Get the translated path for this item
+    const itemPath = t(`pages.${itemKey}`, { lng: currentLang });
+
     // Special case for home
-    if (
-      itemKey === "home" &&
-      (location.pathname === `/${currentLang}` ||
-        location.pathname ===
-          `/${currentLang}/${t(`pages.home`, { lng: currentLang })}`)
-    ) {
-      return true;
+    if (itemKey === "home") {
+      return (
+        normalizedPath === `/${currentLang}` ||
+        normalizedPath === `/${currentLang}/${itemPath}`
+      );
     }
 
-    // Check for exact path match first
-    if (currentPath === t(`pages.${itemKey}`, { lng: currentLang })) {
+    // Check for exact path match (after normalization)
+    if (normalizedPath === `/${currentLang}/${itemPath}`) {
       return true;
     }
 
     // Check for news item detail pages
-    if (
-      itemKey === "news" &&
-      ((currentLang === "en" && location.pathname.includes("/news/")) ||
-        (currentLang === "mk" && location.pathname.includes("/вести/")))
-    ) {
-      return true;
+    if (itemKey === "news") {
+      // For English news detail pages
+      if (currentLang === "en" && normalizedPath.includes("/news/")) {
+        return true;
+      }
+
+      // For Macedonian news detail pages - handle Cyrillic "вести" consistently
+      if (
+        currentLang === "mk" &&
+        (normalizedPath.includes("/вести/") ||
+          normalizedPath.includes("/%D0%B2%D0%B5%D1%81%D1%82%D0%B8/"))
+      ) {
+        return true;
+      }
     }
 
     return false;
@@ -98,9 +111,15 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
                 to={path}
                 className={`flex items-center justify-between w-full gap-2 py-3 text-lg rounded-md ${
                   isItemActive(item.key)
-                    ? "font-bold text-primary/85"
-                    : "font-medium text-gray-800/85"
+                    ? "nav-item-active font-bold !text-primary"
+                    : "nav-item font-medium text-gray-800/85"
                 }`}
+                style={{
+                  color: isItemActive(item.key)
+                    ? "var(--color-primary, #4F46E5)"
+                    : "",
+                  fontWeight: isItemActive(item.key) ? "700" : "500",
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}
