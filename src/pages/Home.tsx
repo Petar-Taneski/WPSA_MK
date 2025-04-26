@@ -1,9 +1,9 @@
 // import { useTranslation } from "react-i18next";
 
-import EventCarousel from "@/components/Home/EventCarousel";
-import FeaturedNews from "@/components/home/recentNews/RecentNews";
-import Hero from "@/components/home/heroSection/Hero";
-import MissionVision from "@/components/Home/MissionVision";
+import EventCarousel from "@/components/homee/EventCarousel";
+import FeaturedNews from "@/components/homee/recentNews/RecentNews";
+import Hero from "@/components/homee/heroSection/Hero";
+import MissionVision from "@/components/homee/MissionVision";
 
 const Home = () => {
   // const { t } = useTranslation();

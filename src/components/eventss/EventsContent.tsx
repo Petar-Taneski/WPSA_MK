@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import EventCarousel from "../home/EventCarousel";
+import EventCarousel from "../homee/EventCarousel";
 import { useState, useEffect } from "react";
 import LoadingState from "../news/LoadingState";
 import { useLocation } from "react-router-dom";
