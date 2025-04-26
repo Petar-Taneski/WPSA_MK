@@ -56,9 +56,9 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ openContactModal }) => {
         <Link
           to="/"
           onClick={handleLogoClick}
-          className="mobile-m:scale-[1.30] mobile-m:translate-x-[15%]"
+          className="mobile-m:scale-[1.30] mobile-m:translate-x-[15%] tablet:scale-100 tablet:translate-x-0"
         >
-          <img src="/Logo-WPSA.png" alt="WPSA logo" className="w-[15vw]" />
+          <img src="/Logo-WPSA.png" alt="WPSA logo" className="w-[70px]" />
         </Link>
         <button
           onClick={() => {
