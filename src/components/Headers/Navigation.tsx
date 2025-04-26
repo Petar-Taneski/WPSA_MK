@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import LanguageSwitcher from "../LanguageSwitcher";
-import "../Headers/MobileHeader/navigation.css";
+import "../headers/mobileHeader/navigation.css";
 
 interface NavigationProps {
   openContactModal: () => void;
