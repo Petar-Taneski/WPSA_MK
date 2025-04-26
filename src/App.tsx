@@ -14,14 +14,14 @@ import JoinUs from "./components/joinUs/JoinUs";
 import FloatingButton from "./components/joinUs/FloatingButton";
 import LoadingState from "./components/news/LoadingState";
 
-const Home = lazy(() => import("./pages/home"));
-const About = lazy(() => import("./pages/about"));
-const News = lazy(() => import("./pages/news"));
-const Events = lazy(() => import("./pages/events"));
-const Post = lazy(() => import("./pages/post"));
+const Home = lazy(() => import("./pages/Home"));
+const About = lazy(() => import("./pages/About"));
+const News = lazy(() => import("./pages/News"));
+const Events = lazy(() => import("./pages/Events"));
+const Post = lazy(() => import("./pages/Post"));
 
 const NewsWithProvider = () => (
-  <NewsProvider>
+  <NewsProvider>  
     <News />
   </NewsProvider>
 );
