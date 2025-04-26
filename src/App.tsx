@@ -5,7 +5,7 @@ import "./App.css";
 import Navigation from "./components/headers/Navigation";
 import MobileHeader from "./components/headers/mobileHeader/MobileNavigation";
 import { NewsProvider } from "./contexts/NewsContext";
-import DashboardPost from "./components/dashboard/Post";
+import DashboardPost from "./components/dashboardd/Post";
 import Footer from "./components/footer/Footer";
 import ContactForm from "./components/ContactForm";
 import { ToastContainer } from "react-toastify";
