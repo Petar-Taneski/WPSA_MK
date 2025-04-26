@@ -132,7 +132,7 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
             >
               <img
                 src={`/images/langs/${
-                  i18n.language === "en" ? "gb.svg" : "mk.svg"
+                  i18n.language === "mk" ? "gb.svg" : "mk.svg"
                 }`}
                 alt={i18n.language}
                 className="w-auto h-5"
