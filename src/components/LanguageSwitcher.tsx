@@ -19,7 +19,6 @@ const LanguageSwitcher = () => {
 
     // Determine the next language (toggle between 'en' and 'mk')
     const nextLang = i18n.language === "en" ? "mk" : "en";
-    console.log("Switching from", i18n.language, "to", nextLang);
 
     // Get the route key by matching the current URL segment to a known route
     const currentLang = pathSegments[0]; // 'en' or 'mk'
@@ -27,7 +26,6 @@ const LanguageSwitcher = () => {
     const currentPageSlug = pathSegments[1]
       ? decodeURIComponent(pathSegments[1])
       : "home";
-    console.log("Current page slug (decoded):", currentPageSlug);
 
     // Map of Macedonian page slugs to their page keys
     const mkPageKeyMap: PageKeyMap = {
@@ -71,18 +69,16 @@ const LanguageSwitcher = () => {
 
     // Get translated page name for the next language using the correct key
     const translatedPage = t(`pages.${pageKey}`);
-    console.log("Translated page name:", translatedPage, "for key:", pageKey);
 
     // Build new path with new language
     const newPath = `/${nextLang}/${translatedPage}`;
-    console.log("Navigating to:", newPath);
 
     // Navigate to translated route
     navigate(newPath);
   };
 
   // Determine flag image based on current language
-  const flagImage = i18n.language === "en" ? "gb.svg" : "mk.svg";
+  const flagImage = i18n.language === "mk" ? "gb.svg" : "mk.svg";
 
   return (
     <div className="language-switcher">

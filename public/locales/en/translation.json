@@ -10,7 +10,7 @@
     "about": "About",
     "news": "News",
     "events": "Events",
-    "contact": "Contact",
+    "contact": "Contact us",
     "language": "Language"
   },
   "common": {
@@ -188,7 +188,7 @@
     "contact": {
       "title": "Contact Information:",
       "address": "Address",
-      "contact": "Contact",
+      "contact": "Contact us",
       "addressLines": {
         "street": "Lazar Pop Trajkov 5-7",
         "city": "1000 Skopje, Macedonia"
@@ -226,6 +226,24 @@
       "phone": "Phone number",
       "email": "Email",
       "clickToCopy": "Click to copy to clipboard"
+    }
+  },
+  "joinUs": {
+    "mainTitle": "Придружете ни се",
+    "form": {
+      "imePlaceholder": "Име",
+      "prezimePlaceholder": "Презиме",
+      "emailPlaceholder": "Е-пошта",
+      "telefonPlaceholder": "Телефон",
+      "zvanjePlaceholder": "Звање",
+      "polPlaceholder": "Пол",
+      "male": "Машки",
+      "female": "Женски",
+      "datumNaRagjanjePlaceholder": "Датум на раѓање",
+      "kompanijaPlaceholder": "Компанија",
+      "adresaPlaceholder": "Адреса",
+      "postenskiBrojPlaceholder": "Поштенски број",
+      "gradPlaceholder": "Град"
     }
   }
 }

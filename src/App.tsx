@@ -10,6 +10,8 @@ import Footer from "./components/Footer/Footer";
 import ContactForm from "./components/ContactForm";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import JoinUs from "./components/JoinUs/JoinUs";
+import FloatingButton from "./components/JoinUs/FloatingButton";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -32,9 +34,12 @@ const PostWithProvider = () => (
 function App() {
   const { t, i18n } = useTranslation();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isJoinUsModalOpen, setIsJoinUsModalOpen] = useState(false);
 
   const openContactModal = () => setIsContactModalOpen(true);
   const closeContactModal = () => setIsContactModalOpen(false);
+  const openJoinUsModal = () => setIsJoinUsModalOpen(true);
+  const closeJoinUsModal = () => setIsJoinUsModalOpen(false);
 
   // Get page paths for both languages
   const paths = {
@@ -61,7 +66,7 @@ function App() {
           <div className="hidden lg:block h-[13vh]">
             <Navigation openContactModal={openContactModal} />
           </div>
-          <div className="block lg:hidden h-[15vh]">
+          <div className={`block lg:hidden h-[15vh]`}>
             <MobileHeader openContactModal={openContactModal} />
           </div>
           <div className="relative">
@@ -124,6 +129,8 @@ function App() {
             isOpen={isContactModalOpen}
             onClose={closeContactModal}
           />
+          <JoinUs isOpen={isJoinUsModalOpen} onClose={closeJoinUsModal} />
+          <FloatingButton onClick={openJoinUsModal} />
         </Suspense>
       </div>
     </BrowserRouter>

@@ -23,6 +23,7 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ openContactModal }) => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.scrollY;
+      const headerHeight = window.innerHeight * 0.15; // 15vh in pixels
 
       // If menu is open, always show header
       if (isOpen) {
@@ -31,10 +32,9 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ openContactModal }) => {
         return;
       }
 
-      // Determine visibility based on scroll direction
-      // Only hide if we've scrolled down a bit (to avoid jumping behavior)
+      // Only hide header if we've scrolled more than its height (15vh)
       const isScrollingDown = currentScrollPos > scrollPosition;
-      setIsVisible(!isScrollingDown || currentScrollPos < 50);
+      setIsVisible(!isScrollingDown || currentScrollPos < headerHeight);
 
       // Update position for next comparison
       setScrollPosition(currentScrollPos);
