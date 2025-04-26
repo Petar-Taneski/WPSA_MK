@@ -10,7 +10,7 @@
     "about": "About",
     "news": "News",
     "events": "Events",
-    "contact": "Contact",
+    "contact": "Contact us",
     "language": "Language"
   },
   "common": {
@@ -184,7 +184,7 @@
     "contact": {
       "title": "Contact Information:",
       "address": "Address",
-      "contact": "Contact",
+      "contact": "Contact us",
       "addressLines": {
         "faculty": "Faculty of Veterinary Medicine",
         "street": "Lazar Pop Trajkov 5-7",
