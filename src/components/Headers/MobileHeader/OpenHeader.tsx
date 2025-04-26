@@ -27,8 +27,6 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
 
   const currentLang = location.pathname.split("/")[1] || i18n.language;
 
-  // Get current page path without language prefix
-  const currentPath = location.pathname.split("/").slice(2).join("/");
 
   // Function to check if a nav item is active
   const isItemActive = (itemKey: string) => {
