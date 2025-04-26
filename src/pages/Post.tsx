@@ -10,7 +10,7 @@ import {
   PostContent,
   PostLoading,
   PostError,
-} from "../components/postt";
+} from "../components/post";
 
 const Post: React.FC = () => {
   const params = useParams<{ id: string }>();
