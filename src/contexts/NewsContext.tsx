@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { fetchNewsArticles } from "../services/api";
 import { NewsArticle } from "@/services/interfaces";
+import { useTranslation } from "react-i18next";
 
 interface NewsContextType {
   articles: NewsArticle[];
@@ -36,6 +37,7 @@ interface NewsProviderProps {
 }
 
 export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
+  const { t } = useTranslation();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +51,7 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
         const data = await fetchNewsArticles();
         setArticles(data);
       } catch (err) {
-        setError("Failed to load news articles");
+        setError(t("news.loadError"));
         console.error(err);
       } finally {
         setLoading(false);
@@ -57,7 +59,7 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     };
 
     getNewsArticles();
-  }, []);
+  }, [t]);
 
   // Extract all unique tags from articles
   const allTags = Array.from(

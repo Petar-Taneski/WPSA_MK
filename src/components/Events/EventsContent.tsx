@@ -108,30 +108,30 @@ const EventsContent = () => {
         }, 800);
       } catch (error) {
         console.error("Error fetching events:", error);
-        setError("Error loading events. Please try again later.");
+        setError(`${t("events.errorLoading")}`);
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, [location.search]);
+  }, [location.search, t]);
 
   return (
-    <div className="events-page pt-8 pb-16">
+    <div className="pt-8 pb-16 events-page">
       {/* Featured Events Carousel */}
       <EventCarousel onEventClick={openEventModal} />
 
       {/* All Events Section */}
       <div className="pt-12">
-        <div className="w-full lg:px-20 sm:px-10 px-4">
-          <h2 className="text-3xl font-bold text-slate-800/90 mb-8">
+        <div className="w-full px-4 lg:px-20 sm:px-10">
+          <h2 className="mb-8 text-3xl font-bold text-slate-800/90">
             {t("events.allEvents")}
           </h2>
 
           {loading && <LoadingState />}
 
           {error && !loading && (
-            <div className="bg-red-50 p-4 rounded-md border border-red-200 text-red-700">
+            <div className="p-4 text-red-700 border border-red-200 rounded-md bg-red-50">
               {error}
             </div>
           )}
@@ -152,9 +152,9 @@ const EventsContent = () => {
       {/* Modal Loading Overlay */}
       {modalLoading && (
         <div className="fixed inset-0 z-[1002] flex items-center justify-center bg-gray-800/50">
-          <div className="bg-white rounded-lg shadow-xl p-8 max-w-md flex flex-col items-center">
-            <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-700 font-medium">
+          <div className="flex flex-col items-center max-w-md p-8 bg-white rounded-lg shadow-xl">
+            <div className="w-16 h-16 mb-4 border-4 rounded-full border-primary border-t-transparent animate-spin"></div>
+            <p className="font-medium text-gray-700">
               {t("events.loadingEvent")}
             </p>
           </div>
