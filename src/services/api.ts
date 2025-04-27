@@ -50,7 +50,7 @@ export const fetchNewsArticlesFromFirebase = async ({
     const newsList = newsSnapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
-      publishDate: formatDate(doc.data().publishDate.toDate()),
+      publishDate: formatDate(doc.data().publishDate.toDate(), lang),
     })) as NewsArticle[];
     return newsList;
   } catch (error) {
@@ -60,7 +60,8 @@ export const fetchNewsArticlesFromFirebase = async ({
 };
 
 export const fetchNewsArticleFromFirebase = async (
-  id: string
+  id: string,
+  lang: string
 ): Promise<NewsArticle | null> => {
   try {
     const newsDoc = doc(db, "news", id);
@@ -73,7 +74,10 @@ export const fetchNewsArticleFromFirebase = async (
     return {
       ...newsSnapshot.data(),
       id: newsSnapshot.id,
-      publishDate: formatDate(newsSnapshot.data().publishDate.toDate()),
+      publishDate: formatDate(
+        newsSnapshot.data().publishDate.toDate(),
+        lang
+      ),
     } as NewsArticle;
   } catch (error) {
     console.error(
@@ -132,8 +136,8 @@ export const fetchEventsFromFirebase = async ({
     const eventsList = eventsSnapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
-      eventDate: formatDate(doc.data().eventDate.toDate()),
-      publishDate: formatDate(doc.data().publishDate.toDate()),
+      eventDate: formatDate(doc.data().eventDate.toDate(), lang),
+      publishDate: formatDate(doc.data().publishDate.toDate(), lang),
     })) as Event[];
 
     return eventsList;
@@ -144,7 +148,8 @@ export const fetchEventsFromFirebase = async ({
 };
 
 export const fetchEventFromFirebase = async (
-  id: string
+  id: string,
+  lang: string
 ): Promise<Event | null> => {
   try {
     const eventDoc = doc(db, "events", id);
@@ -157,8 +162,8 @@ export const fetchEventFromFirebase = async (
     return {
       ...eventSnapshot.data(),
       id: eventSnapshot.id,
-      eventDate: formatDate(eventSnapshot.data().eventDate.toDate()),
-      publishDate: formatDate(eventSnapshot.data().publishDate.toDate()),
+      eventDate: formatDate(eventSnapshot.data().eventDate.toDate(), lang),
+      publishDate: formatDate(eventSnapshot.data().publishDate.toDate(), lang),
     } as Event;
   } catch (error) {
     console.error(`Error fetching event with ID: ${id} from Firebase:`, error);

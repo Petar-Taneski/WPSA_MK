@@ -28,8 +28,6 @@ const EventsContent = () => {
     };
   }, []);
 
-  // Check if there's an event in the URL that should open a modal
-
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const eventId = params.get("event");
@@ -38,7 +36,7 @@ const EventsContent = () => {
       const fetchModalEvent = async () => {
         try {
           setIsModalOpen(true);
-          const modalEvent = await fetchEventFromFirebase(eventId);
+          const modalEvent = await fetchEventFromFirebase(eventId, i18n.language);
 
           if (modalEvent) {
             setSelectedEvent(modalEvent);
@@ -55,12 +53,10 @@ const EventsContent = () => {
     }
   }, []);
 
-  // Function to open the modal with specific event
   const openEventModal = (event: Event) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
 
-    // Update URL with event title as query parameter
     const params = new URLSearchParams(location.search);
     params.set("event", encodeURIComponent(event.id));
     window.history.pushState(
@@ -70,12 +66,10 @@ const EventsContent = () => {
     );
   };
 
-  // Function to close the modal
   const closeEventModal = () => {
     setIsModalOpen(false);
     setSelectedEvent(null);
 
-    // Remove event query parameter from URL
     const params = new URLSearchParams(location.search);
     params.delete("event");
     window.history.pushState(
@@ -85,7 +79,6 @@ const EventsContent = () => {
     );
   };
 
-  // Fetch events from Firebase
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -96,7 +89,6 @@ const EventsContent = () => {
         });
         setEvents(fetchedEvents);
 
-        // Check for event in URL after loading events
         const params = new URLSearchParams(location.search);
         const eventTitle = params.get("event");
 
@@ -125,10 +117,8 @@ const EventsContent = () => {
 
   return (
     <div className="pt-8 pb-16 events-page">
-      {/* Featured Events Carousel */}
       <EventCarousel onEventClick={openEventModal} />
 
-      {/* All Events Section */}
       <div className="pt-12">
         <div className="w-full px-4 lg:px-20 sm:px-10">
           <h2 className="mb-8 text-3xl font-bold text-slate-800/90">
@@ -154,7 +144,6 @@ const EventsContent = () => {
         </div>
       </div>
 
-      {/* Event Modal */}
       <EventModal
         isOpen={isModalOpen}
         onClose={closeEventModal}

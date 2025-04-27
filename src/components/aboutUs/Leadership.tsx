@@ -1,20 +1,41 @@
-import { useTranslation } from "react-i18next";
 import { EXECUTIVES } from "@/utils/consts";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import ExpandedProfileCard from "./ExpandedProfileCard";
+
+interface Executive {
+  firstName: string;
+  lastName: string;
+  role: string;
+  image: string;
+  bio: string;
+}
 
 const Leadership = () => {
   const { t } = useTranslation();
+  const [selectedExecutive, setSelectedExecutive] = useState<Executive | null>(
+    null
+  );
+
+  const handleCardClick = (executive: Executive) => {
+    setSelectedExecutive(executive);
+  };
+
+  const handleCloseExpandedCard = () => {
+    setSelectedExecutive(null);
+  };
 
   return (
     <div>
       <h3 className="text-2xl font-bold text-primary mb-12 border-l-4 border-primary pl-4">
         {t("about.leadership.title")}
       </h3>
-      {/* TODO: make the grid responsive for mobile*/}
-      <div className="grid grid-cols-2 md:grid-cols-5 h-fit gap-8">
+      <div className="flex flex-wrap justify-center gap-8">
         {EXECUTIVES.map((executive) => (
           <div
             key={executive.firstName}
-            className="flex flex-col h-fit p-4 justify-center items-center"
+            onClick={() => handleCardClick(executive as Executive)}
+            className="flex flex-col h-fit w-58 p-4 justify-center items-center hover:shadow-lg shadow-sm transition-shadow duration-300 cursor-pointer"
           >
             <div className="mb-4 w-32 h-32 rounded-full overflow-hidden">
               <img
@@ -42,6 +63,22 @@ const Leadership = () => {
           </div>
         ))}
       </div>
+
+      {selectedExecutive && (
+        <ExpandedProfileCard
+          firstName={t(selectedExecutive.firstName)}
+          lastName={t(selectedExecutive.lastName)}
+          role={t(selectedExecutive.role)}
+          image={selectedExecutive.image}
+          bio={
+            t(selectedExecutive.bio, { returnObjects: true }) as Record<
+              string,
+              string
+            >
+          }
+          onClose={handleCloseExpandedCard}
+        />
+      )}
     </div>
   );
 };

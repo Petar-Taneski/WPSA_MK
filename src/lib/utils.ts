@@ -37,9 +37,10 @@ export const validateEmail = (email: string) => {
   return emailRegex.test(email);
 };
 
-export const formatDate = (date: number) => {
+export const formatDate = (date: number, language: string) => {
   const dateObj = new Date(date);
-  return dateObj.toLocaleDateString("mk-MK", {
+  const locale = language === "en" ? "en-GB" : "mk-MK";
+  return dateObj.toLocaleDateString(locale, {
     year: "numeric",
     month: "long",
     day: "numeric",

@@ -147,27 +147,48 @@
         "dodovski": {
           "firstName": "Aleksandar",
           "lastName": "Dodovski",
-          "role": "President"
+          "role": "President",
+          "bio": {
+            "p1": "Aleksandar Dodovski, PhD, MSc, DVM, is a professor at Ss. Cyril and Methodius University in Skopje, Faculty of Veterinary Medicine. With over two decades of experience in veterinary science, he specializes in avian diseases, diagnostics, and epidemiology. Throughout his career, he has advanced through various academic roles, contributing to scientific research, innovations, and veterinary education.",
+            "p2": "Dr. Dodovski has authored numerous peer-reviewed publications and has played a crucial role in international projects related to avian virology and disease control. He was instrumental in the successful accreditation of advanced laboratory methods for disease diagnostics, enhancing veterinary capabilities in Macedonia. He provides expert advice to the Food and Veterinary Agency and collaborates closely with stakeholders in the agro-food sector.",
+            "p3": "Passionate about advancing poultry science, he is dedicated to research, education, and fostering collaboration in the field. As President of the Macedonian Branch of the World Poultry Science Association, he continues to influence veterinary science and policy."
+          }
         },
-        "kolevska": {
+        "kotevska": {
           "firstName": "Tanja",
-          "lastName": "Kolevska",
-          "role": "Executive Board"
+          "lastName": "Kotevska",
+          "role": "Executive Board",
+          "bio": {
+            "p1": "Tanja Kotevska is a dynamic and results-driven professional with over two decades of experience spanning agricultural development, business leadership, and strategic marketing. As Development Manager at Greenagro, she spearheads educational initiatives to advance sustainable farming practices, blending modern innovation with agro-ecological principles to empower farming communities. Concurrently, she owns and operates TIV 5 DOOEL Skopje, a thriving pet service center, demonstrating entrepreneurial versatility.",
+            "p2": "Her tenure at Unilever SCE as a marketing executive across South-Central Europe honed her expertise in brand strategy, cross-functional collaboration, and market trend analysis. A lifelong learner, Tanja holds certifications in leadership, project management, and psychology, complementing her Bachelor's degree in Humanities and Social Sciences. Fluent in English and adept in digital tools, she merges creative problem-solving with operational excellence to drive growth in diverse sectors—from agriculture to consumer goods—while championing sustainability, education, and community impact."
+          }
         },
         "dovlev": {
           "firstName": "Aleksandar",
           "lastName": "Dovlev",
-          "role": "Executive Board"
+          "role": "Executive Board",
+          "bio": {
+            "p1": "Biography for Aleksandar Dovlev to be added."
+          }
         },
         "tanevski": {
           "firstName": "Marjan",
           "lastName": "Tanevski",
-          "role": "Executive Board"
+          "role": "Executive Board",
+          "bio": {
+            "p1": "Dr. Marjan Tanevski, is a veterinarian with nineteen years of poultry industry experience. Commenced his career in 2006 at a Macedonian poultry production company as a hatchery and breeding flock manager.",
+            "p2": "His responsibilities encompassed all hatchery operations, including product, personnel, and equipment management, and he ensured staff compliance with industry standards. He currently owns a Macedonian poultry hatchery dedicated to producing high-quality day-old chicks."
+          }
         },
         "popchevski": {
           "firstName": "Milan",
           "lastName": "Popchevski",
-          "role": "Executive Board"
+          "role": "Executive Board",
+          "bio": {
+            "p1": "Milan Popchevski, DVM is a dedicated veterinary professional specializing in farm animal nutrition, with a focus on poultry and pigs. He graduated from the Faculty of Veterinary Medicine in Skopje in 2007.",
+            "p2": "With over a decade of experience, Dr. Popchevski has worked extensively in animal nutrition, biosecurity, and farm management. From 2010 to 2013, he contributed to the establishment of HACCP procedures at the Rudine dairy factory. He then served as Director of Ravago Macedonia (2013–2023), where he provided consulting in feed, nutrition, and biosecurity. Currently, through his company VETFUD Consulting, he advises poultry, swine, and fish farms on improving animal health and performance through tailored nutritional strategies.",
+            "p3": "His contributions to animal nutrition, particularly in optimizing feed supplements for improved growth performance and overall farm health, play a crucial role in advancing modern livestock management."
+          }
         }
       }
     },

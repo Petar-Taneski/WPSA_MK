@@ -58,7 +58,8 @@ const Post: React.FC = () => {
         try {
           setLoading(true);
           const articleData = await fetchNewsArticleFromFirebase(
-            params.id as string
+            params.id as string,
+            i18n.language
           );
           if (!articleData) {
             setError(t("post.notFound"));
