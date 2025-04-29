@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ExpandedProfileCardProps {
   firstName: string;
@@ -17,6 +18,8 @@ const ExpandedProfileCard: React.FC<ExpandedProfileCardProps> = ({
   bio,
   onClose,
 }) => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -76,7 +79,9 @@ const ExpandedProfileCard: React.FC<ExpandedProfileCardProps> = ({
             </p>
             <div className="border-gray-200 border-b pt-4 mr-8" />
             <div className="pt-4 overflow-y-auto h-full pr-8">
-              <h4 className="text-xl font-semibold  text-gray-800 mb-2">Bio</h4>
+              <h4 className="text-xl font-semibold  text-gray-800 mb-2">
+                {t("about.leadership.bioLabel")}
+              </h4>
               {Object.values(bio).map((paragraph, index) => (
                 <p
                   key={index}

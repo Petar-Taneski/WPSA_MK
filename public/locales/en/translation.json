@@ -143,6 +143,7 @@
       "title": "Leadership",
       "president": "President",
       "executiveBoard": "Executive Board",
+      "bioLabel": "Biography",
       "executives": {
         "dodovski": {
           "firstName": "Aleksandar",

@@ -143,6 +143,7 @@
       "title": "Раководство",
       "president": "Претседател",
       "executiveBoard": "Извршен одбор",
+      "bioLabel": "Биографија",
       "executives": {
         "dodovski": {
           "firstName": "Александар",
