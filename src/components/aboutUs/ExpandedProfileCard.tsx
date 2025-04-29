@@ -33,7 +33,7 @@ const ExpandedProfileCard: React.FC<ExpandedProfileCardProps> = ({
       document.body.style.overflow = originalOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]); 
+  }, [onClose]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=6366f1&color=fff&size=250`;
@@ -41,11 +41,12 @@ const ExpandedProfileCard: React.FC<ExpandedProfileCardProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black/15 flex justify-center items-center z-50 p-4"
+      className="fixed inset-0 bg-black/15 flex justify-center items-center p-4"
+      style={{ zIndex: 1000 }}
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-xl h-11/12 p-8 pr-0 max-w-2xl w-full relative transform transition-all duration-300 scale-100"
+        className="bg-white rounded-lg shadow-sm shadow-primary h-11/12 p-8 pr-0 max-w-2xl w-full relative transform transition-all duration-300 scale-100"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -56,21 +57,23 @@ const ExpandedProfileCard: React.FC<ExpandedProfileCardProps> = ({
           &times;
         </button>
 
-        <div className="flex flex-col md:flex-row items-center h-full md:items-start gap-8">
-          <div className="flex-shrink-0 mb-4 md:mb-0">
+        <div className="flex flex-col md:flex-row items-center h-full md:items-start gap-4 md:gap-8">
+          <div className="h-full md:flex-shrink-0 max-md:h-1/4 max-md:mr-8 md:mb-0">
             <img
               src={image}
               alt={`${firstName} ${lastName}`}
-              className="w-40 h-40 rounded-full object-cover shadow-md"
+              className="w-40 h-40 max-md:w-32 max-md:h-32 rounded-full object-cover shadow-md"
               onError={handleImageError}
             />
           </div>
 
-          <div className="text-center md:text-left h-full flex flex-col">
-            <h2 className="text-3xl font-bold text-primary pb-1">
+          <div className="text-center md:text-left h-full max-md:h-3/4 flex flex-col">
+            <h2 className="text-3xl max-sm:text-2xl max-md:mr-8 font-bold text-primary pb-1">
               {firstName} {lastName}
             </h2>
-            <p className="text-lg text-indigo-600 font-medium">{role}</p>
+            <p className="text-lg max-sm:text-lg max-md:mr-8 text-primary font-medium">
+              {role}
+            </p>
             <div className="border-gray-200 border-b pt-4 mr-8" />
             <div className="pt-4 overflow-y-auto h-full pr-8">
               <h4 className="text-xl font-semibold  text-gray-800 mb-2">Bio</h4>
