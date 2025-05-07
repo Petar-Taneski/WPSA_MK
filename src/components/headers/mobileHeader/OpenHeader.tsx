@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import "./navigation.css";
+import { SOCIAL_MEDIA_LINKS } from "@/utils/consts";
 
 interface OpenHeaderProps {
   isOpen: boolean;
@@ -137,7 +138,29 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
             <ArrowRight className="w-4 h-4 ml-1" />
           </button>
         </div>
-        <div className="flex justify-center mt-8">
+        <div className="relative flex h-fit justify-center items-center mt-8">
+          <div className="absolute inset-1 h-fit flex space-x-2">
+            {SOCIAL_MEDIA_LINKS.map((social) => (
+              <div
+                key={social.name}
+                className="hover:scale-110 hover:shadow-md shadow-primary hover:border-1 rounded-sm p-0.5 hover:border-primary transition-all duration-100"
+              >
+                <a
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.name}
+                  className="text-gray-600 hover:text-primary flex items-center justify-center w-6 h-6"
+                >
+                  <img
+                    src={social.icon}
+                    alt={social.name}
+                    className="w-full h-full bg-transparent"
+                  />
+                </a>
+              </div>
+            ))}
+          </div>
           <div className="flex justify-end w-full">
             <button
               onClick={handleLanguageChange}

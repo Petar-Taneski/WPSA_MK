@@ -1,107 +1,101 @@
-import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import OpenHeader from "./OpenHeader";
+import { toTop } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router-dom";
-import LanguageSwitcher from "../../LanguageSwitcher";
 
-const MobileHeader = () => {
+// Define props interface
+interface MobileHeaderProps {
+  openContactModal: () => void;
+}
+
+const MobileHeader: React.FC<MobileHeaderProps> = ({ openContactModal }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { t, i18n } = useTranslation();
-  const location = useLocation();
-
-  // Navigation items with their respective route keys
-  const navItems = [
-    { key: "home", label: t("navigation.home") },
-    { key: "about", label: t("navigation.about") },
-    { key: "news", label: t("navigation.news") },
-    { key: "events", label: t("navigation.events") },
-  ];
-
-  // Get current language from URL or i18n
-  const currentLang = location.pathname.split("/")[1] || i18n.language;
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const { t } = useTranslation();
 
   const handleLogoClick = (e: React.MouseEvent) => {
-    if (location.pathname === `/${currentLang}/${t("pages.home")}`) {
+    if (window.location.pathname === "/") {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      toTop();
     }
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      const headerHeight = window.innerHeight * 0.15; // 15vh in pixels
+
+      // If menu is open, always show header
+      if (isOpen) {
+        setIsVisible(true);
+        setScrollPosition(currentScrollPos);
+        return;
+      }
+
+      // Only hide header if we've scrolled more than its height (15vh)
+      const isScrollingDown = currentScrollPos > scrollPosition;
+      setIsVisible(!isScrollingDown || currentScrollPos < headerHeight);
+
+      // Update position for next comparison
+      setScrollPosition(currentScrollPos);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrollPosition, isOpen]);
+
   return (
-    <div className="block lg:hidden">
-      <div className="fixed top-0 w-full flex items-center justify-between min-h-[70px] h-[13vh] max-h-[15vh] z-[1000] bg-white shadow-[0_4px_15px_-3px] shadow-primary/40 px-[5vw]">
+    <div
+      className={`fixed top-0 w-full flex items-end justify-center h-[15vh] min-h-[80px] z-[1000] bg-white transition-transform duration-300 ${
+        isVisible || isOpen ? "transform-none" : "transform -translate-y-full"
+      }`}
+    >
+      <div className="realtive flex items-center justify-between w-full h-fit z-[1001] pb-[15px] pt-[10px] border-b-[0.5px] border-b-white border-opacity-50 px-[5vw]">
         <Link
-          to={`/${currentLang}/${t("pages.home")}`}
+          to="/"
           onClick={handleLogoClick}
+          className="mobile-m:scale-[1.30] mobile-m:translate-x-[15%] tablet:scale-100 tablet:translate-x-0"
+        >
+          <img src="/Logo-WPSA.png" alt="WPSA logo" className="w-[70px]" />
+        </Link>
+        <div className="flex-1 mx-2 text-center">
+          <p className="pr-[20px] text-xs font-medium sm:text-sm md:text-base line-clamp-2 sm:line-clamp-1 text-end">
+            {`${t("about.nameFirstPart")} ${t("about.nameSecondPart")}`}
+          </p>
+        </div>
+
+        <button
+          onClick={() => {
+            setIsOpen((prev) => !prev);
+          }}
+          className="relative mobile-m:scale-[1.30] mobile-m:-translate-x-[15%] tablet:scale-100 tablet:translate-x-0 cursor-pointer"
         >
           <img
-            src="/Logo-WPSA.svg"
-            alt="WPSA Logo"
-            className="h-[8vh] mix-blend-multiply"
+            src="/header-x.svg"
+            alt="Close button"
+            className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 transition-all duration-300 ease-in-out ${
+              isOpen ? "opacity-100" : "opacity-0"
+            }`}
           />
-        </Link>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="relative flex flex-col items-center justify-center w-8 h-8"
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          <span
-            className={`w-6 h-0.5 bg-gray-800 transition-all duration-300 ${
-              isOpen ? "rotate-45 translate-y-[0.3rem]" : ""
+          <img
+            src="/header-lines.svg"
+            alt="Open button"
+            className={`transition-all duration-300 ease-in-out ${
+              isOpen ? "opacity-0" : "opacity-100"
             }`}
-          ></span>
-          <span
-            className={`w-6 h-0.5 bg-gray-800 my-1 transition-all duration-300 ${
-              isOpen ? "opacity-0" : ""
-            }`}
-          ></span>
-          <span
-            className={`w-6 h-0.5 bg-gray-800 transition-all duration-300 ${
-              isOpen ? "-rotate-45 -translate-y-[0.3rem]" : ""
-            }`}
-          ></span>
+          />
         </button>
+        
       </div>
-
-      {/* Mobile Menu Overlay */}
-      <div
-        className={`fixed top-0 left-0 w-full h-screen bg-white z-[999] pt-[13vh] px-[5vw] transition-all duration-500 ease-in-out transform ${
-          isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
-        } ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}
-      >
-        <nav className="flex flex-col mt-8 space-y-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.key}
-              to={`/${currentLang}/${t(`pages.${item.key}`)}`}
-              className="flex items-center justify-between pb-3 text-2xl font-medium text-gray-800 border-b border-gray-200 hover:text-primary"
-              onClick={() => setIsOpen(false)}
-            >
-              <span>{item.label}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-primary"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="absolute bottom-12 w-[calc(100%-10vw)]">
-          <div className="flex justify-center mb-6">
-            <LanguageSwitcher />
-          </div>
-          <div className="text-sm text-center text-gray-600">
-            <p>© {new Date().getFullYear()} WPSA MK</p>
-          </div>
-        </div>
-      </div>
+      <OpenHeader
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        openContactModal={openContactModal}
+      />
     </div>
   );
 };
