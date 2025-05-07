@@ -55,3 +55,21 @@ export const PARTNERS = [
     url: "#",
   },
 ];
+
+export const SOCIAL_MEDIA_LINKS = [
+  {
+    name: "LinkedIn",
+    url: "https://www.linkedin.com/company/%D0%B6%D0%B8%D0%B2%D0%B8%D0%BD%D0%B0%D1%80%D1%81%D0%BA%D0%BE-%D0%B7%D0%B4%D1%80%D1%83%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BD%D0%B0-%D0%BC%D0%B0%D0%BA%D0%B5%D0%B4%D0%BE%D0%BD%D0%B8%D1%98%D0%B0/about/?viewAsMember=true",
+    icon: "/icons/linkedin.svg",
+  },
+  {
+    name: "Facebook",
+    url: "https://www.facebook.com/profile.php?id=61573456712911",
+    icon: "/icons/facebook.svg",
+  },
+  {
+    name: "Instagram",
+    url: "https://www.instagram.com/zivinarsko_zdruzenie_macedonia/",
+    icon: "/icons/instagram.svg",
+  },
+];
