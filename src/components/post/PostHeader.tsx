@@ -1,4 +1,5 @@
 import React from "react";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
 
 interface PostHeaderProps {
   title: string;
@@ -20,11 +21,13 @@ const PostHeader: React.FC<PostHeaderProps> = ({ title, imageUrl }) => {
         </div>
 
         {/* Image container - takes right 3/5th on desktop, full width on mobile */}
-        <div className="w-full md:w-5/7 md:ml-auto h-[250px] md:h-[400px] overflow-hidden rounded-md order-first md:order-none">
+        <div className="w-full md:w-5/7 md:ml-auto h-[250px] md:h-[400px] overflow-hidden rounded-md order-first md:order-none bg-gray-50 flex items-center justify-center">
           <img
-            src={imageUrl}
+            src={imageUrl || DEFAULT_PLACEHOLDER_IMAGE}
             alt={title}
-            className="object-cover w-full h-full"
+            className={`w-full h-full ${
+              !imageUrl ? "object-contain p-8" : "object-cover"
+            }`}
           />
         </div>
       </div>

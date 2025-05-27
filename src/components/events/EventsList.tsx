@@ -1,6 +1,8 @@
 import { Event } from "@/services/interfaces";
 import { CalendarDays, MapPin } from "lucide-react";
 import ArrowButton from "../common/ArrowButton";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { useTranslation } from "react-i18next";
 
 interface EventsListProps {
   events: Event[];
@@ -8,6 +10,7 @@ interface EventsListProps {
 }
 
 const EventsList = ({ events, onEventClick }: EventsListProps) => {
+  const { i18n, t } = useTranslation();
   const handleEventClick = (event: Event) => {
     if (onEventClick) {
       onEventClick(event);
@@ -25,29 +28,37 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
       {events.map((event) => (
         <div
           key={event.id}
-          className="group shadow-md rounded-sm overflow-hidden py-0 transition-all duration-300 hover:shadow-lg"
+          className="py-0 overflow-hidden transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
         >
           <div className="flex flex-col sm:flex-row h-fit sm:h-[220px]">
             <div
-              className="sm:w-1/3 h-48 sm:h-full relative cursor-pointer"
+              className="relative flex items-center justify-center h-48 cursor-pointer sm:w-1/3 sm:h-full bg-gray-50"
               onClick={() => handleEventClick(event)}
             >
               <img
-                src={event.thumbnailUrl || event.imageUrl || "/placeholder.jpg"}
+                src={
+                  event.thumbnailUrl ||
+                  event.imageUrl ||
+                  DEFAULT_PLACEHOLDER_IMAGE
+                }
                 alt={event.title}
-                className="w-full h-full object-cover"
+                className={`w-full h-full ${
+                  !event.thumbnailUrl && !event.imageUrl
+                    ? "object-contain p-6"
+                    : "object-cover"
+                }`}
               />
-              <div className="absolute top-0 right-0 bg-primary/90 text-white px-3 py-1 m-3 rounded text-sm font-medium">
+              <div className="absolute top-0 right-0 px-3 py-1 m-3 text-sm font-medium text-white rounded bg-primary/90">
                 {event.eventDate}
               </div>
               {event.isFeatured && (
-                <div className="absolute top-0 left-0 bg-yellow-500 text-white px-3 py-1 m-3 rounded text-xs font-medium transform -rotate-12">
-                  Featured
+                <div className="absolute top-0 left-0 px-3 py-1 m-3 text-xs font-medium text-white transform bg-yellow-500 rounded -rotate-12">
+                  {t("events.featured")}
                 </div>
               )}
             </div>
-            <div className="sm:w-2/3 p-5 flex flex-col">
-              <h2 className="text-xl font-semibold mb-2 text-gray-800 line-clamp-2">
+            <div className="flex flex-col p-5 sm:w-2/3">
+              <h2 className="mb-2 text-xl font-semibold text-gray-800 line-clamp-2">
                 {event.title}
               </h2>
 
@@ -64,13 +75,19 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
                 )}
               </div>
 
-              <p className="text-gray-600 mb-4 line-clamp-3 flex-grow">
+              <p className="flex-grow mb-4 text-gray-600 line-clamp-3">
                 {event.summary}
               </p>
 
-              <div className="flex justify-end items-center mt-auto">
+              <div className="flex items-center justify-end mt-auto">
                 <ArrowButton
-                  text={event.callToAction || "Learn More"}
+                  text={
+                    event.callToAction
+                      ? event.callToAction
+                      : i18n.language === "mk"
+                      ? "Прочитај повеќе"
+                      : "Learn More"
+                  }
                   onClick={() => handleEventClick(event)}
                   className="text-sm"
                 />

@@ -3,6 +3,8 @@ import ArrowButton from "../common/ArrowButton";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, MapPin, Clock, Award, Copy, Check } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { parseDateString } from "@/lib/utils";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -11,7 +13,7 @@ interface EventModalProps {
 }
 
 const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const modalRef = useRef<HTMLDivElement>(null);
   const [urlCopied, setUrlCopied] = useState(false);
 
@@ -91,17 +93,25 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <div className="mb-4">
               <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">
                 <Award className="w-3 h-3 mr-1" />
-                Featured Event
+                {t("events.featured")}
               </span>
             </div>
           )}
 
           {/* Event Image */}
-          <div className="w-full h-64 mb-6 overflow-hidden rounded-md">
+          <div className="flex items-center justify-center w-full h-64 mb-6 overflow-hidden rounded-md bg-gray-50">
             <img
-              src={event.imageUrl || "/placeholder.jpg"}
+              src={
+                event.imageUrl ||
+                event.thumbnailUrl ||
+                DEFAULT_PLACEHOLDER_IMAGE
+              }
               alt={event.title}
-              className="object-cover w-full h-full"
+              className={`w-full h-full ${
+                !event.imageUrl && !event.thumbnailUrl
+                  ? "object-contain p-8"
+                  : "object-cover"
+              }`}
             />
           </div>
 
@@ -109,7 +119,18 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="flex items-center text-gray-600">
               <CalendarDays className="w-5 h-5 mr-2 text-primary" />
-              <span>{event.eventDate}</span>
+              <span>
+                {(() => {
+                  const parsed = parseDateString(event.eventDate);
+                  return parsed
+                    ? parsed.toLocaleDateString(i18n.language, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : event.eventDate;
+                })()}
+              </span>
             </div>
 
             {event.location && (
@@ -121,7 +142,19 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
             <div className="flex items-center text-gray-600">
               <Clock className="w-5 h-5 mr-2 text-primary" />
-              <span>Published: {event.publishDate}</span>
+              <span>
+                Published:{" "}
+                {(() => {
+                  const parsed = parseDateString(event.publishDate);
+                  return parsed
+                    ? parsed.toLocaleDateString(i18n.language, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : event.publishDate;
+                })()}
+              </span>
             </div>
           </div>
 
@@ -164,14 +197,16 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
           {/* CTA Button */}
           <div className="flex justify-center mt-8">
-            <ArrowButton
-              text={event.callToAction || t("events.applyNow")}
-              onClick={() => {
-                window.open("/", "_blank");
-                onClose();
-              }}
-              className="px-6 py-2"
-            />
+            {event.callToAction && (
+              <ArrowButton
+                text={event.callToAction}
+                onClick={() => {
+                  window.open("/", "_blank");
+                  onClose();
+                }}
+                className="px-6 py-2"
+              />
+            )}
           </div>
         </div>
       </div>

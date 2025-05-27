@@ -6,8 +6,8 @@ export interface NewsArticle {
   imageUrl: string;
   thumbnailUrl: string;
   publishDate: string;
-  author: string;
-  tags: string[];
+  author?: string;
+  tags?: string[];
 }
 
 export interface Event {

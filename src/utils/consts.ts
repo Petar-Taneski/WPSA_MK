@@ -73,3 +73,6 @@ export const SOCIAL_MEDIA_LINKS = [
     icon: "/icons/instagram.svg",
   },
 ];
+
+// Placeholder image using WPSA PNG logo
+export const DEFAULT_PLACEHOLDER_IMAGE = "/Logo-WPSA.png";

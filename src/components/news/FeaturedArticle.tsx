@@ -2,6 +2,8 @@ import { NewsArticle } from "@/services/interfaces";
 import { useTranslation } from "react-i18next";
 import ReadMoreButton from "../common/ReadMoreButton";
 import { useNavigate } from "react-router-dom";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { parseDateString } from "@/lib/utils";
 
 interface FeaturedArticleProps {
   article: NewsArticle;
@@ -17,14 +19,17 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
   };
   console.log(article);
 
-  const formattedDate = new Date(publishDate).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const parsedDate = parseDateString(publishDate);
+  const formattedDate = parsedDate
+    ? parsedDate.toLocaleDateString(i18n.language, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : publishDate;
 
   const displayImageUrl =
-    article.imageUrl || article.thumbnailUrl || "/placeholder.jpg";
+    article.imageUrl || article.thumbnailUrl || DEFAULT_PLACEHOLDER_IMAGE;
 
   return (
     <div className="hover:shadow-md shadow-sm transition-shadow duration-300 group rounded-sm mb-1">
@@ -37,6 +42,11 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500/70 mb-4">
             <span>{formattedDate}</span>
             {author && <span>• {author}</span>}
+            {Array.isArray(article.tags) && article.tags.length > 0 && (
+              <span className="font-medium text-primary">
+                • {article.tags.join(", ")}
+              </span>
+            )}
             <span className="font-medium text-primary">
               • {t("news.featured")}
             </span>
@@ -53,11 +63,15 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
           onClick={() => navigate(getPostUrl())}
           className="lg:w-1/2 mb-4 lg:mb-0 order-1 lg:order-2 cursor-pointer"
         >
-          <div className="aspect-video lg:h-full rounded-sm overflow-hidden">
+          <div className="aspect-video lg:h-full rounded-sm overflow-hidden bg-gray-50 flex items-center justify-center">
             <img
               src={displayImageUrl}
               alt={title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
+              className={`w-full h-full ${
+                !article.imageUrl && !article.thumbnailUrl
+                  ? "object-contain p-8"
+                  : "object-cover"
+              } transition-transform duration-300 group-hover:scale-102`}
             />
           </div>
         </div>

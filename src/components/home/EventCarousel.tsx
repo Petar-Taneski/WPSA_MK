@@ -6,6 +6,8 @@ import { CalendarDays, MapPin } from "lucide-react";
 import { Event } from "@/services/interfaces";
 import { fetchEventsFromFirebase } from "@/services/api";
 import EventModal from "../events/EventModal";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { parseDateString } from "@/lib/utils";
 
 interface EventCarouselProps {
   onEventClick?: (event: Event) => void;
@@ -124,12 +126,14 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
         {/* Slides */}
         {featuredEvents.map((event, index) => {
           const position = getSlidePosition(index);
-          const eventDate = new Date(event.eventDate);
-          const formattedDate = eventDate.toLocaleDateString(i18n.language, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          });
+          const parsedDate = parseDateString(event.eventDate);
+          const formattedDate = parsedDate
+            ? parsedDate.toLocaleDateString(i18n.language, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            : event.eventDate;
 
           return (
             <div
@@ -149,8 +153,22 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
               <div className="relative h-full mx-4 overflow-hidden bg-white border rounded-sm shadow-lg border-slate-200">
                 {/* Background Image */}
                 <div
-                  className="absolute inset-0 w-full h-full bg-center bg-cover"
-                  style={{ backgroundImage: `url(${event.imageUrl})` }}
+                  className="absolute inset-0 w-full h-full bg-center bg-cover bg-gray-50"
+                  style={{
+                    backgroundImage: `url(${
+                      event.imageUrl ||
+                      event.thumbnailUrl ||
+                      DEFAULT_PLACEHOLDER_IMAGE
+                    })`,
+                    backgroundSize:
+                      !event.imageUrl && !event.thumbnailUrl
+                        ? "contain"
+                        : "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    padding:
+                      !event.imageUrl && !event.thumbnailUrl ? "2rem" : "0",
+                  }}
                 ></div>
 
                 {/* Content overlay with blur effect */}
@@ -168,18 +186,20 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
                         </div>
                       )}
                     </div>
-                    <h3 className="mb-2 text-xl font-bold tracking-tight sm:mb-4 sm:text-2xl md:text-3xl lg:text-4xl">
+                    <h3 className="mb-2 text-xl font-bold tracking-tight sm:mb-4 sm:text-2xl md:text-3xl lg:text-4xl line-clamp-3">
                       {event.title}
                     </h3>
-                    <p className="mb-4 text-sm sm:mb-8 sm:text-base text-slate-100">
+                    <p className="mb-4 text-sm sm:mb-8 sm:text-base text-slate-100 line-clamp-4">
                       {event.summary}
                     </p>
                     <div className="mt-auto">
-                      <ArrowButton
-                        className="text-sm bg-white hover:scale-105 text-primary sm:text-base"
-                        text={event.callToAction || t("events.applyNow")}
-                        onClick={() => handleEventClick(event)}
-                      />
+                      {event.callToAction && (
+                        <ArrowButton
+                          className="text-sm bg-white hover:scale-105 text-primary sm:text-base"
+                          text={event.callToAction}
+                          onClick={() => handleEventClick(event)}
+                        />
+                      )}
                     </div>
                   </div>
                 </div>
