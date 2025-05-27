@@ -67,8 +67,10 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
 
   // Extract all unique tags from articles
   const allTags = Array.from(
-    new Set(articles.flatMap((article) => article.tags))
-  ).sort();
+    new Set(articles.flatMap((article) => article.tags ?? []))
+  )
+    .filter((tag): tag is string => typeof tag === "string")
+    .sort();
 
   // Get the featured article (newest) - independent of filters
   const featuredArticle = articles.length > 0 ? articles[0] : null;
@@ -76,14 +78,15 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
   // Filter articles based on active filter and search query
   const filteredArticles = articles.filter((article) => {
     // Filter by tag if active
-    const matchesTag = !activeFilter || article.tags.includes(activeFilter);
+    const matchesTag =
+      !activeFilter || (article.tags?.includes(activeFilter) ?? false);
 
     // Filter by search query if present
     const matchesSearch =
       !searchQuery ||
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.author.toLowerCase().includes(searchQuery.toLowerCase());
+      (article.author ?? "").toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesTag && matchesSearch;
   });
