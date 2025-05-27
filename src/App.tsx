@@ -64,7 +64,7 @@ function App() {
       <div className="app overflow-x-clip">
         <ToastContainer position="top-right" autoClose={5000} />
         <Suspense fallback={<LoadingState />}>
-          <div className="hidden lg:block h-[13vh]">
+          <div className="hidden lg:block h-[13vh] overflow-x-hidden">
             <Navigation openContactModal={openContactModal} />
           </div>
           <div className={`block lg:hidden h-[15vh]`}>
@@ -122,7 +122,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
-          <div className=" h-[13vh] max-md:hidden">
+          <div className=" h-[13vh] max-md:hidden verflow-x-hidden">
             <Footer />
           </div>
 

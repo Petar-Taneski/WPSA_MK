@@ -64,7 +64,7 @@ const Navigation: React.FC<NavigationProps> = ({ openContactModal }) => {
   };
 
   return (
-    <header className="max-[1024px]:hidden px-[5vw] h-[13vh] fixed w-screen top-0 z-50 bg-white shadow-[0_4px_15px_-3px] shadow-primary/40">
+    <header className="max-[1024px]:hidden px-[5vw] h-[13vh] fixed w-screen overflow-x-hidden top-0 z-50 bg-white shadow-[0_4px_15px_-3px] shadow-primary/40">
       <div className="flex items-center justify-between w-full h-full">
         <Link to="/">
           <img

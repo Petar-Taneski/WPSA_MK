@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+import { sendJoinUsEmail } from "../../services/api";
 
 const JoinUs: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen: initialIsOpen,
@@ -42,7 +43,7 @@ const JoinUs: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (
       ime === "" ||
       prezime === "" ||
@@ -63,58 +64,41 @@ const JoinUs: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       toast.error(t("contact.errors.invalidEmail"));
       return;
     }
-
-    // Mock successful submission
-    toast.success(t("contact.success.messageSent"));
-
-    // Reset form
-    setIme("");
-    setPrezime("");
-    setEmail("");
-    setTelefon("");
-    setZvanje("");
-    setPol("");
-    setDatumNaRagjanje("");
-    setKompanija("");
-    setAdresa("");
-    setPostenskiBroj("");
-    setGrad("");
-
-    // Close modal
-    onClose();
+    try {
+      await sendJoinUsEmail({
+        ime,
+        prezime,
+        email,
+        telefon,
+        zvanje,
+        pol,
+        datumNaRagjanje,
+        kompanija,
+        adresa,
+        postenskiBroj,
+        grad,
+      });
+      toast.success(t("contact.success.messageSent"));
+      setIme("");
+      setPrezime("");
+      setEmail("");
+      setTelefon("");
+      setZvanje("");
+      setPol("");
+      setDatumNaRagjanje("");
+      setKompanija("");
+      setAdresa("");
+      setPostenskiBroj("");
+      setGrad("");
+      onClose();
+    } catch (error: unknown) {
+      let errorMessage = t("contact.errors.sendMessageFailed");
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+    }
   };
-
-  // const handleSubmit = async () => {
-  //   const token = recaptcha?.current?.getValue();
-  //   if (ime === "" || prezime === "" || email === "" || telefon === "" || zvanje === "" || pol === "" || datumNaRagjanje === "" || kompanija === "" || adresa === "" || postenskiBroj === "" || grad === "" || !token) {
-  //     toast.error("Please fill in all fields.", toastDefaultOptions);
-  //     return;
-  //   }
-  //   if (!validateEmail(email)) {
-  //     toast.error("Please enter a valid email address.", toastDefaultOptions);
-  //     return;
-  //   }
-  //   try {
-  //     await sendJoinUsEmail({ ime, prezime, email, telefon, zvanje, pol, datumNaRagjanje, kompanija, adresa, postenskiBroj, grad, token });
-  //     toast.success("Message sent successfully!", toastDefaultOptions);
-  //     setIme("");
-  //     setPrezime("");
-  //     setEmail("");
-  //     setTelefon("");
-  //     setZvanje("");
-  //     setPol("");
-  //     setDatumNaRagjanje("");
-  //     setKompanija("");
-  //     setAdresa("");
-  //     setPostenskiBroj("");
-  //     setGrad("");
-  //   } catch (error: any) {
-  //     toast.error(
-  //       error.message || "Failed to send message. Please try again.",
-  //       toastDefaultOptions
-  //     );
-  //   }
-  // };
 
   // Simple email validation
   const validateEmail = (email: string) => {

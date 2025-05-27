@@ -10,6 +10,7 @@ import {
   limit,
   startAfter,
   orderBy,
+  addDoc,
 } from "firebase/firestore";
 import { formatDate } from "@/lib/utils";
 
@@ -74,10 +75,7 @@ export const fetchNewsArticleFromFirebase = async (
     return {
       ...newsSnapshot.data(),
       id: newsSnapshot.id,
-      publishDate: formatDate(
-        newsSnapshot.data().publishDate.toDate(),
-        lang
-      ),
+      publishDate: formatDate(newsSnapshot.data().publishDate.toDate(), lang),
     } as NewsArticle;
   } catch (error) {
     console.error(
@@ -167,6 +165,63 @@ export const fetchEventFromFirebase = async (
     } as Event;
   } catch (error) {
     console.error(`Error fetching event with ID: ${id} from Firebase:`, error);
+    throw error;
+  }
+};
+
+export const sendJoinUsEmail = async (formData: {
+  ime: string;
+  prezime: string;
+  email: string;
+  telefon: string;
+  zvanje: string;
+  pol: string;
+  datumNaRagjanje: string;
+  kompanija: string;
+  adresa: string;
+  postenskiBroj: string;
+  grad: string;
+}) => {
+  try {
+    const {
+      ime,
+      prezime,
+      email,
+      telefon,
+      zvanje,
+      pol,
+      datumNaRagjanje,
+      kompanija,
+      adresa,
+      postenskiBroj,
+      grad,
+    } = formData;
+    const emailData = {
+      ime,
+      prezime,
+      email,
+      telefon,
+      zvanje,
+      pol,
+      datumNaRagjanje,
+      kompanija,
+      adresa,
+      postenskiBroj,
+      grad,
+    };
+    const emailText = Object.entries(emailData)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join("\n");
+
+    await addDoc(collection(db, "mail"), {
+      to: ["1nikolablagoevski6@gmail.com"],
+      message: {
+        subject: "Пријавување на нов член",
+        text: emailText,
+      },
+    });
+  } catch (error) {
+    console.error("Error sending join us email:", error);
     throw error;
   }
 };
