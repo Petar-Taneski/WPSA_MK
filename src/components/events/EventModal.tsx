@@ -81,7 +81,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
-            aria-label={t("common.close")}
+            aria-label={t("common.close", "Close")}
           >
             ✕
           </button>
@@ -93,7 +93,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <div className="mb-4">
               <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">
                 <Award className="w-3 h-3 mr-1" />
-                {t("events.featured")}
+                {t("events.featured", "Featured")}
               </span>
             </div>
           )}
@@ -143,7 +143,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <div className="flex items-center text-gray-600">
               <Clock className="w-5 h-5 mr-2 text-primary" />
               <span>
-                Published:{" "}
+                {t("events.published", "Published")}:{" "}
                 {(() => {
                   const parsed = parseDateString(event.publishDate);
                   return parsed
@@ -163,7 +163,11 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <button
               onClick={copyToClipboard}
               className="flex items-center justify-center px-3 py-1.5 text-sm border border-primary rounded-md hover:bg-primary/10 transition-colors"
-              aria-label={urlCopied ? "URL copied" : "Copy event URL"}
+              aria-label={
+                urlCopied
+                  ? t("common.copied", "Copied!")
+                  : t("common.copyLink", "Copy Link")
+              }
             >
               {urlCopied ? (
                 <>
@@ -180,17 +184,19 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           </div>
 
           {/* Event Summary */}
-          <div className="mb-6">
-            <h3 className="mb-2 text-lg font-semibold text-gray-700">
-              Summary
-            </h3>
-            <p className="text-gray-700">{event.summary}</p>
-          </div>
+          {event.summary && (
+            <div className="mb-6">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                {t("events.summary", "Summary")}
+              </h3>
+              <p className="text-gray-700">{event.summary}</p>
+            </div>
+          )}
 
           {/* Event Content */}
           <div className="mb-8 prose-sm prose max-w-none">
             <h3 className="mb-2 text-lg font-semibold text-gray-700">
-              Details
+              {t("events.details", "Details")}
             </h3>
             <div className="markdown-content">{event.content}</div>
           </div>

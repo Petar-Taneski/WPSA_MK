@@ -40,6 +40,7 @@
     "organizer": "Organizer",
     "eventDate": "Date",
     "eventTime": "Time",
+    "featured": "Featured",
     "contactInfo": "Contact Information",
     "joinEvent": "Join Event",
     "applyNow": "Apply Now",

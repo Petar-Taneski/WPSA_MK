@@ -30,7 +30,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
           key={event.id}
           className="py-0 overflow-hidden transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
         >
-          <div className="flex flex-col sm:flex-row h-fit sm:h-[220px]">
+          <div className="flex flex-col sm:flex-row h-fit max-md:h-[220px]">
             <div
               className="relative flex items-center justify-center h-48 cursor-pointer sm:w-1/3 sm:h-full bg-gray-50"
               onClick={() => handleEventClick(event)}
@@ -57,7 +57,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col p-5 sm:w-2/3">
+            <div className="flex flex-col p-5 h-fit sm:w-2/3">
               <h2 className="mb-2 text-xl font-semibold text-gray-800 line-clamp-2">
                 {event.title}
               </h2>
@@ -75,9 +75,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
                 )}
               </div>
 
-              <p className="flex-grow mb-4 text-gray-600 line-clamp-3">
-                {event.summary}
-              </p>
+              <p className="mb-4 text-gray-600 line-clamp-2">{event.summary}</p>
 
               <div className="flex items-center justify-end mt-auto">
                 <ArrowButton
