@@ -183,16 +183,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             </button>
           </div>
 
-          {/* Event Summary */}
-          {event.summary && (
-            <div className="mb-6">
-              <h3 className="mb-2 text-lg font-semibold text-gray-700">
-                {t("events.summary", "Summary")}
-              </h3>
-              <p className="text-gray-700">{event.summary}</p>
-            </div>
-          )}
-
           {/* Event Content */}
           <div className="mb-8 prose-sm prose max-w-none">
             <h3 className="mb-2 text-lg font-semibold text-gray-700">
