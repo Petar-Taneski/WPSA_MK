@@ -24,7 +24,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 border max-h-[300px] overflow-clip">
       {events.map((event) => (
         <div
           key={event.id}

@@ -99,7 +99,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           )}
 
           {/* Event Image */}
-          <div className="flex items-center justify-center w-full h-64 mb-6 overflow-hidden rounded-md bg-gray-50">
+          <div className="flex items-center justify-center w-full h-full mb-6 overflow-hidden rounded-md bg-gray-50">
             <img
               src={
                 event.imageUrl ||
@@ -110,7 +110,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
               className={`w-full h-full ${
                 !event.imageUrl && !event.thumbnailUrl
                   ? "object-contain p-8"
-                  : "object-cover"
+                  : "object-fill"
               }`}
             />
           </div>
