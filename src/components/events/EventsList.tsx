@@ -24,11 +24,11 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
   };
 
   return (
-    <div className="space-y-6 border max-h-[300px] overflow-clip">
+    <div className="space-y-6 border ">
       {events.map((event) => (
         <div
           key={event.id}
-          className="py-0 overflow-hidden transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
+          className="py-0 max-h-[300px] overflow-clip transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
         >
           <div className="flex flex-col sm:flex-row h-fit max-md:h-[220px]">
             <div
