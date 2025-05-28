@@ -124,8 +124,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   // Contact information
-  const phoneNumber = "+389 71 234 567";
-  const emailAddress = "contact@example.com";
+  const phoneNumber = "+389 75267026";
+  const emailAddress = "ivinarskozdruzenie@gmail.com";
 
   return (
     <div
