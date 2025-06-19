@@ -1,10 +1,10 @@
-import { Event } from "@/services/interfaces";
-import ArrowButton from "../common/ArrowButton";
-import { useTranslation } from "react-i18next";
-import { CalendarDays, MapPin, Clock, Award, Copy, Check } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
 import { parseDateString } from "@/lib/utils";
+import { Event } from "@/services/interfaces";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { Award, CalendarDays, Check, Clock, Copy, MapPin } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import ArrowButton from "../common/ArrowButton";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -88,7 +88,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
         </div>
 
         <div className="w-full text-gray-800/85">
-          {/* Featured Badge */}
           {event.isFeatured && (
             <div className="mb-4">
               <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">
@@ -98,7 +97,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             </div>
           )}
 
-          {/* Event Image */}
           <div className="flex items-center justify-center w-full h-full mb-6 overflow-hidden rounded-md bg-gray-50">
             <img
               src={
@@ -115,7 +113,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             />
           </div>
 
-          {/* Event Meta Information */}
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="flex items-center text-gray-600">
               <CalendarDays className="w-5 h-5 mr-2 text-primary" />
@@ -158,7 +155,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             </div>
           </div>
 
-          {/* Copy URL Button */}
           <div className="my-4">
             <button
               onClick={copyToClipboard}
@@ -183,7 +179,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             </button>
           </div>
 
-          {/* Event Content */}
           <div className="mb-8 prose-sm prose max-w-none">
             <h3 className="mb-2 text-lg font-semibold text-gray-700">
               {t("events.details", "Details")}
@@ -191,7 +186,6 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <div className="markdown-content">{event.content}</div>
           </div>
 
-          {/* CTA Button */}
           <div className="flex justify-center mt-8">
             {event.callToAction && (
               <ArrowButton
