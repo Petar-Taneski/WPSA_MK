@@ -1,4 +1,4 @@
-import { useNews } from "@/contexts/NewsContext";
+import { useNews } from "@/providers/news";
 import EmptyState from "./EmptyState";
 import NewsCard from "./NewsCard";
 import FilterBar from "./FilterBar";
