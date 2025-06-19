@@ -103,12 +103,11 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <img
               src={
                 event.imageUrl ||
-                event.thumbnailUrl ||
                 DEFAULT_PLACEHOLDER_IMAGE
               }
               alt={event.title}
               className={`w-full h-full ${
-                !event.imageUrl && !event.thumbnailUrl
+                !event.imageUrl
                   ? "object-contain p-8"
                   : "object-fill"
               }`}
@@ -193,9 +192,9 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
           {/* CTA Button */}
           <div className="flex justify-center mt-8">
-            {event.callToAction && (
+            {event.formUrl && (
               <ArrowButton
-                text={event.callToAction}
+                text={event.formUrl}
                 onClick={() => {
                   window.open("/", "_blank");
                   onClose();

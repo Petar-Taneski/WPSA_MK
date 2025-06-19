@@ -37,13 +37,11 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
             >
               <img
                 src={
-                  event.thumbnailUrl ||
                   event.imageUrl ||
                   DEFAULT_PLACEHOLDER_IMAGE
                 }
                 alt={event.title}
-                className={`w-full h-full ${
-                  !event.thumbnailUrl && !event.imageUrl
+                className={`w-full h-full ${!event.imageUrl
                     ? "object-contain p-6"
                     : "object-cover"
                 }`}
@@ -80,8 +78,8 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
               <div className="flex items-center justify-end mt-auto">
                 <ArrowButton
                   text={
-                    event.callToAction
-                      ? event.callToAction
+                    event.formUrl
+                      ? event.formUrl
                       : i18n.language === "mk"
                       ? "Прочитај повеќе"
                       : "Learn More"
