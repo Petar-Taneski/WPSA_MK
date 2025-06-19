@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useNews } from "../../contexts/NewsContext";
+import { useNews } from "../../providers/news";
 import FeaturedArticle from "./FeaturedArticle";
 import LoadingState from "./LoadingState";
 import NewsArticles from "./NewsArticles";

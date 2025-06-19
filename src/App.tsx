@@ -4,7 +4,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navigation from "./components/headers/Navigation";
 import MobileHeader from "./components/headers/mobileHeader/MobileHeader";
-import { NewsProvider } from "./contexts/NewsContext";
+import { NewsProvider } from "./providers/news";
+import { AuthProvider } from "./providers/auth";
 import DashboardPost from "./components/dashboardd/Post";
 import Footer from "./components/footer/Footer";
 import ContactForm from "./components/ContactForm";
@@ -13,15 +14,18 @@ import "react-toastify/dist/ReactToastify.css";
 import JoinUs from "./components/joinUs/JoinUs";
 import FloatingButton from "./components/joinUs/FloatingButton";
 import LoadingState from "./components/news/LoadingState";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
 const News = lazy(() => import("./pages/News"));
 const Events = lazy(() => import("./pages/Events"));
 const Post = lazy(() => import("./pages/Post"));
+const Admin = lazy(() => import("./pages/Admin"));
+const Login = lazy(() => import("./pages/Login"));
 
 const NewsWithProvider = () => (
-  <NewsProvider>  
+  <NewsProvider>
     <News />
   </NewsProvider>
 );
@@ -61,79 +65,98 @@ function App() {
   const unusedFeatures = false;
   return (
     <BrowserRouter>
-      <div className="app overflow-x-clip">
-        <ToastContainer position="top-right" autoClose={5000} />
-        <Suspense fallback={<LoadingState />}>
-          <div className="hidden lg:block h-[13vh] overflow-x-hidden">
-            <Navigation openContactModal={openContactModal} />
-          </div>
-          <div className={`block lg:hidden h-[15vh]`}>
-            <MobileHeader openContactModal={openContactModal} />
-          </div>
-          <div className="relative">
-            <Routes>
-              {/* Default redirect to user's language */}
-              <Route
-                path="/"
-                element={
-                  <Navigate
-                    to={`/${i18n.language}/${
-                      paths[i18n.language as keyof typeof paths].home
-                    }`}
-                    replace
+      <AuthProvider>
+        <div className="app overflow-x-clip">
+          <ToastContainer position="top-right" autoClose={5000} />
+          <Suspense fallback={<LoadingState />}>
+            <div className="hidden lg:block h-[13vh]">
+              <Navigation openContactModal={openContactModal} />
+            </div>
+            <div className={`block lg:hidden h-[15vh]`}>
+              <MobileHeader openContactModal={openContactModal} />
+            </div>
+            <div className="relative">
+              <Routes>
+                {/* Default redirect to user's language */}
+                <Route
+                  path="/"
+                  element={
+                    <Navigate
+                      to={`/${i18n.language}/${
+                        paths[i18n.language as keyof typeof paths].home
+                      }`}
+                      replace
+                    />
+                  }
+                />
+
+                {/* English routes */}
+                <Route
+                  path="/en"
+                  element={<Navigate to={`/en/${paths.en.home}`} replace />}
+                />
+                <Route path={`/en/${paths.en.home}`} element={<Home />} />
+                <Route path={`/en/${paths.en.about}`} element={<About />} />
+                <Route
+                  path={`/en/${paths.en.news}`}
+                  element={<NewsWithProvider />}
+                />
+                <Route path={`/en/news/:id`} element={<PostWithProvider />} />
+                <Route path={`/en/${paths.en.events}`} element={<Events />} />
+                {unusedFeatures && (
+                  <Route
+                    path="/en/dashboard/post"
+                    element={<DashboardPost />}
                   />
-                }
-              />
+                )}
+                {/* Macedonian routes */}
+                <Route
+                  path="/mk"
+                  element={<Navigate to={`/mk/${paths.mk.home}`} replace />}
+                />
+                <Route path={`/mk/${paths.mk.home}`} element={<Home />} />
+                <Route path={`/mk/${paths.mk.about}`} element={<About />} />
+                <Route
+                  path={`/mk/${paths.mk.news}`}
+                  element={<NewsWithProvider />}
+                />
+                <Route path={`/mk/вести/:id`} element={<PostWithProvider />} />
+                <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
+                {unusedFeatures && (
+                  <Route
+                    path="/mk/dashboard/post"
+                    element={<DashboardPost />}
+                  />
+                )}
 
-              {/* English routes */}
-              <Route
-                path="/en"
-                element={<Navigate to={`/en/${paths.en.home}`} replace />}
-              />
-              <Route path={`/en/${paths.en.home}`} element={<Home />} />
-              <Route path={`/en/${paths.en.about}`} element={<About />} />
-              <Route
-                path={`/en/${paths.en.news}`}
-                element={<NewsWithProvider />}
-              />
-              <Route path={`/en/news/:id`} element={<PostWithProvider />} />
-              <Route path={`/en/${paths.en.events}`} element={<Events />} />
-              {unusedFeatures && (
-                <Route path="/en/dashboard/post" element={<DashboardPost />} />
-              )}
-              {/* Macedonian routes */}
-              <Route
-                path="/mk"
-                element={<Navigate to={`/mk/${paths.mk.home}`} replace />}
-              />
-              <Route path={`/mk/${paths.mk.home}`} element={<Home />} />
-              <Route path={`/mk/${paths.mk.about}`} element={<About />} />
-              <Route
-                path={`/mk/${paths.mk.news}`}
-                element={<NewsWithProvider />}
-              />
-              <Route path={`/mk/вести/:id`} element={<PostWithProvider />} />
-              <Route path={`/mk/${paths.mk.events}`} element={<Events />} />
-              {unusedFeatures && (
-                <Route path="/mk/dashboard/post" element={<DashboardPost />} />
-              )}
+                {/* Admin routes */}
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <Admin />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Fallback for invalid routes */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-          <div className=" h-[13vh] max-md:hidden verflow-x-hidden">
-            <Footer />
-          </div>
+                {/* Fallback for invalid routes */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </div>
+            <div className=" h-[13vh] max-md:hidden">
+              <Footer />
+            </div>
 
-          <ContactForm
-            isOpen={isContactModalOpen}
-            onClose={closeContactModal}
-          />
-          <JoinUs isOpen={isJoinUsModalOpen} onClose={closeJoinUsModal} />
-          <FloatingButton onClick={openJoinUsModal} />
-        </Suspense>
-      </div>
+            <ContactForm
+              isOpen={isContactModalOpen}
+              onClose={closeContactModal}
+            />
+            <JoinUs isOpen={isJoinUsModalOpen} onClose={closeJoinUsModal} />
+            <FloatingButton onClick={openJoinUsModal} />
+          </Suspense>
+        </div>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

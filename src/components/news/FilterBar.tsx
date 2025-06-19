@@ -1,6 +1,6 @@
 import { useRef, ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNews } from "../../contexts/NewsContext";
+import { useNews } from "../../providers/news";
 
 const FilterBar = () => {
   const { t } = useTranslation();
