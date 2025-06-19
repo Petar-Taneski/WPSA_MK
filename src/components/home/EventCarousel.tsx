@@ -156,17 +156,16 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
                   style={{
                     backgroundImage: `url(${
                       event.imageUrl ||
-                      event.thumbnailUrl ||
                       DEFAULT_PLACEHOLDER_IMAGE
                     })`,
                     backgroundSize:
-                      !event.imageUrl && !event.thumbnailUrl
+                      !event.imageUrl
                         ? "contain"
                         : "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                     padding:
-                      !event.imageUrl && !event.thumbnailUrl ? "2rem" : "0",
+                      !event.imageUrl? "2rem" : "0",
                   }}
                 ></div>
 

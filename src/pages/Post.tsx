@@ -11,6 +11,7 @@ import {
   PostLoading,
   PostError,
 } from "../components/post";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
 
 const Post: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -89,9 +90,10 @@ const Post: React.FC = () => {
     return <PostError message={error || t("post.notFound")} />;
   }
 
+  const displayImageUrl = article.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
   return (
     <div className="px-4 py-8 mx-auto max-w-7xl">
-      <PostHeader title={article.title} imageUrl={article.imageUrl} />
+      <PostHeader title={article.title} imageUrl={displayImageUrl} />
 
       <div className="mb-4 md:p-4 md:pb-4 md:mb-8 md:border-b md:border-gray-200">
         <div className="flex flex-wrap items-center justify-between gap-4">

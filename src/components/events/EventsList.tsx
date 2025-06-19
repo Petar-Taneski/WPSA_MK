@@ -36,16 +36,10 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
               onClick={() => handleEventClick(event)}
             >
               <img
-                src={
-                  event.thumbnailUrl ||
-                  event.imageUrl ||
-                  DEFAULT_PLACEHOLDER_IMAGE
-                }
+                src={event.imageUrl || DEFAULT_PLACEHOLDER_IMAGE}
                 alt={event.title}
                 className={`w-full max-sm:h-full overflow-clip max-xl:h-[230px] xl:h-[300px] ${
-                  !event.thumbnailUrl && !event.imageUrl
-                    ? "object-contain p-6"
-                    : "object-cover"
+                  !event.imageUrl ? "object-contain p-6" : "object-cover"
                 }`}
               />
               <div className="absolute top-0 right-0 px-3 py-1 m-3 text-sm font-medium text-white rounded bg-primary/90">

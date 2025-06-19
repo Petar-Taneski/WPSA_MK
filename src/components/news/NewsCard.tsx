@@ -10,7 +10,7 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ article }: NewsCardProps) => {
-  const { id, title, summary, thumbnailUrl, publishDate, author } = article;
+  const { id, title, summary, imageUrl, publishDate, author } = article;
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
     return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
   };
 
-  const displayImageUrl = thumbnailUrl || DEFAULT_PLACEHOLDER_IMAGE;
+  const displayImageUrl = imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
 
   return (
     <div
@@ -46,7 +46,7 @@ const NewsCard = ({ article }: NewsCardProps) => {
             src={displayImageUrl}
             alt=""
             className={`h-full w-full ${
-              !thumbnailUrl ? "object-contain p-8" : "object-cover"
+              !imageUrl  ? "object-contain p-8" : "object-cover"
             } transition-transform duration-300 group-hover:scale-102`}
           />
         </div>

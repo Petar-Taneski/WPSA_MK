@@ -99,16 +99,10 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
           <div className="flex items-center justify-center w-full h-full mb-6 overflow-hidden rounded-md bg-gray-50">
             <img
-              src={
-                event.imageUrl ||
-                event.thumbnailUrl ||
-                DEFAULT_PLACEHOLDER_IMAGE
-              }
+              src={event.imageUrl || DEFAULT_PLACEHOLDER_IMAGE}
               alt={event.title}
               className={`w-full h-full ${
-                !event.imageUrl && !event.thumbnailUrl
-                  ? "object-contain p-8"
-                  : "object-fill"
+                !event.imageUrl ? "object-contain p-8" : "object-fill"
               }`}
             />
           </div>
@@ -187,15 +181,14 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           </div>
 
           <div className="flex justify-center mt-8">
-            {event.callToAction && (
-              <ArrowButton
-                text={event.callToAction}
-                onClick={() => {
-                  window.open("/", "_blank");
-                  onClose();
-                }}
-                className="px-6 py-2"
-              />
+            {event.formUrl && (
+              <a href={event.formUrl} target="_blank">
+                <ArrowButton
+                  text={t("events.applyNow")}
+                  onClick={() => {}}
+                  className="px-6 py-2"
+                />
+              </a>
             )}
           </div>
         </div>
