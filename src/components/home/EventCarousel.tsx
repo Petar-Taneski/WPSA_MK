@@ -1,13 +1,12 @@
-import { useState, useEffect, useRef } from "react";
-import ArrowButton from "../common/ArrowButton";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { CalendarDays, MapPin } from "lucide-react";
-import { Event } from "@/services/interfaces";
-import { fetchEventsFromFirebase } from "@/services/api";
-import EventModal from "../events/EventModal";
-import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
 import { parseDateString } from "@/lib/utils";
+import { fetchEventsFromFirebase } from "@/services/api";
+import { Event } from "@/services/interfaces";
+import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { CalendarDays, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import ArrowButton from "../common/ArrowButton";
+import EventModal from "../events/EventModal";
 
 interface EventCarouselProps {
   onEventClick?: (event: Event) => void;
@@ -192,13 +191,11 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
                       {event.summary}
                     </p>
                     <div className="mt-auto">
-                      {event.formUrl && (
-                        <ArrowButton
-                          className="text-sm bg-white hover:scale-105 text-primary sm:text-base"
-                          text={event.formUrl}
-                          onClick={() => handleEventClick(event)}
-                        />
-                      )}
+                      <ArrowButton
+                        className="text-sm bg-white hover:scale-105 text-primary sm:text-base"
+                        text={t("events.learnMore")}
+                        onClick={() => handleEventClick(event)}
+                      />
                     </div>
                   </div>
                 </div>

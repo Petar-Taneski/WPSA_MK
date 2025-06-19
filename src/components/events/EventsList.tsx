@@ -1,8 +1,8 @@
 import { Event } from "@/services/interfaces";
-import { CalendarDays, MapPin } from "lucide-react";
-import ArrowButton from "../common/ArrowButton";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { CalendarDays, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import ArrowButton from "../common/ArrowButton";
 
 interface EventsListProps {
   events: Event[];
@@ -10,7 +10,7 @@ interface EventsListProps {
 }
 
 const EventsList = ({ events, onEventClick }: EventsListProps) => {
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const handleEventClick = (event: Event) => {
     if (onEventClick) {
       onEventClick(event);
@@ -24,26 +24,22 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
   };
 
   return (
-    <div className="space-y-6 border ">
+    <div className="space-y-6">
       {events.map((event) => (
         <div
           key={event.id}
-          className="py-0 max-h-[300px] overflow-clip transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
+          className="py-0 h-fit max-sm:overflow-clip transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
         >
-          <div className="flex flex-col sm:flex-row h-fit max-md:h-[220px]">
+          <div className="flex flex-col max-sm:h-fit sm:flex-row  max-xl:h-[230px] xl:h-[300px]">
             <div
-              className="relative flex items-center justify-center h-48 cursor-pointer sm:w-1/3 sm:h-full bg-gray-50"
+              className="relative flex items-center justify-center h-64 cursor-pointer sm:w-1/3 sm:h-fit bg-gray-50"
               onClick={() => handleEventClick(event)}
             >
               <img
-                src={
-                  event.imageUrl ||
-                  DEFAULT_PLACEHOLDER_IMAGE
-                }
+                src={event.imageUrl || DEFAULT_PLACEHOLDER_IMAGE}
                 alt={event.title}
-                className={`w-full h-full ${!event.imageUrl
-                    ? "object-contain p-6"
-                    : "object-cover"
+                className={`w-full max-sm:h-full overflow-clip max-xl:h-[230px] xl:h-[300px] ${
+                  !event.imageUrl ? "object-contain p-6" : "object-cover"
                 }`}
               />
               <div className="absolute top-0 right-0 px-3 py-1 m-3 text-sm font-medium text-white rounded bg-primary/90">
@@ -55,7 +51,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
                 </div>
               )}
             </div>
-            <div className="flex flex-col p-5 h-fit sm:w-2/3">
+            <div className="flex flex-col p-5 max-sm:h-fit max-xl:h-[230px] xl:h-[300px] sm:w-2/3">
               <h2 className="mb-2 text-xl font-semibold text-gray-800 line-clamp-2">
                 {event.title}
               </h2>
@@ -77,13 +73,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
 
               <div className="flex items-center justify-end mt-auto">
                 <ArrowButton
-                  text={
-                    event.formUrl
-                      ? event.formUrl
-                      : i18n.language === "mk"
-                      ? "Прочитај повеќе"
-                      : "Learn More"
-                  }
+                  text={t("events.learnMore")}
                   onClick={() => handleEventClick(event)}
                   className="text-sm"
                 />
