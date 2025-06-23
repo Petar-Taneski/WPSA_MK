@@ -11,8 +11,153 @@ import {
   startAfter,
   orderBy,
   addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  QueryDocumentSnapshot,
+  DocumentData,
+  DocumentSnapshot,
 } from "firebase/firestore";
 import { formatDate } from "@/lib/utils";
+
+// Types for admin CRUD operations
+export type NewsArticleInput = Omit<NewsArticle, "id" | "publishDate"> & {
+  publishDate?: Date;
+};
+
+export type EventInput = Omit<
+  Event,
+  "id" | "publishDate" | "eventDate" | "eventEndDate"
+> & {
+  publishDate?: Date;
+  eventDate: Date;
+  eventEndDate?: Date;
+};
+
+// News CRUD Operations
+export const createNewsArticle = async (
+  data: NewsArticleInput,
+  uid: string
+): Promise<string> => {
+  const ref = await addDoc(collection(db, "news"), {
+    ...data,
+    publishDate: data.publishDate ?? serverTimestamp(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    createdBy: uid,
+    updatedBy: uid,
+  });
+  return ref.id;
+};
+
+export const updateNewsArticle = async (
+  id: string,
+  data: Partial<NewsArticleInput>,
+  uid: string
+): Promise<void> => {
+  await updateDoc(doc(db, "news", id), {
+    ...data,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid,
+  });
+};
+
+export const deleteNewsArticle = async (id: string): Promise<void> => {
+  await deleteDoc(doc(db, "news", id));
+};
+
+// Event CRUD Operations
+export const createEvent = async (
+  data: EventInput,
+  uid: string
+): Promise<string> => {
+  const ref = await addDoc(collection(db, "events"), {
+    ...data,
+    publishDate: data.publishDate ?? serverTimestamp(),
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    createdBy: uid,
+    updatedBy: uid,
+  });
+  return ref.id;
+};
+
+export const updateEvent = async (
+  id: string,
+  data: Partial<EventInput>,
+  uid: string
+): Promise<void> => {
+  await updateDoc(doc(db, "events", id), {
+    ...data,
+    updatedAt: serverTimestamp(),
+    updatedBy: uid,
+  });
+};
+
+export const deleteEvent = async (id: string): Promise<void> => {
+  await deleteDoc(doc(db, "events", id));
+};
+
+// Infinite scroll functions
+export const fetchNewsChunk = async (
+  lang: string,
+  tag: string | null,
+  pageSize = 15,
+  lastDoc?: QueryDocumentSnapshot<DocumentData>
+) => {
+  let q = query(
+    collection(db, "news"),
+    where("lang", "==", lang === "en" ? "english" : "macedonian"),
+    orderBy("publishDate", "desc"),
+    limit(pageSize)
+  );
+
+  if (tag) {
+    q = query(q, where("tags", "array-contains", tag));
+  }
+
+  if (lastDoc) {
+    q = query(q, startAfter(lastDoc));
+  }
+
+  const snap = await getDocs(q);
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    publishDate: formatDate(d.data().publishDate.toDate(), lang),
+    _doc: d,
+  })) as (NewsArticle & { _doc: DocumentSnapshot })[];
+
+  return { items, lastDoc: snap.docs.at(-1) };
+};
+
+export const fetchEventsChunk = async (
+  lang: string,
+  pageSize = 15,
+  lastDoc?: QueryDocumentSnapshot<DocumentData>
+) => {
+  let q = query(
+    collection(db, "events"),
+    where("lang", "==", lang === "en" ? "english" : "macedonian"),
+    orderBy("publishDate", "desc"),
+    limit(pageSize)
+  );
+
+  if (lastDoc) {
+    q = query(q, startAfter(lastDoc));
+  }
+
+  const snap = await getDocs(q);
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    publishDate: formatDate(d.data().publishDate.toDate(), lang),
+    eventDate: formatDate(d.data().eventDate.toDate(), lang),
+    _doc: d,
+  })) as (Event & { _doc: DocumentSnapshot })[];
+
+  return { items, lastDoc: snap.docs.at(-1) };
+};
 
 export const fetchNewsArticlesFromFirebase = async ({
   lang,

@@ -1,0 +1,346 @@
+────────────────────────────────────────────────────────────
+WPSA - ADMIN PANEL – IMPLEMENTATION GUIDE
+────────────────────────────────────────────────────────────
+Last update: 2024-06-23
+
+CONTENTS
+1  Overview
+2  Data model recap
+3  Firebase layout & security
+4  API layer extensions  (src/services/api.ts)
+5  SWR + infinite scroll hooks  (src/hooks/)
+6  UI structure & routing      (src/pages/Admin/, src/components/admin/)
+7  Create / Edit / Delete flows
+8  Authentication & authorisation
+9  Validation, rich-text & uploads
+10 Testing & deployment checklist
+────────────────────────────────────────────────────────────
+
+
+1  OVERVIEW
+-----------
+Goal: Replace the dummy `src/pages/Admin.tsx` with a fully-functional admin
+dashboard that lets privileged users — 
+ • list news articles and events with infinite scroll;
+ • create new records;
+ • edit existing records; and
+ • delete records.
+
+Tech decisions
+• Uses the existing Firestore backend (`news`, `events` collections).
+• CRUD operations live in `src/services/api.ts`.
+• Data fetching → SWR (`useSWRInfinite`) for list views, SWR (`useSWR`) for
+  single-item fetch after navigation to edit form.
+• UI split in two tabs:  News  |  Events.
+• Forms built with React-Hook-Form + Zod (already in deps via react-hook-form,
+  add `zod` if missing).
+• Image upload handled through Firebase Storage.
+• Route protected by current `ProtectedRoute` + simple "admin" role check.
+
+
+2  DATA MODEL RECAP
+-------------------
+`src/services/interfaces.ts`
+
+NewsArticle
+  id: string
+  title: string
+  summary: string
+  content: string
+  imageUrl?: string
+  publishDate: string        // formatted for client
+  author?: string
+  tags?: string[]
+  links?: { name; value }[]
+  lang: string               // "english" | "macedonian"
+
+Event (similar, plus date / location)
+
+❑ Add (optional but recommended) these server-side fields:
+  createdAt  : Timestamp
+  updatedAt  : Timestamp
+  createdBy  : string (uid)
+  updatedBy  : string (uid)
+
+
+3  FIREBASE LAYOUT & SECURITY
+-----------------------------
+Collections
+  /news/{doc}
+  /events/{doc}
+  /mail/{doc}                (already used)
+
+Sub-collection for images is unnecessary – store the URL in `imageUrl`.
+
+Security rules (pseudo):
+
+match /news/{id} {
+  allow read:  if true;
+  allow write: if request.auth != null
+               && request.auth.token.admin == true;
+}
+
+match /events/{id} {
+  allow read:  if true;
+  allow write: if request.auth != null
+               && request.auth.token.admin == true;
+}
+
+
+4  API LAYER EXTENSIONS
+-----------------------
+All changes happen inside `src/services/api.ts`.
+
+4.1  GENERIC HELPERS
+────────────────────
+```ts
+// Firestore helpers ------------------------------------------------
+import {
+  addDoc, updateDoc, deleteDoc, doc,
+  Timestamp, serverTimestamp
+} from "firebase/firestore";
+```
+
+4.2  NEWS CRUD
+──────────────
+```ts
+export type NewsArticleInput = Omit<NewsArticle, "id" | "publishDate"> & {
+  publishDate?: Date;           // allow optional in input
+};
+
+export const createNewsArticle = async (
+  data: NewsArticleInput,
+  uid: string
+) => {
+  const ref = await addDoc(collection(db, "news"), {
+    ...data,
+    publishDate : data.publishDate ?? serverTimestamp(),
+    createdAt   : serverTimestamp(),
+    updatedAt   : serverTimestamp(),
+    createdBy   : uid,
+    updatedBy   : uid,
+  });
+  return ref.id;
+};
+
+export const updateNewsArticle = async (
+  id: string,
+  data: Partial<NewsArticleInput>,
+  uid: string
+) => {
+  await updateDoc(doc(db, "news", id), {
+    ...data,
+    updatedAt : serverTimestamp(),
+    updatedBy : uid,
+  });
+};
+
+export const deleteNewsArticle = async (id: string) =>
+  deleteDoc(doc(db, "news", id));
+```
+
+4.3  EVENT CRUD (mirror functions: `createEvent`, `updateEvent`, `deleteEvent`).
+
+4.4  INFINITE FETCH
+Extend existing `fetchNewsArticlesFromFirebase`  
+and `fetchEventsFromFirebase` to optionally accept a *DocumentSnapshot* for
+pagination:
+
+```ts
+export const fetchNewsChunk = async (
+  lang: string,
+  tag: string | null,
+  pageSize = 15,
+  lastDoc?: QueryDocumentSnapshot<DocumentData>
+) => {
+  let q = query(
+    collection(db, "news"),
+    where("lang", "==", lang === "en" ? "english" : "macedonian"),
+    orderBy("publishDate", "desc"),
+    limit(pageSize)
+  );
+  if (tag)      q = query(q, where("tags", "array-contains", tag));
+  if (lastDoc)  q = query(q, startAfter(lastDoc));
+
+  const snap = await getDocs(q);
+  const items = snap.docs.map(d => ({
+    id: d.id,
+    ...d.data(),
+    publishDate: formatDate(d.data().publishDate.toDate(), lang),
+    _doc: d                                     // keep ref for pagination
+  })) as (NewsArticle & { _doc: DocumentSnapshot })[];
+
+  return { items, lastDoc: snap.docs.at(-1) };
+};
+```
+
+Do the same for events.
+
+
+5  SWR + INFINITE SCROLL HOOKS
+------------------------------
+Create `src/hooks/useInfiniteNews.ts` and `useInfiniteEvents.ts`.
+
+```ts
+import useSWRInfinite from "swr/infinite";
+import { fetchNewsChunk } from "@/services/api";
+
+const PAGE_SIZE = 15;
+
+export const useInfiniteNews = (lang: string, tag: string | null) => {
+  const getKey = (pageIndex: number, previous: any) => {
+    if (previous && !previous.items.length) return null; // reached end
+    if (pageIndex === 0) return ["news", lang, tag, null];
+    return ["news", lang, tag, previous.lastDoc];
+  };
+
+  const fetcher = (key: any[]) => {
+    const [, l, t, last] = key as [string, string, string | null, any];
+    return fetchNewsChunk(l, t, PAGE_SIZE, last);
+  };
+
+  const { data, error, size, setSize, mutate, isLoading } = useSWRInfinite(
+    getKey,
+    fetcher,
+    { revalidateFirstPage: false }
+  );
+
+  const flat = data?.map(d => d.items).flat() ?? [];
+  const isEnd = data?.[data.length - 1]?.items.length < PAGE_SIZE;
+
+  return { flat, error, size, setSize, isEnd, mutate, isLoading };
+};
+```
+
+Use IntersectionObserver on the last list item to call `setSize(size + 1)`.
+
+
+6  UI STRUCTURE & ROUTING
+-------------------------
+6.1  ROUTE
+`src/App.tsx` already routes `/admin` through `ProtectedRoute`.  
+No router change necessary.
+
+6.2  PAGE LAYOUT  (replace `src/pages/Admin.tsx`)
+```
+<AdminLayout>
+ ├── <TabBar value={tab} onChange={setTab} />
+ ├── {tab === "news"
+ │     └── <NewsSection /> }
+ └── {tab === "events"
+       └── <EventsSection /> }
+</AdminLayout>
+```
+
+6.3  COMPONENTS
+Create `src/components/admin/` with:
+
+• `AdminLayout.tsx`  
+  – shared header (logo + user avatar)  
+  – "Create" button (context-aware: creates News when on News tab etc.)
+
+• `NewsSection.tsx`  
+  – `useInfiniteNews` for list  
+  – renders `AdminCard` for each item (image, title, date, "Edit", "Delete")
+
+• `EventSection.tsx`  
+  – same idea with `useInfiniteEvents`
+
+• `NewsFormModal.tsx`, `EventFormModal.tsx`  
+  – React-Hook-Form; open in "create" or "edit" mode  
+  – on submit call `createNewsArticle` or `updateNewsArticle`, then `mutate()`.
+
+• `ConfirmDeleteModal.tsx`  
+  – simple dialog → `deleteNewsArticle(id)` then `mutate()`.
+
+Style with existing Tailwind setup.
+
+6.4  LIST → FORM NAVIGATION
+We keep everything in the `/admin` route; modals make UX quicker.  
+Alternatives: dedicated `/admin/news/:id/edit` sub-routes (optional).
+
+6.5  DRAG-AND-DROP IMAGE UPLOAD
+Inside form component:
+```
+const handleFile = async (f: File) => {
+  const storageRef = ref(firebaseStorage, `news/${id}/${f.name}`);
+  await uploadBytes(storageRef, f);
+  const url = await getDownloadURL(storageRef);
+  setValue("imageUrl", url);
+};
+```
+Store `imageUrl` in Firestore document.
+
+
+7  CREATE / EDIT / DELETE FLOWS
+-------------------------------
+1. User clicks "Create".  
+2. `FormModal` opens with empty default values.  
+3. On submit → call `createXxx()`.  
+4. On success: close modal, call `mutate()` on list SWR.
+
+Editing is identical except form is pre-filled using `useSWR` to fetch single
+doc on modal open.
+
+Deleting:
+```
+await deleteNewsArticle(id);
+mutate(prev => prev?.filter(i => i.id !== id));
+```
+
+Toast notifications are already configured (`react-toastify`).
+
+
+8  AUTHENTICATION & AUTHORISATION
+---------------------------------
+`ProtectedRoute` currently checks for any logged-in user.  We need an admin
+check:
+
+```ts
+const isAdmin = async (user: User) => {
+  const token = await user.getIdTokenResult();
+  return !!token.claims.admin;
+};
+...
+if (!user || !(await isAdmin(user))) return <Navigate to="/login" replace/>;
+```
+
+Add helper `useIsAdmin()` or extend `AuthContext`.
+
+Alternatively store a list of admin-UIDs in `/config/admins.json` or in
+Firebase Remote Config.
+
+
+9  VALIDATION, RICH-TEXT & UPLOADS
+----------------------------------
+• Install zod: `npm i zod @hookform/resolvers`.  
+• Use `react-quill` or "TipTap" for rich text in `content` field.  
+• Summary can stay a textarea with max length 300.  
+• Validate required fields: `title`, `summary`, `content`, `lang`.
+• Use Date Picker (`@headlessui/react` or `react-date-picker`) for eventDate.
+
+Example Zod schema:
+```ts
+const NewsSchema = z.object({
+  title: z.string().min(5),
+  summary: z.string().min(10).max(300),
+  content: z.string().min(20),
+  lang: z.enum(["english", "macedonian"]),
+});
+```
+
+
+10  TESTING & DEPLOYMENT CHECKLIST
+----------------------------------
+□  Unit-test API helpers with Jest and `@firebase/rules-unit-testing`.  
+□  Verify Firestore rules deny write for non-admin users.  
+□  Verify SWR lists update after each mutation.  
+□  Lighthouse – ensure admin panel excluded from crawl.  
+□  Route guard – direct `/admin` access redirects to `/login`.  
+□  Add fallback `<Suspense>` for admin components.  
+□  Vercel environment vars – Firebase API Key etc. already set.
+
+
+────────────────────────────────────────────────────────────
+END
+────────────────────────────────────────────────────────────
