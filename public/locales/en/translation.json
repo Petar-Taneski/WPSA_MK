@@ -69,6 +69,8 @@
     "recentTitle": "Latest News",
     "recentDescription": "Stay updated with our latest news and developments",
     "viewAllNews": "View all news",
+    "loadMore": "Load More",
+    "noMoreArticles": "No more articles to show",
     "errorLoading": "Error loading news articles. Please try again later.",
     "filterByCategory": "Filter by category",
     "loadError": "Failed to load news articles"

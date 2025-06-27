@@ -14,7 +14,8 @@ export const NewsSection: React.FC<NewsSectionProps> = ({
 }) => {
   const { flat, error, size, setSize, isEnd, isLoading } = useInfiniteNews(
     "en",
-    null
+    null,
+    15 // Default page size for admin panel
   );
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
