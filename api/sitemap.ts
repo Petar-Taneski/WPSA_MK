@@ -1,10 +1,24 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
+interface SitemapURL {
+  loc: string;
+  lastmod?: string;
+  changefreq?:
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never";
+  priority?: number;
+}
+
 // We'll use fetch to get data from your existing API endpoints or Firebase directly
 const generateCompleteSitemap = async (): Promise<string> => {
   const BASE_URL = "https://wpsa.mk";
 
-  const staticPages = [
+  const staticPages: SitemapURL[] = [
     { loc: "/en/home", changefreq: "weekly", priority: 1.0 },
     { loc: "/mk/почетна", changefreq: "weekly", priority: 1.0 },
     { loc: "/en/about", changefreq: "monthly", priority: 0.8 },
@@ -16,7 +30,7 @@ const generateCompleteSitemap = async (): Promise<string> => {
   ];
 
   const currentDate = new Date().toISOString().split("T")[0];
-  let allUrls = [...staticPages];
+  const allUrls: SitemapURL[] = [...staticPages];
 
   try {
     // Import Firebase functions for serverless environment
