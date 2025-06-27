@@ -24,8 +24,8 @@ Allow: /*.woff2
 Allow: /*.ttf
 Allow: /*.otf
 
-# Sitemap location
-Sitemap: https://wpsa.mk/sitemap.xml
+# Dynamic sitemap location (includes all articles)
+Sitemap: https://wpsa.mk/api/sitemap
 
 # Crawl-delay (optional, be respectful to small servers)
 Crawl-delay: 1 
