@@ -1,7 +1,6 @@
 import { Plugin } from "vite";
 
-// Since we can't import from the TypeScript files directly in the plugin,
-// we'll create the sitemap generation logic here
+// Generate sitemap with static pages only - Firebase imports cause build issues
 const generateStaticSitemap = (): string => {
   const BASE_URL = "https://wpsa.mk";
 
@@ -18,6 +17,7 @@ const generateStaticSitemap = (): string => {
 
   const currentDate = new Date().toISOString().split("T")[0];
 
+  // Generate XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticPages
@@ -39,6 +39,8 @@ export function sitemapPlugin(): Plugin {
   return {
     name: "vite-sitemap-plugin",
     generateBundle() {
+      console.log("🗺️  Generating sitemap...");
+
       // Generate basic sitemap with static pages
       const sitemapContent = generateStaticSitemap();
 
@@ -49,9 +51,9 @@ export function sitemapPlugin(): Plugin {
         source: sitemapContent,
       });
 
-      console.log("✅ Static sitemap.xml generated");
+      console.log("✅ Basic sitemap.xml generated with static pages");
       console.log(
-        "ℹ️  Note: For dynamic content (news/events), use the sitemap utility in the admin panel"
+        "ℹ️  For complete sitemap with all articles, use the Admin Panel → SEO Management"
       );
     },
   };
