@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { AdminLayout } from "../components/admin/AdminLayout";
 import { TabBar } from "../components/admin/TabBar";
@@ -9,17 +9,26 @@ import { EditEventView } from "../components/admin/EditEventView";
 import { ConfirmDeleteModal } from "../components/admin/ConfirmDeleteModal";
 import { NewsArticle, Event } from "../services/interfaces";
 import { deleteNewsArticle, deleteEvent } from "../services/api";
+import { useTranslation } from "react-i18next";
+import { useSEO } from "@/hooks/useSEO";
+import { seoConfig } from "@/config/seo";
+import SitemapManager from "../components/admin/SitemapManager";
 
 type ViewState =
   | "list"
   | "edit-news"
   | "edit-event"
   | "create-news"
-  | "create-event";
+  | "create-event"
+  | "seo";
 
-export default function Admin() {
-  const [activeTab, setActiveTab] = useState<"news" | "events">("news");
+const Admin = () => {
+  const [activeTab, setActiveTab] = useState<"news" | "events" | "seo">("news");
   const [viewState, setViewState] = useState<ViewState>("list");
+  const { i18n } = useTranslation();
+
+  // Apply SEO
+  useSEO(seoConfig.admin[i18n.language as "en" | "mk"]);
 
   // Modal states
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -37,9 +46,11 @@ export default function Admin() {
     if (activeTab === "news") {
       setEditingNews(undefined);
       setViewState("create-news");
-    } else {
+    } else if (activeTab === "events") {
       setEditingEvent(undefined);
       setViewState("create-event");
+    } else {
+      setViewState("seo");
     }
   };
 
@@ -106,7 +117,11 @@ export default function Admin() {
 
   const getCreateButtonText = () => {
     if (viewState !== "list") return "";
-    return activeTab === "news" ? "Create News Article" : "Create Event";
+    return activeTab === "news"
+      ? "Create News Article"
+      : activeTab === "events"
+      ? "Create Event"
+      : "Manage Sitemap";
   };
 
   const renderContent = () => {
@@ -131,6 +146,9 @@ export default function Admin() {
           />
         );
 
+      case "seo":
+        return <SitemapManager />;
+
       default:
         return (
           <>
@@ -141,12 +159,12 @@ export default function Admin() {
                 onEdit={handleNewsEdit}
                 onDelete={(id) => handleDeleteClick(id, "news")}
               />
-            ) : (
+            ) : activeTab === "events" ? (
               <EventsSection
                 onEdit={handleEventEdit}
                 onDelete={(id) => handleDeleteClick(id, "events")}
               />
-            )}
+            ) : null}
           </>
         );
     }
@@ -177,4 +195,6 @@ export default function Admin() {
       />
     </>
   );
-}
+};
+
+export default Admin;

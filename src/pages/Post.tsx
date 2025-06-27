@@ -12,6 +12,8 @@ import {
   PostError,
 } from "../components/post";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
+import { useSEO } from "@/hooks/useSEO";
+import { getPostSEO } from "@/config/seo";
 
 const Post: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -25,6 +27,29 @@ const Post: React.FC = () => {
 
   // Current article URL for sharing
   const articleUrl = `${window.location.origin}${window.location.pathname}`;
+
+  // Apply dynamic SEO for the article
+  useSEO(
+    article
+      ? getPostSEO(
+          article.title,
+          article.summary || article.content.substring(0, 200),
+          i18n.language,
+          "article",
+          article.imageUrl
+        )
+      : {
+          title:
+            i18n.language === "en"
+              ? "Loading Article - WPSA Macedonia"
+              : "Се вчитува статија - Светско здружение за наука во живинарството Македонија",
+          description:
+            i18n.language === "en"
+              ? "Loading article content..."
+              : "Се вчитува содржината на статијата...",
+          noIndex: true,
+        }
+  );
 
   // Copy to clipboard function
   const copyToClipboard = () => {
@@ -80,7 +105,7 @@ const Post: React.FC = () => {
       setError(t("post.noIdProvided"));
       setLoading(false);
     }
-  }, [params.id, t]);
+  }, [params.id, t, i18n.language]);
 
   if (loading) {
     return <PostLoading />;

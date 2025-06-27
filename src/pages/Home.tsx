@@ -1,12 +1,17 @@
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 import EventCarousel from "@/components/home/EventCarousel";
 import FeaturedNews from "@/components/home/recentNews/RecentNews";
 import Hero from "@/components/home/heroSection/Hero";
 import MissionVision from "@/components/home/MissionVision";
+import { useSEO } from "@/hooks/useSEO";
+import { seoConfig } from "@/config/seo";
 
 const Home = () => {
-  // const { t } = useTranslation();
+  const { i18n } = useTranslation();
+
+  // Apply SEO
+  useSEO(seoConfig.home[i18n.language as "en" | "mk"]);
 
   return (
     <div>
