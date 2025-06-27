@@ -1,14 +1,15 @@
 import React from "react";
 
 interface TabBarProps {
-  value: "news" | "events";
-  onChange: (tab: "news" | "events") => void;
+  value: "news" | "events" | "seo";
+  onChange: (tab: "news" | "events" | "seo") => void;
 }
 
 export const TabBar: React.FC<TabBarProps> = ({ value, onChange }) => {
   const tabs = [
     { id: "news" as const, label: "News Articles" },
     { id: "events" as const, label: "Events" },
+    { id: "seo" as const, label: "SEO Management" },
   ];
 
   return (

@@ -1,0 +1,31 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and authentication pages
+Disallow: /login
+Disallow: /admin
+Disallow: /en/dashboard/
+Disallow: /mk/dashboard/
+
+# Allow all static assets
+Allow: /public/
+Allow: /assets/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.webp
+Allow: /*.ico
+Allow: /*.woff
+Allow: /*.woff2
+Allow: /*.ttf
+Allow: /*.otf
+
+# Sitemap location
+Sitemap: https://wpsa.mk/sitemap.xml
+
+# Crawl-delay (optional, be respectful to small servers)
+Crawl-delay: 1 

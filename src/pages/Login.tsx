@@ -1,66 +1,73 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../providers/auth";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebase";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../providers/auth";
+import { useTranslation } from "react-i18next";
+import { useSEO } from "@/hooks/useSEO";
+import { seoConfig } from "@/config/seo";
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+interface LoginFormData {
+  email: string;
+  password: string;
+}
 
-  const { login, user, loading, error } = useAuth();
+const Login = () => {
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const { user } = useAuth();
+  const { i18n } = useTranslation();
 
-  const from = location.state?.from?.pathname || "/admin";
+  // Apply SEO
+  useSEO(seoConfig.login[i18n.language as "en" | "mk"]);
 
-  useEffect(() => {
-    if (user && !loading) {
-      navigate(from, { replace: true });
-    }
-  }, [user, loading, navigate, from]);
+  // Redirect if already logged in
+  if (user) {
+    navigate("/admin");
+    return null;
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email || !password) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-
-    setIsSubmitting(true);
+    setLoading(true);
 
     try {
-      await login(email, password);
-      toast.success("Successfully logged in!");
-    } catch {
-      toast.error("Failed to log in. Please check your credentials.");
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      toast.success("Login successful!");
+      navigate("/admin");
+    } catch (error: unknown) {
+      console.error("Login error:", error);
+      toast.error("Login failed. Please check your credentials.");
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="flex justify-center items-center px-4 py-12 min-h-screen bg-gray-50 sm:px-6 lg:px-8">
+      <div className="space-y-8 w-full max-w-md">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-3xl font-extrabold text-center text-gray-900">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-sm text-center text-gray-600">
             Enter your credentials to access the admin panel
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="email" className="sr-only">
                 Email address
@@ -71,11 +78,10 @@ const Login: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="block relative px-3 py-2 w-full placeholder-gray-500 text-gray-900 rounded-none rounded-t-md border border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isSubmitting}
+                value={formData.email}
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -88,35 +94,21 @@ const Login: React.FC = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="block relative px-3 py-2 w-full placeholder-gray-500 text-gray-900 rounded-none rounded-b-md border border-gray-300 appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isSubmitting}
+                value={formData.password}
+                onChange={handleChange}
               />
             </div>
           </div>
 
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">Invalid credentials</div>
-            </div>
-          )}
-
           <div>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+              className="flex relative justify-center px-4 py-2 w-full text-sm font-medium text-white bg-indigo-600 rounded-md border border-transparent group hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
-              {isSubmitting ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Signing in...
-                </div>
-              ) : (
-                "Sign in"
-              )}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>
