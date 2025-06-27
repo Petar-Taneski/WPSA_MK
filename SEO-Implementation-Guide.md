@@ -6,7 +6,7 @@ This document outlines the comprehensive SEO optimization implementation for the
 
 ## Implemented Features
 
-### 1. Dynamic Meta Tags Managementnpm 
+### 1. Dynamic Meta Tags Managementnpm
 
 #### Custom SEO Hook (`src/hooks/useSEO.ts`)
 
@@ -66,7 +66,7 @@ Allow: /*.js
 # ... more file types
 
 # Sitemap location
-Sitemap: https://wpsa.mk/sitemap.xml
+Sitemap: https://wpsa-mk.com/sitemap.xml
 ```
 
 ### 4. Dynamic Sitemap Generation
@@ -120,7 +120,7 @@ Sitemap: https://wpsa.mk/sitemap.xml
   "@type": "Organization",
   "name": "World Poultry Science Association - Macedonian Branch",
   "alternateName": "WPSA Macedonia",
-  "url": "https://wpsa.mk"
+  "url": "https://wpsa-mk.com"
   // ... more organization data
 }
 ```

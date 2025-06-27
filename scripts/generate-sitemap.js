@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { resolve } from "path";
 
 const generateCompleteSitemap = async () => {
-  const BASE_URL = "https://wpsa.mk";
+  const BASE_URL = "https://wpsa-mk.com";
 
   const staticPages = [
     { loc: "/en/home", changefreq: "weekly", priority: 1.0 },

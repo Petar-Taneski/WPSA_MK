@@ -16,7 +16,7 @@ interface SitemapURL {
 
 // We'll use fetch to get data from your existing API endpoints or Firebase directly
 const generateCompleteSitemap = async (): Promise<string> => {
-  const BASE_URL = "https://wpsa.mk";
+  const BASE_URL = "https://wpsa-mk.com";
 
   const staticPages: SitemapURL[] = [
     { loc: "/en/home", changefreq: "weekly", priority: 1.0 },

@@ -13,7 +13,7 @@ const SitemapManager = () => {
   const [error, setError] = useState<string | null>(null);
   const [previewContent, setPreviewContent] = useState<string>("");
 
-  const SITEMAP_URL = "https://wpsa.mk/api/sitemap";
+  const SITEMAP_URL = "https://wpsa-mk.com/api/sitemap";
 
   const handleGenerateSitemap = async () => {
     setIsGenerating(true);
