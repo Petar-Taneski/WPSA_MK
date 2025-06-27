@@ -5,7 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { fetchNewsArticlesFromFirebase } from "../services/api";
+import { fetchNewsArticlesFromFirebase } from "../../services/api";
 import { NewsArticle } from "@/services/interfaces";
 import { useTranslation } from "react-i18next";
 
@@ -65,23 +65,18 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     getNewsArticles();
   }, [i18n.language, activeFilter]);
 
-  // Extract all unique tags from articles
   const allTags = Array.from(
     new Set(articles.flatMap((article) => article.tags ?? []))
   )
     .filter((tag): tag is string => typeof tag === "string")
     .sort();
 
-  // Get the featured article (newest) - independent of filters
   const featuredArticle = articles.length > 0 ? articles[0] : null;
 
-  // Filter articles based on active filter and search query
   const filteredArticles = articles.filter((article) => {
-    // Filter by tag if active
     const matchesTag =
       !activeFilter || (article.tags?.includes(activeFilter) ?? false);
 
-    // Filter by search query if present
     const matchesSearch =
       !searchQuery ||
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

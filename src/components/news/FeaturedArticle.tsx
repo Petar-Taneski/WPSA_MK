@@ -29,7 +29,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
     : publishDate;
 
   const displayImageUrl =
-    article.imageUrl || article.thumbnailUrl || DEFAULT_PLACEHOLDER_IMAGE;
+    article.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -69,7 +69,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
                 src={displayImageUrl}
                 alt={title}
                 className={`w-full h-full ${
-                  !article.imageUrl && !article.thumbnailUrl
+                  !article.imageUrl
                     ? "object-contain p-8"
                     : "object-fill"
                 } transition-transform duration-300 group-hover:scale-102`}

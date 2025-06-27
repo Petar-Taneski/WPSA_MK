@@ -1,25 +1,33 @@
+interface LinkPair {
+  name: string;
+  value: string;
+}
 export interface NewsArticle {
   id: string;
   title: string;
   summary: string;
   content: string;
-  imageUrl: string;
-  thumbnailUrl: string;
+  imageUrl?: string;
   publishDate: string;
   author?: string;
   tags?: string[];
-}
-
-export interface Event {
+  links?: LinkPair[];
+  lang: string;
+  }
+  
+  export interface Event {
   id: string;
   title: string;
   summary: string;
   content: string;
-  imageUrl: string;
-  thumbnailUrl: string;
+  isFeatured?: boolean;
+  imageUrl?: string;
   publishDate: string;
   eventDate: string;
-  location?: string;
-  callToAction?: string;
-  isFeatured: boolean;
-}
+  eventEndDate?: string;
+  location: string;
+  links?: string[];
+  lang: string;
+  formUrl?: string;
+  }
+  
