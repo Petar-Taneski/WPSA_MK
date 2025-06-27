@@ -1,8 +1,5 @@
-import { NewsArticle, Event } from "../services/interfaces";
-import {
-  fetchNewsArticlesFromFirebase,
-  fetchEventsFromFirebase,
-} from "../services/api";
+import { NewsArticle } from "../services/interfaces";
+import { fetchNewsArticlesFromFirebase } from "../services/api";
 
 interface SitemapURL {
   loc: string;
@@ -71,7 +68,7 @@ const formatSitemapDate = (date: Date | string): string => {
   return d.toISOString().split("T")[0];
 };
 
-// Function to fetch dynamic news URLs
+// Function to fetch dynamic news URLs (only news has individual pages)
 const fetchNewsUrls = async (): Promise<SitemapURL[]> => {
   const urls: SitemapURL[] = [];
 
@@ -114,58 +111,13 @@ const fetchNewsUrls = async (): Promise<SitemapURL[]> => {
   return urls;
 };
 
-// Function to fetch dynamic event URLs
-const fetchEventUrls = async (): Promise<SitemapURL[]> => {
-  const urls: SitemapURL[] = [];
-
-  try {
-    // Fetch English events
-    const englishEvents = await fetchEventsFromFirebase({
-      lang: "en",
-      fetchLimit: 1000, // Get all events
-    });
-
-    // Fetch Macedonian events
-    const macedonianEvents = await fetchEventsFromFirebase({
-      lang: "mk",
-      fetchLimit: 1000, // Get all events
-    });
-
-    // Add English event URLs
-    englishEvents.forEach((event: Event) => {
-      urls.push({
-        loc: `/en/events/${event.id}`,
-        lastmod: formatSitemapDate(event.publishDate),
-        changefreq: "monthly",
-        priority: 0.6,
-      });
-    });
-
-    // Add Macedonian event URLs
-    macedonianEvents.forEach((event: Event) => {
-      urls.push({
-        loc: `/mk/настани/${event.id}`,
-        lastmod: formatSitemapDate(event.publishDate),
-        changefreq: "monthly",
-        priority: 0.6,
-      });
-    });
-  } catch (error) {
-    console.error("Error fetching events for sitemap:", error);
-  }
-
-  return urls;
-};
-
 // Main function to generate sitemap XML
 export const generateSitemap = async (): Promise<string> => {
   const allUrls: SitemapURL[] = [...staticPages];
 
-  // Fetch dynamic content URLs
+  // Fetch dynamic content URLs (only news articles, events don't have individual pages)
   const newsUrls = await fetchNewsUrls();
-  const eventUrls = await fetchEventUrls();
-
-  allUrls.push(...newsUrls, ...eventUrls);
+  allUrls.push(...newsUrls);
 
   // Generate XML
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
