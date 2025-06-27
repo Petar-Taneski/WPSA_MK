@@ -16,7 +16,8 @@
   "common": {
     "close": "Close",
     "copied": "Copied!",
-    "copyLink": "Copy Link"
+    "copyLink": "Copy Link",
+    "loading": "Loading..."
   },
   "languages": {
     "en": "English",
@@ -46,6 +47,8 @@
     "applyNow": "Apply Now",
     "loadingEvent": "Loading event details...",
     "learnMore": "Learn More",
+    "loadMore": "Load More",
+    "noMoreEvents": "No more events to show",
     "errorLoading": "Error loading events. Please try again later."
   },
   "news": {

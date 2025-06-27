@@ -5,6 +5,7 @@ import { Award, CalendarDays, Check, Clock, Copy, MapPin } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ArrowButton from "../common/ArrowButton";
+// import ReactQuill from "react-quill-new";
 
 interface EventModalProps {
   isOpen: boolean;
@@ -74,7 +75,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
         className="bg-white rounded-lg shadow-xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto z-[1002] relative my-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="pr-8 text-xl font-bold text-gray-800/85">
             {event.title}
           </h2>
@@ -91,13 +92,13 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           {event.isFeatured && (
             <div className="mb-4">
               <span className="inline-flex items-center px-3 py-1 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-full">
-                <Award className="w-3 h-3 mr-1" />
+                <Award className="mr-1 w-3 h-3" />
                 {t("events.featured", "Featured")}
               </span>
             </div>
           )}
 
-          <div className="flex items-center justify-center w-full h-full mb-6 overflow-hidden rounded-md bg-gray-50">
+          <div className="flex overflow-hidden justify-center items-center mb-6 w-full h-full bg-gray-50 rounded-md">
             <img
               src={event.imageUrl || DEFAULT_PLACEHOLDER_IMAGE}
               alt={event.title}
@@ -109,7 +110,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="flex items-center text-gray-600">
-              <CalendarDays className="w-5 h-5 mr-2 text-primary" />
+              <CalendarDays className="mr-2 w-5 h-5 text-primary" />
               <span>
                 {(() => {
                   const parsed = parseDateString(event.eventDate);
@@ -126,13 +127,13 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
             {event.location && (
               <div className="flex items-center text-gray-600">
-                <MapPin className="w-5 h-5 mr-2 text-primary" />
+                <MapPin className="mr-2 w-5 h-5 text-primary" />
                 <span>{event.location}</span>
               </div>
             )}
 
             <div className="flex items-center text-gray-600">
-              <Clock className="w-5 h-5 mr-2 text-primary" />
+              <Clock className="mr-2 w-5 h-5 text-primary" />
               <span>
                 {t("events.published", "Published")}:{" "}
                 {(() => {
@@ -161,23 +162,30 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             >
               {urlCopied ? (
                 <>
-                  <Check className="w-4 h-4 mr-2" />
+                  <Check className="mr-2 w-4 h-4" />
                   {t("common.copied", "Copied!")}
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 mr-2" />
+                  <Copy className="mr-2 w-4 h-4" />
                   {t("common.copyLink", "Copy Link")}
                 </>
               )}
             </button>
           </div>
 
-          <div className="mb-8 prose-sm prose max-w-none">
+          <div className="mb-8 max-w-none prose-sm prose">
             <h3 className="mb-2 text-lg font-semibold text-gray-700">
               {t("events.details", "Details")}
             </h3>
             <div className="markdown-content">{event.content}</div>
+            {/* <div className="max-w-3xl prose prose-lg" />
+            <ReactQuill
+              theme="bubble"
+              readOnly={true}
+              value={event.content}
+              className="px-4 custom-quill markdown-content"
+            /> */}
           </div>
 
           <div className="flex justify-center mt-8">
