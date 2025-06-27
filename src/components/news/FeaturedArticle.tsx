@@ -1,7 +1,6 @@
 import { NewsArticle } from "@/services/interfaces";
 import { useTranslation } from "react-i18next";
 import ReadMoreButton from "../common/ReadMoreButton";
-import { useNavigate } from "react-router-dom";
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
 import { parseDateString } from "@/lib/utils";
 
@@ -12,7 +11,6 @@ interface FeaturedArticleProps {
 const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
   const { t, i18n } = useTranslation();
   const { id, title, summary, publishDate, author } = article;
-  const navigate = useNavigate();
   const getPostUrl = () => {
     const currentLanguage = i18n.language;
     return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
@@ -28,8 +26,7 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
       })
     : publishDate;
 
-  const displayImageUrl =
-    article.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
+  const displayImageUrl = article.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -60,22 +57,21 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
             <ReadMoreButton articleId={id} className="self-end mt-auto" />
           </div>
 
-          <div
-            onClick={() => navigate(getPostUrl())}
-            className="flex items-center order-1 cursor-pointer justify-centermb-4 lg:w-1/2 lg:mb-0 lg:order-2"
+          <a
+            href={getPostUrl()}
+            className="flex items-center order-1 justify-centermb-4 lg:w-1/2 lg:mb-0 lg:order-2"
+            aria-label={`Read full article: ${title}`}
           >
             <div className="flex items-center justify-center w-full overflow-hidden rounded-sm bg-gray-50">
               <img
                 src={displayImageUrl}
                 alt={title}
                 className={`w-full h-full ${
-                  !article.imageUrl
-                    ? "object-contain p-8"
-                    : "object-fill"
+                  !article.imageUrl ? "object-contain p-8" : "object-fill"
                 } transition-transform duration-300 group-hover:scale-102`}
               />
             </div>
-          </div>
+          </a>
         </div>
       </div>
     </div>

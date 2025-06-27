@@ -1,9 +1,7 @@
-import ArrowButton from "@/components/common/ArrowButton";
 import NewsCard from "../../news/NewsCard";
 import { NewsArticle } from "@/services/interfaces";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { fetchNewsArticlesFromFirebase } from "../../../services/api";
 
 const RecentNews = () => {
@@ -11,7 +9,6 @@ const RecentNews = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const navigate = useNavigate();
   // Get the current language
   const currentLanguage = i18n.language;
 
@@ -108,10 +105,25 @@ const RecentNews = () => {
           </div>
 
           <div className="mt-8 text-center">
-            <ArrowButton
-              text={t("news.viewAllNews")}
-              onClick={() => navigate(getNewsPath())}
-            />
+            <a
+              href={getNewsPath()}
+              className="inline-flex items-center gap-2 px-6 py-3 font-medium text-white transition-colors rounded-lg shadow-sm bg-primary-600 hover:bg-primary-700 no-underline"
+            >
+              {t("news.viewAllNews")}
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </a>
           </div>
         </>
       ) : (
