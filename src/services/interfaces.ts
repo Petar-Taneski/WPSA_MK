@@ -13,6 +13,7 @@ export interface NewsArticle {
   tags?: string[];
   links?: LinkPair[];
   lang: string;
+  correspondingId?: string;
 }
 
 export interface Event {
