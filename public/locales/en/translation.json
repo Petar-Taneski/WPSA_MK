@@ -17,7 +17,9 @@
     "close": "Close",
     "copied": "Copied!",
     "copyLink": "Copy Link",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "previous": "Previous",
+    "next": "Next"
   },
   "languages": {
     "en": "English",
@@ -49,7 +51,8 @@
     "learnMore": "Learn More",
     "loadMore": "Load More",
     "noMoreEvents": "No more events to show",
-    "errorLoading": "Error loading events. Please try again later."
+    "errorLoading": "Error loading events. Please try again later.",
+    "gallery": "Gallery"
   },
   "news": {
     "latestUpdates": "Latest updates from the world of poultry science",
@@ -86,7 +89,8 @@
     "loadError": "Failed to load article",
     "noIdProvided": "No article ID provided",
     "goBack": "Go Back",
-    "backToNews": "Back to News"
+    "backToNews": "Back to News",
+    "gallery": "Gallery"
   },
   "about": {
     "generalInfo": {
