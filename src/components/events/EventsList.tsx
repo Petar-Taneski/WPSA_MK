@@ -28,11 +28,11 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
       {events.map((event) => (
         <div
           key={event.id}
-          className="py-0 h-fit max-sm:overflow-clip transition-all duration-300 rounded-sm shadow-md group hover:shadow-lg"
+          className="py-0 rounded-sm shadow-md transition-all duration-300 h-fit max-sm:overflow-clip group hover:shadow-lg"
         >
           <div className="flex flex-col max-sm:h-fit sm:flex-row  max-xl:h-[230px] xl:h-[300px]">
             <div
-              className="relative flex items-center justify-center h-64 cursor-pointer sm:w-1/3 sm:h-fit bg-gray-50"
+              className="flex relative justify-center items-center h-64 bg-gray-50 cursor-pointer sm:w-1/3 sm:h-fit"
               onClick={() => handleEventClick(event)}
             >
               <img
@@ -46,7 +46,7 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
                 {event.eventDate}
               </div>
               {event.isFeatured && (
-                <div className="absolute top-0 left-0 px-3 py-1 m-3 text-xs font-medium text-white transform bg-yellow-500 rounded -rotate-12">
+                <div className="absolute top-0 left-0 px-3 py-1 m-3 text-xs font-medium text-white bg-yellow-500 rounded transform -rotate-12">
                   {t("events.featured")}
                 </div>
               )}
@@ -58,20 +58,20 @@ const EventsList = ({ events, onEventClick }: EventsListProps) => {
 
               <div className="flex flex-wrap gap-2 mb-2 text-sm text-gray-500">
                 <div className="flex items-center">
-                  <CalendarDays className="w-4 h-4 mr-1" />
+                  <CalendarDays className="mr-1 w-4 h-4" />
                   {event.eventDate}
                 </div>
                 {event.location && (
                   <div className="flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
+                    <MapPin className="mr-1 w-4 h-4" />
                     {event.location}
                   </div>
                 )}
               </div>
 
               <p className="mb-4 text-gray-600 line-clamp-2">{event.summary}</p>
-
-              <div className="flex items-center justify-end mt-auto">
+             
+              <div className="flex justify-end items-center mt-auto">
                 <ArrowButton
                   text={t("events.learnMore")}
                   onClick={() => handleEventClick(event)}
