@@ -1,6 +1,6 @@
 interface LinkPair {
   name: string;
-  value: string;
+  url: string;
 }
 export interface NewsArticle {
   id: string;
@@ -13,9 +13,9 @@ export interface NewsArticle {
   tags?: string[];
   links?: LinkPair[];
   lang: string;
-  }
-  
-  export interface Event {
+}
+
+export interface Event {
   id: string;
   title: string;
   summary: string;
@@ -26,8 +26,7 @@ export interface NewsArticle {
   eventDate: string;
   eventEndDate?: string;
   location: string;
-  links?: string[];
+  links?: LinkPair[];
   lang: string;
   formUrl?: string;
-  }
-  
+}

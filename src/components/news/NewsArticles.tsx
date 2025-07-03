@@ -5,7 +5,6 @@ import { useState, useEffect, useMemo } from "react";
 import EmptyState from "./EmptyState";
 import NewsCard from "./NewsCard";
 import FilterBar from "./FilterBar";
-import { NewsArticle } from "@/services/interfaces";
 
 export default function NewsArticles() {
   const { t, i18n } = useTranslation();
@@ -95,7 +94,7 @@ export default function NewsArticles() {
     return (
       <>
         <FilterBar />
-        <div className="p-4 text-red-700 border border-red-200 rounded-md bg-red-50">
+        <div className="p-4 text-red-700 bg-red-50 rounded-md border border-red-200">
           {t("news.errorLoading")}
         </div>
       </>
@@ -108,7 +107,7 @@ export default function NewsArticles() {
 
       {displayedArticles.length === 0 && <EmptyState />}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-12">
+      <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         {displayedArticles.map((article) => (
           <NewsCard key={article.id} article={article} />
         ))}
@@ -120,11 +119,11 @@ export default function NewsArticles() {
           <button
             onClick={loadMoreArticles}
             disabled={loadingMore || isLoading}
-            className="px-6 py-3 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed"
+            className="px-6 py-3 text-white bg-blue-600 rounded-lg transition-colors duration-200 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed"
           >
             {loadingMore || isLoading ? (
               <span className="flex items-center">
-                <svg className="w-4 h-4 mr-2 animate-spin" viewBox="0 0 24 24">
+                <svg className="mr-2 w-4 h-4 animate-spin" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -151,7 +150,7 @@ export default function NewsArticles() {
 
       {/* No more articles message */}
       {!hasMoreToShow && displayedArticles.length > 0 && (
-        <div className="text-center mt-8 text-gray-500">
+        <div className="mt-8 text-center text-gray-500">
           {t("news.noMoreArticles")}
         </div>
       )}

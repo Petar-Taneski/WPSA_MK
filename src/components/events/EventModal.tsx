@@ -187,7 +187,30 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
               className="px-4 custom-quill markdown-content"
             /> */}
           </div>
-
+          {event.links && event.links.length > 0 && (
+            <div className="px-4 mt-6">
+              <h3 className="mb-3 text-lg font-semibold text-gray-800">
+                {t("post.relatedLinks", "Related Links")}
+              </h3>
+              <div className="space-y-2">
+                {event.links.map((link, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-3 pl-4 border-l-4 border-primary-600"
+                  >
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block font-medium text-blue-600 transition-colors duration-200 hover:text-blue-800 hover:underline"
+                    >
+                      {link.name}
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="flex justify-center mt-8">
             {event.formUrl && (
               <a href={event.formUrl} target="_blank">

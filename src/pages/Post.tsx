@@ -119,9 +119,8 @@ const Post: React.FC = () => {
   return (
     <div className="px-4 py-8 mx-auto max-w-7xl">
       <PostHeader title={article.title} imageUrl={displayImageUrl} />
-
       <div className="mb-4 md:p-4 md:pb-4 md:mb-8 md:border-b md:border-gray-200">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap gap-4 justify-between items-center">
           <div className="flex-grow">
             <PostMetadata
               author={article.author}
@@ -137,12 +136,12 @@ const Post: React.FC = () => {
             >
               {urlCopied ? (
                 <>
-                  <Check className="w-4 h-4 mr-2" />
+                  <Check className="mr-2 w-4 h-4" />
                   {t("common.copied", "Copied!")}
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 mr-2" />
+                  <Copy className="mr-2 w-4 h-4" />
                   {t("common.copyLink", "Copy Link")}
                 </>
               )}
@@ -150,13 +149,36 @@ const Post: React.FC = () => {
           </div>
         </div>
       </div>
-
       <PostContent content={article.content} />
 
+      {article.links && article.links.length > 0 && (
+        <div className="px-4 mt-6">
+          <h3 className="mb-3 text-lg font-semibold text-gray-800">
+            {t("post.relatedLinks", "Related Links")}
+          </h3>
+          <div className="space-y-2">
+            {article.links.map((link, index) => (
+              <div
+                key={index}
+                className="flex gap-3 pl-4 border-l-4 border-primary-600"
+              >
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block font-medium text-blue-600 transition-colors duration-200 hover:text-blue-800 hover:underline"
+                >
+                  {link.name}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="mt-12 text-center">
         <button
           onClick={() => navigate(getNewsPath())}
-          className="px-6 py-3 font-medium text-white transition-colors rounded-lg shadow-sm bg-primary-600 hover:bg-primary-700"
+          className="px-6 py-3 font-medium text-white rounded-lg shadow-sm transition-colors bg-primary-600 hover:bg-primary-700"
         >
           {t("post.backToNews")}
         </button>
