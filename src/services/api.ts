@@ -1,5 +1,5 @@
 import { Event, NewsArticle } from "./interfaces";
-import { db } from "../config/firebase";
+import { db, storage } from "../config/firebase";
 import {
   collection,
   getDocs,
@@ -18,7 +18,50 @@ import {
   DocumentData,
   DocumentSnapshot,
 } from "firebase/firestore";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { formatDate } from "@/lib/utils";
+
+// Image upload utilities
+export const uploadImage = async (
+  file: File,
+  path: string
+): Promise<string> => {
+  const storageRef = ref(storage, path);
+  const snapshot = await uploadBytes(storageRef, file);
+  return await getDownloadURL(snapshot.ref);
+};
+
+export const deleteImage = async (url: string): Promise<void> => {
+  try {
+    const imageRef = ref(storage, url);
+    await deleteObject(imageRef);
+  } catch (error) {
+    console.error("Error deleting image:", error);
+    // Don't throw error if image doesn't exist
+  }
+};
+
+// Gallery image management
+export const uploadGalleryImages = async (
+  files: File[],
+  type: "news" | "events",
+  folderName: string
+): Promise<{ url: string; altText: string }[]> => {
+  const uploadPromises = files.map(async (file, index) => {
+    const filename = `${type}/${folderName}/${Date.now()}_${index}_${
+      file.name
+    }`;
+    const url = await uploadImage(file, filename);
+    return { url, altText: file.name.replace(/\.[^/.]+$/, "") };
+  });
+
+  return Promise.all(uploadPromises);
+};
 
 // Types for admin CRUD operations
 export type NewsArticleInput = Omit<NewsArticle, "id" | "publishDate"> & {
@@ -34,7 +77,7 @@ export type EventInput = Omit<
   eventEndDate?: Date;
 };
 
-// News CRUD Operations
+// Enhanced News CRUD Operations
 export const createNewsArticle = async (
   data: NewsArticleInput,
   uid: string
@@ -66,7 +109,7 @@ export const deleteNewsArticle = async (id: string): Promise<void> => {
   await deleteDoc(doc(db, "news", id));
 };
 
-// Event CRUD Operations
+// Enhanced Event CRUD Operations
 export const createEvent = async (
   data: EventInput,
   uid: string
@@ -96,6 +139,86 @@ export const updateEvent = async (
 
 export const deleteEvent = async (id: string): Promise<void> => {
   await deleteDoc(doc(db, "events", id));
+};
+
+// Fetch all news articles for admin (with pagination)
+export const fetchAllNewsArticles = async (
+  lang?: string,
+  pageSize = 20,
+  lastDoc?: QueryDocumentSnapshot<DocumentData>
+): Promise<{
+  items: NewsArticle[];
+  lastDoc?: QueryDocumentSnapshot<DocumentData>;
+}> => {
+  let q = query(
+    collection(db, "news"),
+    orderBy("publishDate", "desc"),
+    limit(pageSize)
+  );
+
+  if (lang) {
+    q = query(
+      collection(db, "news"),
+      where("lang", "==", lang === "en" ? "english" : "macedonian"),
+      orderBy("publishDate", "desc"),
+      limit(pageSize)
+    );
+  }
+
+  if (lastDoc) {
+    q = query(q, startAfter(lastDoc));
+  }
+
+  const snap = await getDocs(q);
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    publishDate: formatDate(d.data().publishDate.toDate(), lang || "en"),
+  })) as NewsArticle[];
+
+  return { items, lastDoc: snap.docs.at(-1) };
+};
+
+// Fetch all events for admin (with pagination)
+export const fetchAllEvents = async (
+  lang?: string,
+  pageSize = 20,
+  lastDoc?: QueryDocumentSnapshot<DocumentData>
+): Promise<{
+  items: Event[];
+  lastDoc?: QueryDocumentSnapshot<DocumentData>;
+}> => {
+  let q = query(
+    collection(db, "events"),
+    orderBy("publishDate", "desc"),
+    limit(pageSize)
+  );
+
+  if (lang) {
+    q = query(
+      collection(db, "events"),
+      where("lang", "==", lang === "en" ? "english" : "macedonian"),
+      orderBy("publishDate", "desc"),
+      limit(pageSize)
+    );
+  }
+
+  if (lastDoc) {
+    q = query(q, startAfter(lastDoc));
+  }
+
+  const snap = await getDocs(q);
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    publishDate: formatDate(d.data().publishDate.toDate(), lang || "en"),
+    eventDate: formatDate(d.data().eventDate.toDate(), lang || "en"),
+    eventEndDate: d.data().eventEndDate
+      ? formatDate(d.data().eventEndDate.toDate(), lang || "en")
+      : undefined,
+  })) as Event[];
+
+  return { items, lastDoc: snap.docs.at(-1) };
 };
 
 // Infinite scroll functions

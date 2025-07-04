@@ -30,6 +30,7 @@ export interface Event {
   content: string;
   isFeatured?: boolean;
   imageUrl?: string;
+  altText?: string;
   publishDate: string;
   eventDate: string;
   eventEndDate?: string;

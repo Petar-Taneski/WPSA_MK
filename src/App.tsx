@@ -6,7 +6,7 @@ import Navigation from "./components/headers/Navigation";
 import MobileHeader from "./components/headers/mobileHeader/MobileHeader";
 import { NewsProvider } from "./providers/news";
 import { AuthProvider } from "./providers/auth";
-import DashboardPost from "./components/dashboardd/Post";
+import DashboardPost from "./components/dashboard/Post";
 import Footer from "./components/footer/Footer";
 import ContactForm from "./components/ContactForm";
 import { ToastContainer } from "react-toastify";
@@ -69,9 +69,11 @@ function App() {
         <div className="app overflow-x-clip">
           <ToastContainer position="top-right" autoClose={5000} />
           <Suspense fallback={<LoadingState />}>
-            <div className="hidden lg:block h-[13vh]">
-              <Navigation openContactModal={openContactModal} />
-            </div>
+            {!location.pathname.startsWith('/login') && !location.pathname.startsWith('/admin') && (
+              <div className="hidden lg:block h-[13vh]">
+                <Navigation openContactModal={openContactModal} />
+              </div>
+            )}
             <div className={`block lg:hidden h-[15vh]`}>
               <MobileHeader openContactModal={openContactModal} />
             </div>
