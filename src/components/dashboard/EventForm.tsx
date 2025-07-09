@@ -87,11 +87,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         formUrl: editingItem.formUrl || "",
         lang: editingItem.lang,
         links: editingItem.links || [],
-        gallery:
-          editingItem.gallery?.map((img) => ({
-            url: img.url,
-            altText: img.altText,
-          })) || [],
+        gallery: editingItem.gallery || [],
       });
     }
   }, [editingItem]);
@@ -172,6 +168,9 @@ export const EventForm: React.FC<EventFormProps> = ({
     });
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      toast.error(t("dashboard.errors", "Missing required fields"));
+    }
     return Object.keys(newErrors).length === 0;
   };
 
@@ -241,7 +240,8 @@ export const EventForm: React.FC<EventFormProps> = ({
         finalGallery = formData.gallery.map((img) => {
           if (img.file) {
             const uploadedImg = uploadedImages.find(
-              (uploaded) => uploaded.altText === img.altText
+              (uploaded: { altText: string }) =>
+                uploaded.altText === img.altText
             );
             return uploadedImg || img;
           }

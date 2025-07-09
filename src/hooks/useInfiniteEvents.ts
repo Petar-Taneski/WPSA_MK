@@ -29,7 +29,7 @@ export const useInfiniteEvents = (lang: string) => {
     fetcher,
     { revalidateFirstPage: false }
   );
-  console.log(error);
+  console.error(error);
 
   const flat = data?.map((d) => d.items).flat() ?? [];
   const isEnd =

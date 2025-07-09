@@ -81,11 +81,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
         tags: editingItem.tags?.join(", ") || "",
         lang: editingItem.lang,
         links: editingItem.links || [],
-        gallery:
-          editingItem.gallery?.map((img) => ({
-            url: img.url,
-            altText: img.altText,
-          })) || [],
+        gallery: editingItem.gallery || [],
       });
     }
   }, [editingItem]);
@@ -138,6 +134,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     });
 
     setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      toast.error(t("dashboard.errors", "Missing required fields"));
+    }
     return Object.keys(newErrors).length === 0;
   };
 

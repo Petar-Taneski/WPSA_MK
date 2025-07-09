@@ -54,20 +54,20 @@ export const formatDate = (date: number, language: string) => {
 export function parseDateString(dateString: string): Date | null {
   if (!dateString) return null;
   // Try native Date parsing first
-  let date = new Date(dateString);
+  const date = new Date(dateString);
   if (!isNaN(date.getTime())) return date;
 
   // Try '15 May 2025' (day month year, English)
   let match = dateString.match(/^(\d{1,2}) ([A-Za-z]+) (\d{4})$/);
   if (match) {
-    const [_, day, month, year] = match;
+    const [, day, month, year] = match;
     return new Date(`${year}-${month}-${day}`);
   }
 
   // Try '11 октомври 2024 г.' (day month year, Macedonian, with or without 'г.')
   match = dateString.match(/^(\d{1,2}) ([^\d]+) (\d{4})(?: г\.)?$/);
   if (match) {
-    const [_, day, mkMonth, year] = match;
+    const [, day, mkMonth, year] = match;
     // Map Macedonian month names to numbers
     const mkMonths = [
       "јануари",
@@ -94,3 +94,13 @@ export function parseDateString(dateString: string): Date | null {
 
   return null;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const undefinedToNull = (obj: any) => {
+  Object.keys(obj).forEach((key) => {
+    if (typeof obj[key] === "undefined") {
+      obj[key] = null;
+    }
+  });
+  return obj;
+};

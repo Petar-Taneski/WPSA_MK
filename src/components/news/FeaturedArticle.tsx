@@ -15,7 +15,6 @@ const FeaturedArticle = ({ article }: FeaturedArticleProps) => {
     const currentLanguage = i18n.language;
     return currentLanguage === "mk" ? `/mk/вести/${id}` : `/en/news/${id}`;
   };
-  console.log(article);
 
   const parsedDate = parseDateString(publishDate);
   const formattedDate = parsedDate
