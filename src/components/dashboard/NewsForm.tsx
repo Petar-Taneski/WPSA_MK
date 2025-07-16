@@ -150,21 +150,6 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     }
   };
 
-  // Helper function to create safe folder names
-  const createSafeFolderName = (title: string): string => {
-    if (!title || title.trim() === "") {
-      return `temp-${Date.now()}`;
-    }
-    return title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "")
-      .substring(0, 50);
-  };
-
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,10 +162,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
       // Upload main image if it has a file
       if (formData.mainImage?.file) {
-        const safeFolderName = createSafeFolderName(formData.title);
-        const filename = `news/${safeFolderName}/${Date.now()}_${
-          formData.mainImage.file.name
-        }`;
+        const filename = `news/${Date.now()}_${formData.mainImage.file.name}`;
         finalImageUrl = await uploadImage(formData.mainImage.file, filename);
         finalAltText = formData.mainImage.altText;
       } else if (formData.mainImage?.url) {
@@ -194,13 +176,8 @@ export const NewsForm: React.FC<NewsFormProps> = ({
       let finalGallery = formData.gallery;
 
       if (galleryImagesToUpload.length > 0) {
-        const safeFolderName = createSafeFolderName(formData.title);
         const files = galleryImagesToUpload.map((img) => img.file!);
-        const uploadedImages = await uploadGalleryImages(
-          files,
-          "news",
-          safeFolderName
-        );
+        const uploadedImages = await uploadGalleryImages(files, "news");
 
         // Replace the temporary images with uploaded ones
         finalGallery = formData.gallery.map((img) => {
@@ -448,7 +425,6 @@ export const NewsForm: React.FC<NewsFormProps> = ({
           images={formData.gallery}
           onChange={(gallery) => handleChange("gallery", gallery)}
           type="news"
-          postTitle={formData.title}
         />
 
         {/* Action Buttons */}

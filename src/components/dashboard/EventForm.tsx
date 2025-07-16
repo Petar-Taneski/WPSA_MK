@@ -67,6 +67,27 @@ export const EventForm: React.FC<EventFormProps> = ({
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // Helper function to convert formatted date string to YYYY-MM-DD format for HTML input
+  const formatDateForInput = (dateString: string): string => {
+    if (!dateString) return "";
+
+    try {
+      // Try to parse the date string
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+
+      // Convert to YYYY-MM-DD format
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      return "";
+    }
+  };
+
   // Initialize form when editing
   useEffect(() => {
     if (editingItem) {
@@ -81,8 +102,8 @@ export const EventForm: React.FC<EventFormProps> = ({
             }
           : null,
         isFeatured: editingItem.isFeatured || false,
-        eventDate: editingItem.eventDate || "",
-        eventEndDate: editingItem.eventEndDate || "",
+        eventDate: formatDateForInput(editingItem.eventDate || ""),
+        eventEndDate: formatDateForInput(editingItem.eventEndDate || ""),
         location: editingItem.location,
         formUrl: editingItem.formUrl || "",
         lang: editingItem.lang,
@@ -184,21 +205,6 @@ export const EventForm: React.FC<EventFormProps> = ({
     }
   };
 
-  // Helper function to create safe folder names
-  const createSafeFolderName = (title: string): string => {
-    if (!title || title.trim() === "") {
-      return `temp-${Date.now()}`;
-    }
-    return title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "")
-      .substring(0, 50);
-  };
-
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -211,10 +217,7 @@ export const EventForm: React.FC<EventFormProps> = ({
 
       // Upload main image if it has a file
       if (formData.mainImage?.file) {
-        const safeFolderName = createSafeFolderName(formData.title);
-        const filename = `events/${safeFolderName}/${Date.now()}_${
-          formData.mainImage.file.name
-        }`;
+        const filename = `events/${Date.now()}_${formData.mainImage.file.name}`;
         finalImageUrl = await uploadImage(formData.mainImage.file, filename);
         finalAltText = formData.mainImage.altText;
       } else if (formData.mainImage?.url) {
@@ -228,13 +231,8 @@ export const EventForm: React.FC<EventFormProps> = ({
       let finalGallery = formData.gallery;
 
       if (galleryImagesToUpload.length > 0) {
-        const safeFolderName = createSafeFolderName(formData.title);
         const files = galleryImagesToUpload.map((img) => img.file!);
-        const uploadedImages = await uploadGalleryImages(
-          files,
-          "events",
-          safeFolderName
-        );
+        const uploadedImages = await uploadGalleryImages(files, "events");
 
         // Replace the temporary images with uploaded ones
         finalGallery = formData.gallery.map((img) => {
@@ -542,7 +540,6 @@ export const EventForm: React.FC<EventFormProps> = ({
           images={formData.gallery}
           onChange={(gallery) => handleChange("gallery", gallery)}
           type="events"
-          postTitle={formData.title}
         />
 
         {/* Action Buttons */}

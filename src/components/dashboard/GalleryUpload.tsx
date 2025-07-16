@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
-import { uploadGalleryImages } from "@/services/api";
+import { X, Image as ImageIcon } from "lucide-react";
+import { deleteImage } from "@/services/api";
 import { useAuth } from "@/providers/auth";
 
 interface GalleryImage {
@@ -15,7 +15,6 @@ interface GalleryUploadProps {
   images: GalleryImage[];
   onChange: (images: GalleryImage[]) => void;
   type: "news" | "events";
-  postTitle: string; // Changed from itemId to postTitle
 }
 
 const GALLERY_SIZE_LIMIT = 5; // Max 5 images per post/event
@@ -25,31 +24,13 @@ const GALLERY_SIZE_LIMIT = 5; // Max 5 images per post/event
 // const MAX_FILE_SIZE = Number.MAX_SAFE_INTEGER; // No size limit (temporarily)
 const MAX_TOTAL_SIZE = Number.MAX_SAFE_INTEGER; // No size limit (temporarily)
 
-// Helper function to create safe folder names
-const createSafeFolderName = (title: string): string => {
-  if (!title || title.trim() === "") {
-    return `temp-${Date.now()}`;
-  }
-
-  return title
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single
-    .replace(/^-|-$/g, "") // Remove leading/trailing hyphens
-    .substring(0, 50); // Limit length
-};
-
 export const GalleryUpload: React.FC<GalleryUploadProps> = ({
   images,
   onChange,
   type,
-  postTitle,
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [uploading, setUploading] = useState(false);
 
   // Calculate current total size
   const currentTotalSize = images.reduce((total, img) => {
@@ -123,58 +104,26 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
     );
   };
 
-  // Handle file upload (for real Firebase upload)
-  const handleUpload = async () => {
-    if (!user) {
-      toast.error(
-        t("dashboard.authRequired", "Please log in to upload images")
-      );
-      return;
-    }
-
-    const filesToUpload = images.filter((img) => img.file);
-    if (filesToUpload.length === 0) return;
-
-    setUploading(true);
-    try {
-      const files = filesToUpload.map((img) => img.file!);
-      const safeFolderName = createSafeFolderName(postTitle);
-      const uploadedImages = await uploadGalleryImages(
-        files,
-        type,
-        safeFolderName
-      );
-
-      // Replace the temporary images with uploaded ones
-      const updatedImages = images.map((img) => {
-        if (img.file) {
-          const uploadedImg = uploadedImages.find(
-            (uploaded) => uploaded.altText === img.altText
-          );
-          return uploadedImg || img;
-        }
-        return img;
-      });
-
-      onChange(updatedImages);
-      toast.success(
-        t("dashboard.imagesUploaded", "Images uploaded successfully")
-      );
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      toast.error(t("dashboard.uploadError", "Failed to upload images"));
-    } finally {
-      setUploading(false);
-    }
-  };
-
   // Remove image
-  const removeImage = (index: number) => {
+  const removeImage = async (index: number) => {
     const imageToRemove = images[index];
 
     // Clean up object URL if it exists
     if (imageToRemove.url.startsWith("blob:")) {
       URL.revokeObjectURL(imageToRemove.url);
+    } else if (imageToRemove.url.includes("firebasestorage.googleapis.com")) {
+      // Delete from Firebase Storage if it's a Firebase URL
+      try {
+        await deleteImage(imageToRemove.url);
+        toast.success(
+          t("dashboard.imageDeleted", "Image deleted from storage")
+        );
+      } catch (error) {
+        console.error("Error deleting image from storage:", error);
+        toast.error(
+          t("dashboard.deleteImageError", "Failed to delete image from storage")
+        );
+      }
     }
 
     const newImages = images.filter((_, i) => i !== index);
@@ -223,7 +172,7 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
 
           {/* Upload Button */}
           <label className="flex items-center px-3 py-1 text-sm text-white bg-blue-600 rounded-md transition-colors cursor-pointer hover:bg-blue-700">
-            <Upload className="mr-1 w-4 h-4" />
+            <ImageIcon className="mr-1 w-4 h-4" />
             {t("dashboard.addImages", "Add Images")}
             <input
               type="file"
@@ -236,75 +185,39 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
               disabled={images.length >= GALLERY_SIZE_LIMIT}
             />
           </label>
-
-          {/* Upload to Firebase Button */}
-          {images.some((img) => img.file) && (
-            <button
-              onClick={handleUpload}
-              disabled={uploading}
-              className="flex items-center px-3 py-1 text-sm text-white bg-green-600 rounded-md transition-colors hover:bg-green-700 disabled:opacity-50"
-            >
-              {uploading ? (
-                <>
-                  <div className="mr-1 w-3 h-3 rounded-full border-b-2 border-white animate-spin"></div>
-                  {t("dashboard.uploading", "Uploading...")}
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-1 w-4 h-4" />
-                  {t("dashboard.uploadToServer", "Upload to Server")}
-                </>
-              )}
-            </button>
-          )}
         </div>
       </div>
 
       {/* Size Warning - temporarily disabled */}
       {/* {currentTotalSize > MAX_TOTAL_SIZE * 0.8 && (
-        <div className="flex items-center p-3 space-x-2 bg-yellow-50 rounded-md border border-yellow-200">
-          <AlertCircle className="w-4 h-4 text-yellow-600" />
+        <div className="px-3 py-2 bg-yellow-100 border border-yellow-400 rounded-md">
           <p className="text-sm text-yellow-800">
-            {t(
-              "dashboard.sizeWarning",
-              "Warning: You are approaching the size limit"
-            )}
+            {t("dashboard.sizeWarning", "Warning: Approaching size limit")}
           </p>
         </div>
       )} */}
 
       {/* Images Grid */}
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((image, index) => (
-            <div
-              key={index}
-              className="relative p-3 bg-gray-50 rounded-lg border border-gray-200 group"
-            >
-              {/* Image Preview */}
-              <div className="relative mb-3">
+            <div key={index} className="relative group">
+              <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
                 <img
                   src={image.url}
                   alt={image.altText}
-                  className="object-cover w-full h-32 rounded-md border border-gray-300"
+                  className="w-full h-full object-cover"
                 />
-                {/* Remove Button */}
-                <button
-                  type="button"
-                  onClick={() => removeImage(index)}
-                  className="flex absolute -top-2 -right-2 justify-center items-center w-6 h-6 text-white bg-red-600 rounded-full opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-700"
-                  title={t("dashboard.removeImage", "Remove image")}
-                >
-                  <X className="w-3 h-3" />
-                </button>
-
-                {/* Upload Status Indicator */}
-                {image.file && (
-                  <div className="absolute top-2 left-2 px-2 py-1 text-xs text-white bg-orange-500 rounded">
-                    {t("dashboard.pending", "Pending")}
-                  </div>
-                )}
               </div>
+
+              {/* Remove Button */}
+              <button
+                onClick={() => removeImage(index)}
+                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                aria-label={t("dashboard.removeImage", "Remove image")}
+              >
+                <X className="w-4 h-4" />
+              </button>
 
               {/* Alt Text Input */}
               <div>
@@ -345,39 +258,25 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
       )}
 
       {/* Instructions */}
-      <div className="p-3 bg-blue-50 rounded-md border border-blue-200">
-        <h4 className="mb-2 text-sm font-medium text-blue-800">
-          {t("dashboard.galleryInstructions", "Gallery Instructions")}
-        </h4>
-        <ul className="space-y-1 text-sm text-blue-700">
-          <li>
-            • {t("dashboard.instruction1", "Maximum 5 images per post/event")}
-          </li>
-          <li>
-            •{" "}
-            {t(
-              "dashboard.instruction2",
-              "No size limit per image (temporarily)"
-            )}
-          </li>
-          <li>
-            • {t("dashboard.instruction3", "No total size limit (temporarily)")}
-          </li>
-          <li>
-            •{" "}
-            {t(
-              "dashboard.instruction4",
-              "Supported formats: JPG, PNG, GIF, WebP"
-            )}
-          </li>
-          <li>
-            •{" "}
-            {t(
-              "dashboard.instruction5",
-              "Add descriptive alt text for accessibility"
-            )}
-          </li>
-        </ul>
+      <div className="text-xs text-gray-500 space-y-1">
+        <p>
+          {t(
+            "dashboard.galleryInstructions",
+            "• Images will be automatically uploaded when you save the post"
+          )}
+        </p>
+        <p>
+          {t(
+            "dashboard.galleryInstructions2",
+            "• Click the × button to remove an image"
+          )}
+        </p>
+        <p>
+          {t(
+            "dashboard.galleryInstructions3",
+            "• Add descriptive alt text for accessibility"
+          )}
+        </p>
       </div>
     </div>
   );

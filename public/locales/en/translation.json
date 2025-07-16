@@ -190,6 +190,8 @@
     "imagesAdded": "image(s) added",
     "imagesUploaded": "Images uploaded successfully",
     "uploadError": "Failed to upload images",
+    "imageDeleted": "Image deleted from storage",
+    "deleteImageError": "Failed to delete image from storage",
     "mainImage": "Main Image",
     "dragDropImage": "Drag & drop an image here, or click to browse",
     "imageRequirements": "JPG, PNG, GIF, WebP (no size limit)",

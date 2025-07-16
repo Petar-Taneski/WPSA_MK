@@ -62,13 +62,23 @@ export const updateEvent = async (
 
 export const deleteEvent = async (id: string): Promise<void> => {
   const event = await getDoc(doc(db, "events", id));
+
   try {
-    await deleteImage(event.data()?.imageUrl);
-    await Promise.all(
-      event.data()?.galleryImages.map((imageUrl: string) => {
-        deleteImage(imageUrl);
-      })
-    );
+    const data = event.data();
+
+    // Delete main image
+    if (data?.imageUrl) {
+      await deleteImage(data.imageUrl);
+    }
+
+    // Delete gallery images
+    if (data?.gallery && Array.isArray(data.gallery)) {
+      await Promise.all(
+        data.gallery.map((galleryItem: { url: string; altText: string }) => {
+          return deleteImage(galleryItem.url);
+        })
+      );
+    }
   } catch (error) {
     console.error("Error deleting event images:", error);
   }
@@ -98,6 +108,9 @@ export const fetchEventsChunk = async (
     ...d.data(),
     publishDate: formatDate(d.data().publishDate.toDate(), lang),
     eventDate: formatDate(d.data().eventDate.toDate(), lang),
+    eventEndDate: d.data().eventEndDate
+      ? formatDate(d.data().eventEndDate.toDate(), lang)
+      : undefined,
     _doc: d,
   })) as (Event & { _doc: DocumentSnapshot })[];
 
@@ -153,6 +166,9 @@ export const fetchEventsFromFirebase = async ({
       ...doc.data(),
       id: doc.id,
       eventDate: formatDate(doc.data().eventDate.toDate(), lang),
+      eventEndDate: doc.data().eventEndDate
+        ? formatDate(doc.data().eventEndDate.toDate(), lang)
+        : undefined,
       publishDate: formatDate(doc.data().publishDate.toDate(), lang),
     })) as Event[];
 
@@ -179,6 +195,9 @@ export const fetchEventFromFirebase = async (
       ...eventSnapshot.data(),
       id: eventSnapshot.id,
       eventDate: formatDate(eventSnapshot.data().eventDate.toDate(), lang),
+      eventEndDate: eventSnapshot.data().eventEndDate
+        ? formatDate(eventSnapshot.data().eventEndDate.toDate(), lang)
+        : undefined,
       publishDate: formatDate(eventSnapshot.data().publishDate.toDate(), lang),
     } as Event;
   } catch (error) {

@@ -61,12 +61,21 @@ export const deleteNewsArticle = async (id: string): Promise<void> => {
   const newsArticle = await getDoc(doc(db, "news", id));
 
   try {
-    await deleteImage(newsArticle.data()?.imageUrl);
-    await Promise.all(
-      newsArticle.data()?.galleryImages.map((imageUrl: string) => {
-        deleteImage(imageUrl);
-      })
-    );
+    const data = newsArticle.data();
+
+    // Delete main image
+    if (data?.imageUrl) {
+      await deleteImage(data.imageUrl);
+    }
+
+    // Delete gallery images
+    if (data?.gallery && Array.isArray(data.gallery)) {
+      await Promise.all(
+        data.gallery.map((galleryItem: { url: string; altText: string }) => {
+          return deleteImage(galleryItem.url);
+        })
+      );
+    }
   } catch (error) {
     console.error("Error deleting news article images:", error);
   }

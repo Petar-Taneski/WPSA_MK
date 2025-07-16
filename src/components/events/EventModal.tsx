@@ -64,28 +64,28 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
 
   // Navigate to previous image
   const previousImage = () => {
-    if (!lightboxImage) return;
-    // For testing with 5 placeholder images
-    const galleryLength = 5;
+    if (!lightboxImage || !event?.gallery) return;
+    const galleryLength = event.gallery.length;
     const newIndex =
       lightboxImage.index > 0 ? lightboxImage.index - 1 : galleryLength - 1;
+    const newPhoto = event.gallery[newIndex];
     setLightboxImage({
-      url: DEFAULT_PLACEHOLDER_IMAGE,
-      altText: `Placeholder image ${newIndex + 1}`,
+      url: newPhoto.url,
+      altText: newPhoto.altText,
       index: newIndex,
     });
   };
 
   // Navigate to next image
   const nextImage = () => {
-    if (!lightboxImage) return;
-    // For testing with 5 placeholder images
-    const galleryLength = 5;
+    if (!lightboxImage || !event?.gallery) return;
+    const galleryLength = event.gallery.length;
     const newIndex =
       lightboxImage.index < galleryLength - 1 ? lightboxImage.index + 1 : 0;
+    const newPhoto = event.gallery[newIndex];
     setLightboxImage({
-      url: DEFAULT_PLACEHOLDER_IMAGE,
-      altText: `Placeholder image ${newIndex + 1}`,
+      url: newPhoto.url,
+      altText: newPhoto.altText,
       index: newIndex,
     });
   };
@@ -209,14 +209,28 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
               <CalendarDays className="mr-2 w-5 h-5 text-primary" />
               <span>
                 {(() => {
-                  const parsed = parseDateString(event.eventDate);
-                  return parsed
-                    ? parsed.toLocaleDateString(i18n.language, {
+                  const startParsed = parseDateString(event.eventDate);
+                  const startDate = startParsed
+                    ? startParsed.toLocaleDateString(i18n.language, {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
                       })
                     : event.eventDate;
+
+                  if (event.eventEndDate) {
+                    const endParsed = parseDateString(event.eventEndDate);
+                    const endDate = endParsed
+                      ? endParsed.toLocaleDateString(i18n.language, {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : event.eventEndDate;
+                    return `${startDate} - ${endDate}`;
+                  }
+
+                  return startDate;
                 })()}
               </span>
             </div>
@@ -359,13 +373,17 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           }}
         >
           <div
-            className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+            className="relative w-full h-full flex items-center justify-center p-4"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={lightboxImage.url}
               alt={lightboxImage.altText}
               className="object-contain max-w-full max-h-full"
+              style={{
+                maxWidth: "calc(100vw - 8rem)",
+                maxHeight: "calc(100vh - 8rem)",
+              }}
               onClick={(e) => e.stopPropagation()}
             />
 
@@ -381,33 +399,35 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
               <X className="w-6 h-6" />
             </button>
 
-            {/* Navigation buttons (always show for testing) */}
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  previousImage();
-                }}
-                className="absolute left-4 top-1/2 p-2 text-white transition-colors transform -translate-y-1/2 hover:text-gray-300"
-                aria-label={t("common.previous", "Previous")}
-              >
-                <ChevronLeft className="w-8 h-8" />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  nextImage();
-                }}
-                className="absolute right-4 top-1/2 p-2 text-white transition-colors transform -translate-y-1/2 hover:text-gray-300"
-                aria-label={t("common.next", "Next")}
-              >
-                <ChevronRight className="w-8 h-8" />
-              </button>
-            </>
+            {/* Navigation buttons */}
+            {event?.gallery && event.gallery.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    previousImage();
+                  }}
+                  className="absolute left-4 top-1/2 p-2 text-white transition-colors transform -translate-y-1/2 hover:text-gray-300"
+                  aria-label={t("common.previous", "Previous")}
+                >
+                  <ChevronLeft className="w-8 h-8" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage();
+                  }}
+                  className="absolute right-4 top-1/2 p-2 text-white transition-colors transform -translate-y-1/2 hover:text-gray-300"
+                  aria-label={t("common.next", "Next")}
+                >
+                  <ChevronRight className="w-8 h-8" />
+                </button>
+              </>
+            )}
 
-            {/* Image counter (always show for testing) */}
+            {/* Image counter */}
             <div className="absolute bottom-4 left-1/2 px-3 py-1 text-sm text-white rounded-md transform -translate-x-1/2 bg-black/50">
-              {lightboxImage.index + 1} / 5
+              {lightboxImage.index + 1} / {event?.gallery?.length || 0}
             </div>
           </div>
         </div>
