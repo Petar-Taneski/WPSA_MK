@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 
 type TabType = "news" | "events";
 type ViewType = "list" | "create" | "edit";
+type LanguageFilter = "all" | "english" | "macedonian";
 
 export const Dashboard = () => {
   const { t } = useTranslation();
@@ -32,25 +33,38 @@ export const Dashboard = () => {
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
+  const [languageFilter, setLanguageFilter] = useState<LanguageFilter>("all");
   const [editingItem, setEditingItem] = useState<NewsArticle | Event | null>(
     null
   );
 
-  // Load data based on active tab
+  // Load data based on active tab and language filter
   useEffect(() => {
     if (user) {
       loadData();
     }
-  }, [activeTab, user]);
+  }, [activeTab, languageFilter, user]);
 
   const loadData = async () => {
     setLoading(true);
     try {
       if (activeTab === "news") {
-        const { items } = await fetchAllNewsArticles();
+        const langParam =
+          languageFilter === "all"
+            ? undefined
+            : languageFilter === "english"
+            ? "en"
+            : "mk";
+        const { items } = await fetchAllNewsArticles(langParam);
         setNewsArticles(items);
       } else {
-        const { items } = await fetchAllEvents();
+        const langParam =
+          languageFilter === "all"
+            ? undefined
+            : languageFilter === "english"
+            ? "en"
+            : "mk";
+        const { items } = await fetchAllEvents(langParam);
         setEvents(items);
       }
     } catch (error) {
@@ -174,11 +188,53 @@ export const Dashboard = () => {
             <div className="p-6">
               {/* Action Bar */}
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {activeTab === "news"
-                    ? t("dashboard.newsArticles", "News Articles")
-                    : t("dashboard.events", "Events")}
-                </h2>
+                <div className="flex items-center gap-4">
+                  <h2 className="text-xl font-semibold text-gray-800">
+                    {activeTab === "news"
+                      ? t("dashboard.newsArticles", "News Articles")
+                      : t("dashboard.events", "Events")}
+                  </h2>
+
+                  {/* Language Filter - Show for both news and events tabs */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">
+                      {t("dashboard.filter", "Filter")}:
+                    </span>
+                    <div className="flex rounded-md border border-gray-300 overflow-hidden">
+                      <button
+                        onClick={() => setLanguageFilter("all")}
+                        className={`px-3 py-1 text-sm transition-colors ${
+                          languageFilter === "all"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {t("dashboard.allItems", "All")}
+                      </button>
+                      <button
+                        onClick={() => setLanguageFilter("english")}
+                        className={`px-3 py-1 text-sm border-l border-gray-300 transition-colors ${
+                          languageFilter === "english"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        EN
+                      </button>
+                      <button
+                        onClick={() => setLanguageFilter("macedonian")}
+                        className={`px-3 py-1 text-sm border-l border-gray-300 transition-colors ${
+                          languageFilter === "macedonian"
+                            ? "bg-blue-600 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        MK
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => {
                     setEditingItem(null);

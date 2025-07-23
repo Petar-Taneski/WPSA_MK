@@ -222,7 +222,10 @@
     "errorLoadingPosts": "Error loading available posts",
     "errorLinkingPosts": "Error linking posts",
     "errorUnlinkingPosts": "Error unlinking posts",
-    "linked": "Linked"
+    "linked": "Linked",
+    "filter": "Filter",
+    "allPosts": "All",
+    "allItems": "All"
   },
   "about": {
     "generalInfo": {
