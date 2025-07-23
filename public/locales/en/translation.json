@@ -204,7 +204,25 @@
     "authRequired": "Please log in to upload images",
     "imageRequired": "Main image is required",
     "imageAdded": "Image added - will upload when you save",
-    "pendingUpload": "Will upload on save"
+    "pendingUpload": "Will upload on save",
+    "correspondingPost": "Corresponding Post",
+    "correspondingPostHelp": "Link this post to its translation in the opposite language",
+    "noCorrespondingPost": "No corresponding post linked",
+    "saveFirstToLink": "Save the post first to link it to another post",
+    "linkToPost": "Link to Post",
+    "selectCorrespondingPost": "Select Corresponding Post",
+    "searchPosts": "Search posts...",
+    "noPostsFound": "No posts found matching your search",
+    "noAvailablePosts": "No available posts to link",
+    "preview": "Preview",
+    "unlink": "Unlink",
+    "postsLinked": "Posts linked successfully",
+    "postsUnlinked": "Posts unlinked successfully",
+    "errorLoadingCorrespondingPost": "Error loading corresponding post",
+    "errorLoadingPosts": "Error loading available posts",
+    "errorLinkingPosts": "Error linking posts",
+    "errorUnlinkingPosts": "Error unlinking posts",
+    "linked": "Linked"
   },
   "about": {
     "generalInfo": {

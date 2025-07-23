@@ -2,12 +2,16 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/auth";
 import { toast } from "react-toastify";
-import { Save, X } from "lucide-react";
+import { Save, X, Search, Link2, Unlink, Eye } from "lucide-react";
 import {
   createNewsArticle,
   updateNewsArticle,
   uploadImage,
   uploadGalleryImages,
+  fetchPostsInOppositeLanguage,
+  linkCorrespondingPosts,
+  unlinkCorrespondingPosts,
+  getCorrespondingPost,
 } from "@/services/api";
 import { NewsArticle } from "@/services/interfaces";
 import ReactQuill from "react-quill-new";
@@ -61,6 +65,15 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     gallery: [] as GalleryImage[],
   });
 
+  // Corresponding post state
+  const [correspondingPost, setCorrespondingPost] =
+    useState<NewsArticle | null>(null);
+  const [availablePosts, setAvailablePosts] = useState<NewsArticle[]>([]);
+  const [showPostSelector, setShowPostSelector] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loadingCorresponding, setLoadingCorresponding] = useState(false);
+  const [hasBeenUnlinked, setHasBeenUnlinked] = useState(false);
+
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -83,8 +96,113 @@ export const NewsForm: React.FC<NewsFormProps> = ({
         links: editingItem.links || [],
         gallery: editingItem.gallery || [],
       });
+
+      // Reset unlinked flag when loading new post
+      setHasBeenUnlinked(false);
+
+      // Load corresponding post if it exists
+      if (editingItem.correspondingId) {
+        loadCorrespondingPost(editingItem.correspondingId, editingItem.lang);
+      } else {
+        setCorrespondingPost(null);
+      }
     }
   }, [editingItem]);
+
+  // Load corresponding post
+  const loadCorrespondingPost = async (
+    correspondingId: string,
+    currentLang: string
+  ) => {
+    setLoadingCorresponding(true);
+    try {
+      const expectedLang = currentLang === "english" ? "macedonian" : "english";
+      const post = await getCorrespondingPost(correspondingId, expectedLang);
+      setCorrespondingPost(post);
+    } catch (error) {
+      console.error("Error loading corresponding post:", error);
+      toast.error(
+        t(
+          "dashboard.errorLoadingCorrespondingPost",
+          "Error loading corresponding post"
+        )
+      );
+    } finally {
+      setLoadingCorresponding(false);
+    }
+  };
+
+  // Load available posts for linking
+  const loadAvailablePosts = async () => {
+    setLoadingCorresponding(true);
+    try {
+      const posts = await fetchPostsInOppositeLanguage(formData.lang);
+      // Filter out already linked posts
+      const unlinkedPosts = posts.filter((post) => !post.correspondingId);
+      setAvailablePosts(unlinkedPosts);
+    } catch (error) {
+      console.error("Error loading available posts:", error);
+      toast.error(
+        t("dashboard.errorLoadingPosts", "Error loading available posts")
+      );
+    } finally {
+      setLoadingCorresponding(false);
+    }
+  };
+
+  // Handle linking posts
+  const handleLinkPost = async (selectedPost: NewsArticle) => {
+    if (!editingItem || !user) {
+      toast.error(
+        t(
+          "dashboard.saveFirstToLink",
+          "Please save the post first before linking"
+        )
+      );
+      return;
+    }
+
+    setLoadingCorresponding(true);
+    try {
+      await linkCorrespondingPosts(editingItem.id, selectedPost.id, user.uid);
+      setCorrespondingPost(selectedPost);
+      setHasBeenUnlinked(false); // Reset unlinked flag
+      setShowPostSelector(false);
+      toast.success(t("dashboard.postsLinked", "Posts linked successfully"));
+    } catch (error) {
+      console.error("Error linking posts:", error);
+      toast.error(t("dashboard.errorLinkingPosts", "Error linking posts"));
+    } finally {
+      setLoadingCorresponding(false);
+    }
+  };
+
+  // Handle unlinking posts
+  const handleUnlinkPost = async () => {
+    if (!editingItem || !user) return;
+
+    setLoadingCorresponding(true);
+    try {
+      await unlinkCorrespondingPosts(editingItem.id, user.uid);
+      setCorrespondingPost(null);
+      setHasBeenUnlinked(true); // Mark as explicitly unlinked
+      toast.success(
+        t("dashboard.postsUnlinked", "Posts unlinked successfully")
+      );
+    } catch (error) {
+      console.error("Error unlinking posts:", error);
+      toast.error(t("dashboard.errorUnlinkingPosts", "Error unlinking posts"));
+    } finally {
+      setLoadingCorresponding(false);
+    }
+  };
+
+  // Filter available posts based on search term
+  const filteredPosts = availablePosts.filter(
+    (post) =>
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.summary.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // Form validation
   const validateForm = () => {
@@ -217,6 +335,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                 altText: img.altText,
               }))
             : undefined,
+        correspondingId: hasBeenUnlinked
+          ? undefined
+          : correspondingPost?.id || editingItem?.correspondingId || undefined,
       };
 
       if (editingItem) {
@@ -373,6 +494,216 @@ export const NewsForm: React.FC<NewsFormProps> = ({
             />
           </div>
         </div>
+
+        {/* Corresponding Post Management */}
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-medium text-gray-800">
+              {t("dashboard.correspondingPost", "Corresponding Post")}
+            </h3>
+            <div className="text-sm text-gray-600">
+              {t(
+                "dashboard.correspondingPostHelp",
+                "Link this post to its translation in the opposite language"
+              )}
+            </div>
+          </div>
+
+          {correspondingPost ? (
+            <div className="bg-white border rounded-lg p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h4 className="font-medium text-gray-800 mb-2">
+                    {correspondingPost.title}
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {correspondingPost.summary}
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <span>
+                      {correspondingPost.lang === "english"
+                        ? "English"
+                        : "Macedonian"}
+                    </span>
+                    <span>•</span>
+                    <span>{correspondingPost.publishDate}</span>
+                    {correspondingPost.author && (
+                      <>
+                        <span>•</span>
+                        <span>{correspondingPost.author}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.open(
+                        correspondingPost.lang === "english"
+                          ? `/en/news/${correspondingPost.id}`
+                          : `/mk/вести/${correspondingPost.id}`,
+                        "_blank"
+                      )
+                    }
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                  >
+                    <Eye className="w-4 h-4" />
+                    {t("dashboard.preview", "Preview")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUnlinkPost}
+                    disabled={loadingCorresponding}
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 bg-red-50 rounded hover:bg-red-100 disabled:opacity-50"
+                  >
+                    <Unlink className="w-4 h-4" />
+                    {t("dashboard.unlink", "Unlink")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-6">
+              <div className="text-gray-500 mb-4">
+                {editingItem
+                  ? t(
+                      "dashboard.noCorrespondingPost",
+                      "No corresponding post linked"
+                    )
+                  : t(
+                      "dashboard.saveFirstToLink",
+                      "Save the post first to link it to another post"
+                    )}
+              </div>
+              {editingItem && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPostSelector(true);
+                    loadAvailablePosts();
+                  }}
+                  disabled={loadingCorresponding}
+                  className="flex items-center gap-2 px-4 py-2 mx-auto text-blue-600 bg-blue-50 rounded hover:bg-blue-100 disabled:opacity-50"
+                >
+                  <Link2 className="w-4 h-4" />
+                  {t("dashboard.linkToPost", "Link to Post")}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Post Selector Modal */}
+        {showPostSelector && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[80vh] overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">
+                  {t(
+                    "dashboard.selectCorrespondingPost",
+                    "Select Corresponding Post"
+                  )}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowPostSelector(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder={t("dashboard.searchPosts", "Search posts...")}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-y-auto max-h-96">
+                {loadingCorresponding ? (
+                  <div className="text-center py-8">
+                    <div className="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="mt-2 text-gray-600">
+                      {t("dashboard.loading", "Loading...")}
+                    </p>
+                  </div>
+                ) : filteredPosts.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    {searchTerm
+                      ? t(
+                          "dashboard.noPostsFound",
+                          "No posts found matching your search"
+                        )
+                      : t(
+                          "dashboard.noAvailablePosts",
+                          "No available posts to link"
+                        )}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredPosts.map((post) => (
+                      <div
+                        key={post.id}
+                        className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleLinkPost(post)}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-800 mb-1">
+                              {post.title}
+                            </h4>
+                            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                              {post.summary}
+                            </p>
+                            <div className="flex items-center gap-4 text-xs text-gray-500">
+                              <span>
+                                {post.lang === "english"
+                                  ? "English"
+                                  : "Macedonian"}
+                              </span>
+                              <span>•</span>
+                              <span>{post.publishDate}</span>
+                              {post.author && (
+                                <>
+                                  <span>•</span>
+                                  <span>{post.author}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(
+                                post.lang === "english"
+                                  ? `/en/news/${post.id}`
+                                  : `/mk/вести/${post.id}`,
+                                "_blank"
+                              );
+                            }}
+                            className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                          >
+                            <Eye className="w-3 h-3" />
+                            {t("dashboard.preview", "Preview")}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Main Image Upload */}
         <div>
