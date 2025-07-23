@@ -1,7 +1,15 @@
+<<<<<<< HEAD
+=======
+import { useState } from "react";
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { X, Image as ImageIcon } from "lucide-react";
 import { deleteImage } from "@/services/api";
+<<<<<<< HEAD
+=======
+import { useAuth } from "@/providers/auth";
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
 
 interface GalleryImage {
   url: string;
@@ -25,8 +33,16 @@ const MAX_TOTAL_SIZE = Number.MAX_SAFE_INTEGER; // No size limit (temporarily)
 export const GalleryUpload: React.FC<GalleryUploadProps> = ({
   images,
   onChange,
+<<<<<<< HEAD
 }) => {
   const { t } = useTranslation();
+=======
+  type,
+}) => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
+
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
   // Calculate current total size
   const currentTotalSize = images.reduce((total, img) => {
     return total + (img.file?.size || 0);
@@ -185,7 +201,11 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
 
       {/* Size Warning - temporarily disabled */}
       {/* {currentTotalSize > MAX_TOTAL_SIZE * 0.8 && (
+<<<<<<< HEAD
         <div className="px-3 py-2 bg-yellow-100 rounded-md border border-yellow-400">
+=======
+        <div className="px-3 py-2 bg-yellow-100 border border-yellow-400 rounded-md">
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
           <p className="text-sm text-yellow-800">
             {t("dashboard.sizeWarning", "Warning: Approaching size limit")}
           </p>
@@ -197,18 +217,30 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((image, index) => (
             <div key={index} className="relative group">
+<<<<<<< HEAD
               <div className="overflow-hidden bg-gray-100 rounded-lg aspect-w-16 aspect-h-9">
                 <img
                   src={image.url}
                   alt={image.altText}
                   className="object-cover w-full h-full"
+=======
+              <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
+                <img
+                  src={image.url}
+                  alt={image.altText}
+                  className="w-full h-full object-cover"
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
                 />
               </div>
 
               {/* Remove Button */}
               <button
                 onClick={() => removeImage(index)}
+<<<<<<< HEAD
                 className="absolute top-2 right-2 p-1 text-white bg-red-500 rounded-full opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+=======
+                className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
                 aria-label={t("dashboard.removeImage", "Remove image")}
               >
                 <X className="w-4 h-4" />
@@ -253,7 +285,11 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
       )}
 
       {/* Instructions */}
+<<<<<<< HEAD
       <div className="space-y-1 text-xs text-gray-500">
+=======
+      <div className="text-xs text-gray-500 space-y-1">
+>>>>>>> 04886e9e21c1dbd83c94f969640d3204957150fe
         <p>
           {t(
             "dashboard.galleryInstructions",
