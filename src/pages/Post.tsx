@@ -3,7 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { fetchNewsArticleFromFirebase } from "../services/api";
 import { NewsArticle } from "../services/interfaces";
-import { Copy, Check } from "lucide-react";
+import {
+  Copy,
+  Check,
+  Maximize2,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import {
   PostHeader,
   PostMetadata,
@@ -24,6 +31,11 @@ const Post: React.FC = () => {
   const [article, setArticle] = useState<NewsArticle | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<{
+    url: string;
+    altText: string;
+    index: number;
+  } | null>(null);
 
   // Current article URL for sharing
   const articleUrl = `${window.location.origin}${window.location.pathname}`;
@@ -66,6 +78,47 @@ const Post: React.FC = () => {
     );
   };
 
+  // Handle image click to open lightbox
+  const handleImageClick = (
+    photo: { url: string; altText: string },
+    index: number
+  ) => {
+    setLightboxImage({ ...photo, index });
+  };
+
+  // Close lightbox
+  const closeLightbox = () => {
+    setLightboxImage(null);
+  };
+
+  // Navigate to previous image
+  const previousImage = () => {
+    if (!lightboxImage) return;
+    // For testing with 5 placeholder images
+    const galleryLength = 5;
+    const newIndex =
+      lightboxImage.index > 0 ? lightboxImage.index - 1 : galleryLength - 1;
+    setLightboxImage({
+      url: DEFAULT_PLACEHOLDER_IMAGE,
+      altText: `Placeholder image ${newIndex + 1}`,
+      index: newIndex,
+    });
+  };
+
+  // Navigate to next image
+  const nextImage = () => {
+    if (!lightboxImage) return;
+    // For testing with 5 placeholder images
+    const galleryLength = 5;
+    const newIndex =
+      lightboxImage.index < galleryLength - 1 ? lightboxImage.index + 1 : 0;
+    setLightboxImage({
+      url: DEFAULT_PLACEHOLDER_IMAGE,
+      altText: `Placeholder image ${newIndex + 1}`,
+      index: newIndex,
+    });
+  };
+
   // Get the news path based on current language
   const getNewsPath = () => {
     const currentLanguage = i18n.language;
@@ -106,6 +159,33 @@ const Post: React.FC = () => {
       setLoading(false);
     }
   }, [params.id, t, i18n.language]);
+
+  // Handle keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxImage) return;
+
+      switch (e.key) {
+        case "Escape":
+          e.stopPropagation();
+          closeLightbox();
+          break;
+        case "ArrowLeft":
+          e.stopPropagation();
+          previousImage();
+          break;
+        case "ArrowRight":
+          e.stopPropagation();
+          nextImage();
+          break;
+      }
+    };
+
+    if (lightboxImage) {
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [lightboxImage]);
 
   if (loading) {
     return <PostLoading />;
@@ -151,6 +231,33 @@ const Post: React.FC = () => {
       </div>
       <PostContent content={article.content} />
 
+      {/* Real gallery (when it exists) */}
+      {article.gallery && article.gallery.length > 0 && (
+        <div className="flex flex-col items-center px-4 my-6 mb-6 w-full">
+          <h3 className="mb-3 text-lg font-semibold text-gray-700">
+            {t("post.gallery", "Gallery")}
+          </h3>
+          <div className="flex flex-wrap gap-2 w-full">
+            {article.gallery.map((photo, index) => (
+              <div
+                key={index}
+                className="relative cursor-pointer group/photo"
+                onClick={() => handleImageClick(photo, index)}
+              >
+                <img
+                  src={photo.url}
+                  alt={photo.altText}
+                  className="object-cover w-16 h-16 rounded-md transition-opacity sm:w-20 sm:h-20 hover:opacity-90"
+                />
+                <div className="flex absolute inset-0 justify-center items-center rounded-md opacity-0 transition-opacity bg-black/50 group-hover/photo:opacity-100">
+                  <Maximize2 className="w-5 h-5 text-white" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {article.links && article.links.length > 0 && (
         <div className="px-4 mt-6">
           <h3 className="mb-3 text-lg font-semibold text-gray-800">
@@ -183,6 +290,70 @@ const Post: React.FC = () => {
           {t("post.backToNews")}
         </button>
       </div>
+
+      {/* Lightbox for full-size images */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-[1003] flex items-center justify-center bg-black/90"
+          onClick={(e) => {
+            e.stopPropagation();
+            closeLightbox();
+          }}
+        >
+          <div
+            className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={lightboxImage.url}
+              alt={lightboxImage.altText}
+              className="object-contain max-w-full max-h-full"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            {/* Close button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                closeLightbox();
+              }}
+              className="absolute top-4 right-4 p-2 text-white transition-colors hover:text-gray-300"
+              aria-label={t("common.close", "Close")}
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Navigation buttons (always show for testing) */}
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  previousImage();
+                }}
+                className="absolute left-4 top-1/2 p-2 text-white transition-colors transform -translate-y-1/2 hover:text-gray-300"
+                aria-label={t("common.previous", "Previous")}
+              >
+                <ChevronLeft className="w-8 h-8" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextImage();
+                }}
+                className="absolute right-4 top-1/2 p-2 text-white transition-colors transform -translate-y-1/2 hover:text-gray-300"
+                aria-label={t("common.next", "Next")}
+              >
+                <ChevronRight className="w-8 h-8" />
+              </button>
+            </>
+
+            {/* Image counter (always show for testing) */}
+            <div className="absolute bottom-4 left-1/2 px-3 py-1 text-sm text-white rounded-md transform -translate-x-1/2 bg-black/50">
+              {lightboxImage.index + 1} / 5
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
