@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { compressImage, COMPRESSION_PRESETS } from "@/utils/imageCompression";
 
 interface ImageData {
   url: string;
@@ -25,6 +26,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
 }) => {
   const { t } = useTranslation();
   const [dragOver, setDragOver] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Handle file validation
@@ -50,27 +52,56 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     return true;
   };
 
-  // Handle file selection (no immediate upload, just preview)
-  const handleFileSelection = (file: File) => {
+  // Handle file selection with compression
+  const handleFileSelection = async (file: File) => {
     if (!validateFile(file)) return;
 
-    // Create object URL for immediate preview
-    const previewUrl = URL.createObjectURL(file);
+    setCompressing(true);
 
-    // Auto-generate alt text from filename
-    const autoAltText = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+    try {
+      // Compress the image while maintaining original dimensions
+      const compressedFile = await compressImage(
+        file,
+        COMPRESSION_PRESETS.medium
+      );
 
-    // Store file locally with preview URL
-    const newImageData: ImageData = {
-      url: previewUrl,
-      altText: imageData?.altText || autoAltText,
-      file: file,
-    };
+      // Create object URL for immediate preview
+      const previewUrl = URL.createObjectURL(compressedFile);
 
-    onImageChange(newImageData);
-    toast.success(
-      t("dashboard.imageAdded", "Image added - will upload when you save")
-    );
+      // Auto-generate alt text from filename
+      const autoAltText = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+
+      // Store compressed file locally with preview URL
+      const newImageData: ImageData = {
+        url: previewUrl,
+        altText: imageData?.altText || autoAltText,
+        file: compressedFile,
+      };
+
+      onImageChange(newImageData);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      toast.error(
+        t(
+          "dashboard.compressionError",
+          "Failed to optimize image. Using original file."
+        )
+      );
+
+      // Fallback to original file if compression fails
+      const previewUrl = URL.createObjectURL(file);
+      const autoAltText = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+
+      const newImageData: ImageData = {
+        url: previewUrl,
+        altText: imageData?.altText || autoAltText,
+        file: file,
+      };
+
+      onImageChange(newImageData);
+    } finally {
+      setCompressing(false);
+    }
   };
 
   // Handle drag events
@@ -174,9 +205,17 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           <button
             onClick={handleBrowseClick}
             type="button"
-            className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors"
+            disabled={compressing}
+            className="w-full px-4 py-2 text-sm text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {t("dashboard.replaceImage", "Replace Image")}
+            {compressing ? (
+              <span className="flex items-center justify-center">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                {t("dashboard.optimizing", "Optimizing...")}
+              </span>
+            ) : (
+              t("dashboard.replaceImage", "Replace Image")
+            )}
           </button>
         </div>
       ) : (
@@ -208,10 +247,20 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             <button
               onClick={handleBrowseClick}
               type="button"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              disabled={compressing}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Upload className="w-4 h-4 mr-2" />
-              {t("dashboard.browseFiles", "Browse Files")}
+              {compressing ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t("dashboard.optimizing", "Optimizing...")}
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  {t("dashboard.browseFiles", "Browse Files")}
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -223,6 +272,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         type="file"
         accept="image/*"
         onChange={handleFileChange}
+        disabled={compressing}
         className="hidden"
       />
     </div>
