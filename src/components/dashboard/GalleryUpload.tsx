@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { X, Image as ImageIcon } from "lucide-react";
+import { X, Image as ImageIcon, Loader2 } from "lucide-react";
 import { deleteImage } from "@/services/api";
+import { compressImages, COMPRESSION_PRESETS } from "@/utils/imageCompression";
 
 interface GalleryImage {
   url: string;
@@ -25,16 +27,16 @@ const MAX_TOTAL_SIZE = Number.MAX_SAFE_INTEGER; // No size limit (temporarily)
 export const GalleryUpload: React.FC<GalleryUploadProps> = ({
   images,
   onChange,
-  
 }) => {
   const { t } = useTranslation();
+  const [compressing, setCompressing] = useState(false);
 
   // Calculate current total size
   const currentTotalSize = images.reduce((total, img) => {
     return total + (img.file?.size || 0);
   }, 0);
 
-  // Handle file selection
+  // Handle file selection with compression
   const handleFileSelection = async (files: FileList) => {
     if (images.length + files.length > GALLERY_SIZE_LIMIT) {
       toast.error(
@@ -47,7 +49,6 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
     }
 
     const validFiles: File[] = [];
-    // let totalSize = currentTotalSize; // Temporarily disabled
 
     // Validate each file
     for (let i = 0; i < files.length; i++) {
@@ -64,41 +65,48 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
         continue;
       }
 
-      // Size validation temporarily disabled - uncomment to re-enable
-      // if (file.size > MAX_FILE_SIZE) {
-      //   toast.error(
-      //     t(
-      //       "dashboard.fileSizeLimit",
-      //       `File ${file.name} is too large (max 5MB)`
-      //     )
-      //   );
-      //   continue;
-      // }
-
-      // if (totalSize + file.size > MAX_TOTAL_SIZE) {
-      //   toast.error(
-      //     t("dashboard.totalSizeLimit", "Total size limit exceeded (25MB max)")
-      //   );
-      //   break;
-      // }
-
-      // totalSize += file.size; // Temporarily disabled
       validFiles.push(file);
     }
 
     if (validFiles.length === 0) return;
 
-    // For immediate preview, create object URLs
-    const newImages: GalleryImage[] = validFiles.map((file) => ({
-      url: URL.createObjectURL(file),
-      altText: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
-      file,
-    }));
+    setCompressing(true);
 
-    onChange([...images, ...newImages]);
-    toast.success(
-      t("dashboard.imagesAdded", `${validFiles.length} image(s) added`)
-    );
+    try {
+      // Compress all images
+      const compressedFiles = await compressImages(
+        validFiles,
+        COMPRESSION_PRESETS.web
+      );
+
+      // Create new images with compressed files
+      const newImages: GalleryImage[] = compressedFiles.map((file) => ({
+        url: URL.createObjectURL(file),
+        altText: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
+        file,
+      }));
+
+      onChange([...images, ...newImages]);
+    } catch (error) {
+      console.error("Error compressing gallery images:", error);
+      toast.error(
+        t(
+          "dashboard.galleryCompressionError",
+          "Failed to optimize some images. Using original files."
+        )
+      );
+
+      // Fallback to original files if compression fails
+      const newImages: GalleryImage[] = validFiles.map((file) => ({
+        url: URL.createObjectURL(file),
+        altText: file.name.replace(/\.[^/.]+$/, ""),
+        file,
+      }));
+
+      onChange([...images, ...newImages]);
+    } finally {
+      setCompressing(false);
+    }
   };
 
   // Remove image
@@ -168,9 +176,24 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
           )}
 
           {/* Upload Button */}
-          <label className="flex items-center px-3 py-1 text-sm text-white bg-blue-600 rounded-md transition-colors cursor-pointer hover:bg-blue-700">
-            <ImageIcon className="mr-1 w-4 h-4" />
-            {t("dashboard.addImages", "Add Images")}
+          <label
+            className={`flex items-center px-3 py-1 text-sm text-white bg-blue-600 rounded-md transition-colors cursor-pointer hover:bg-blue-700 ${
+              compressing || images.length >= GALLERY_SIZE_LIMIT
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
+          >
+            {compressing ? (
+              <>
+                <Loader2 className="mr-1 w-4 h-4 animate-spin" />
+                {t("dashboard.optimizing", "Optimizing...")}
+              </>
+            ) : (
+              <>
+                <ImageIcon className="mr-1 w-4 h-4" />
+                {t("dashboard.addImages", "Add Images")}
+              </>
+            )}
             <input
               type="file"
               multiple
@@ -179,7 +202,7 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
                 e.target.files && handleFileSelection(e.target.files)
               }
               className="hidden"
-              disabled={images.length >= GALLERY_SIZE_LIMIT}
+              disabled={compressing || images.length >= GALLERY_SIZE_LIMIT}
             />
           </label>
         </div>
