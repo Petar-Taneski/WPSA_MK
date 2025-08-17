@@ -230,7 +230,23 @@
     "linked": "Linked",
     "filter": "Filter",
     "allPosts": "All",
-    "allItems": "All"
+    "allItems": "All",
+    "imagePendingDeletion": "Image will be deleted when you save the form",
+    "pendingDeletion": "Pending Deletion",
+    "restoreImage": "Restore image",
+    "galleryInstructions2": "• Click the × button to remove an image",
+    "galleryInstructions3": "• Add descriptive alt text for accessibility",
+    "galleryImagesDeleted": "Gallery images deleted successfully",
+    "errorDeletingGalleryImages": "Error deleting some gallery images",
+    "errorRemovingImage": "Error removing image",
+    "linkPending": "Link will be applied when you save the post",
+    "unlinkPending": "Unlink will be applied when you save the post",
+    "linkCancelled": "Pending link cancelled",
+    "unlinkCancelled": "Pending unlink cancelled",
+    "pendingUnlink": "Pending Unlink",
+    "pendingUnlinkDescription": "The link will be removed when you save",
+    "imageDeletionCancelled": "Image deletion cancelled",
+    "confirmDiscard": "You have unsaved changes. Are you sure you want to discard them?"
   },
   "about": {
     "generalInfo": {

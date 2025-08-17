@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { X, Image as ImageIcon, Loader2 } from "lucide-react";
-import { deleteImage } from "@/services/api";
+import { X, Image as ImageIcon, Loader2, Undo2 } from "lucide-react";
+// Note: deleteImage is no longer used here - deletion is deferred
 import { compressImages, COMPRESSION_PRESETS } from "@/utils/imageCompression";
 
 interface GalleryImage {
   url: string;
   altText: string;
   file?: File;
+  pendingDeletion?: boolean; // Mark for deletion without actually deleting
 }
 
 interface GalleryUploadProps {
   images: GalleryImage[];
   onChange: (images: GalleryImage[]) => void;
   type: "news" | "events";
+  onPendingDeletions?: (deletions: string[]) => void; // Callback for pending deletions
 }
 
 const GALLERY_SIZE_LIMIT = 5; // Max 5 images per post/event
@@ -27,6 +29,7 @@ const MAX_TOTAL_SIZE = Number.MAX_SAFE_INTEGER; // No size limit (temporarily)
 export const GalleryUpload: React.FC<GalleryUploadProps> = ({
   images,
   onChange,
+  onPendingDeletions,
 }) => {
   const { t } = useTranslation();
   const [compressing, setCompressing] = useState(false);
@@ -109,30 +112,80 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
     }
   };
 
-  // Remove image
-  const removeImage = async (index: number) => {
-    const imageToRemove = images[index];
+  // Remove image - now with deferred deletion for Firebase images
+  const removeImage = (index: number) => {
+    try {
+      const imageToRemove = images[index];
 
-    // Clean up object URL if it exists
-    if (imageToRemove.url.startsWith("blob:")) {
-      URL.revokeObjectURL(imageToRemove.url);
-    } else if (imageToRemove.url.includes("firebasestorage.googleapis.com")) {
-      // Delete from Firebase Storage if it's a Firebase URL
-      try {
-        await deleteImage(imageToRemove.url);
-        toast.success(
-          t("dashboard.imageDeleted", "Image deleted from storage")
-        );
-      } catch (error) {
-        console.error("Error deleting image from storage:", error);
-        toast.error(
-          t("dashboard.deleteImageError", "Failed to delete image from storage")
-        );
+      // Clean up object URL if it exists (new uploads)
+      if (imageToRemove.url.startsWith("blob:")) {
+        URL.revokeObjectURL(imageToRemove.url);
+        // Remove immediately since it's not saved yet
+        const newImages = images.filter((_, i) => i !== index);
+        onChange(newImages);
+        return; // Important: exit early
       }
+
+      // Check if it's a Firebase Storage URL
+      if (imageToRemove.url.includes("firebasestorage.googleapis.com")) {
+        // Mark Firebase images for deletion instead of deleting immediately
+        const newImages = images.map((img, i) =>
+          i === index ? { ...img, pendingDeletion: true } : img
+        );
+        onChange(newImages);
+
+        // Notify parent component about pending deletion
+        if (onPendingDeletions) {
+          const pendingDeletions = newImages
+            .filter(
+              (img) =>
+                img.pendingDeletion &&
+                img.url.includes("firebasestorage.googleapis.com")
+            )
+            .map((img) => img.url);
+          onPendingDeletions(pendingDeletions);
+        }
+
+        toast.info(
+          t(
+            "dashboard.imagePendingDeletion",
+            "Image will be deleted when you save the form"
+          )
+        );
+        return; // Important: exit early
+      }
+
+      // Remove other types immediately (fallback)
+      const newImages = images.filter((_, i) => i !== index);
+      onChange(newImages);
+    } catch (error) {
+      console.error("Error in removeImage:", error);
+      toast.error(t("dashboard.errorRemovingImage", "Error removing image"));
+    }
+  };
+
+  // Restore pending deletion
+  const restorePendingDeletion = (index: number) => {
+    const newImages = images.map((img, i) =>
+      i === index ? { ...img, pendingDeletion: false } : img
+    );
+    onChange(newImages);
+
+    // Update pending deletions
+    if (onPendingDeletions) {
+      const pendingDeletions = newImages
+        .filter(
+          (img) =>
+            img.pendingDeletion &&
+            img.url.includes("firebasestorage.googleapis.com")
+        )
+        .map((img) => img.url);
+      onPendingDeletions(pendingDeletions);
     }
 
-    const newImages = images.filter((_, i) => i !== index);
-    onChange(newImages);
+    toast.info(
+      t("dashboard.imageDeletionCancelled", "Image deletion cancelled")
+    );
   };
 
   // Update alt text
@@ -221,23 +274,49 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
       {images.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((image, index) => (
-            <div key={index} className="relative group">
+            <div
+              key={index}
+              className={`relative group ${
+                image.pendingDeletion ? "opacity-50" : ""
+              }`}
+            >
               <div className="overflow-hidden bg-gray-100 rounded-lg aspect-w-16 aspect-h-9">
                 <img
                   src={image.url}
                   alt={image.altText}
-                  className="object-cover w-full h-full"
+                  className={`object-cover w-full h-full ${
+                    image.pendingDeletion ? "grayscale" : ""
+                  }`}
                 />
+                {image.pendingDeletion && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <span className="px-2 py-1 text-xs text-white bg-red-600 rounded">
+                      {t("dashboard.pendingDeletion", "Pending Deletion")}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              {/* Remove Button */}
-              <button
-                onClick={() => removeImage(index)}
-                className="absolute top-2 right-2 p-1 text-white bg-red-500 rounded-full opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
-                aria-label={t("dashboard.removeImage", "Remove image")}
-              >
-                <X className="w-4 h-4" />
-              </button>
+              {/* Action Buttons */}
+              {image.pendingDeletion ? (
+                <button
+                  type="button"
+                  onClick={() => restorePendingDeletion(index)}
+                  className="absolute top-2 right-2 p-1 text-white bg-green-500 rounded-full opacity-0 transition-opacity group-hover:opacity-100 hover:bg-green-600"
+                  aria-label={t("dashboard.restoreImage", "Restore image")}
+                >
+                  <Undo2 className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => removeImage(index)}
+                  className="absolute top-2 right-2 p-1 text-white bg-red-500 rounded-full opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+                  aria-label={t("dashboard.removeImage", "Remove image")}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
 
               {/* Alt Text Input */}
               <div>
@@ -248,7 +327,12 @@ export const GalleryUpload: React.FC<GalleryUploadProps> = ({
                   type="text"
                   value={image.altText}
                   onChange={(e) => updateAltText(index, e.target.value)}
-                  className="px-2 py-1 w-full text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  disabled={image.pendingDeletion}
+                  className={`px-2 py-1 w-full text-sm rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                    image.pendingDeletion
+                      ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                      : ""
+                  }`}
                   placeholder={t(
                     "dashboard.altTextPlaceholder",
                     "Image description..."

@@ -8,6 +8,7 @@ import {
   updateEvent,
   uploadImage,
   uploadGalleryImages,
+  deletePendingImages,
 } from "@/services/api";
 import { Event } from "@/services/interfaces";
 import ReactQuill from "react-quill-new";
@@ -25,6 +26,7 @@ interface GalleryImage {
   url: string;
   altText: string;
   file?: File;
+  pendingDeletion?: boolean;
 }
 
 interface ImageData {
@@ -66,6 +68,10 @@ export const EventForm: React.FC<EventFormProps> = ({
 
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  // Track pending gallery image deletions
+  const [pendingGalleryDeletions, setPendingGalleryDeletions] = useState<
+    string[]
+  >([]);
 
   // Check if there are unsaved changes
   const hasUnsavedChanges = () => {
@@ -82,7 +88,8 @@ export const EventForm: React.FC<EventFormProps> = ({
         formData.isFeatured !== false ||
         formData.mainImage !== null ||
         formData.links.length > 0 ||
-        formData.gallery.length > 0
+        formData.gallery.length > 0 ||
+        pendingGalleryDeletions.length > 0
       );
     } else {
       // For existing items, check if any fields have changed
@@ -98,6 +105,7 @@ export const EventForm: React.FC<EventFormProps> = ({
           JSON.stringify(editingItem.links || []) ||
         JSON.stringify(formData.gallery) !==
           JSON.stringify(editingItem.gallery || []) ||
+        pendingGalleryDeletions.length > 0 ||
         formData.mainImage?.url !== editingItem.imageUrl ||
         formData.mainImage?.altText !== (editingItem.altText || "") ||
         formatDateForInput(editingItem.eventDate) !== formData.eventDate ||
@@ -118,7 +126,7 @@ export const EventForm: React.FC<EventFormProps> = ({
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, editingItem]);
+  }, [formData, editingItem, pendingGalleryDeletions]);
 
   // Helper function to convert formatted date string to YYYY-MM-DD format for HTML input
   const formatDateForInput = (dateString: string): string => {
@@ -300,6 +308,9 @@ export const EventForm: React.FC<EventFormProps> = ({
         });
       }
 
+      // Filter out images marked for deletion
+      finalGallery = finalGallery.filter((img) => !img.pendingDeletion);
+
       // Prepare data for submission
       const eventData = {
         title: formData.title,
@@ -338,6 +349,27 @@ export const EventForm: React.FC<EventFormProps> = ({
         toast.success(
           t("dashboard.eventCreated", "Event created successfully")
         );
+      }
+
+      // Handle pending gallery deletions after the event is saved
+      if (pendingGalleryDeletions.length > 0) {
+        try {
+          await deletePendingImages(pendingGalleryDeletions);
+          toast.success(
+            t(
+              "dashboard.galleryImagesDeleted",
+              "Gallery images deleted successfully"
+            )
+          );
+        } catch (error) {
+          console.error("Error deleting gallery images after save:", error);
+          toast.error(
+            t(
+              "dashboard.errorDeletingGalleryImages",
+              "Error deleting some gallery images"
+            )
+          );
+        }
       }
 
       onSuccess();
@@ -608,6 +640,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         <GalleryUpload
           images={formData.gallery}
           onChange={(gallery) => handleChange("gallery", gallery)}
+          onPendingDeletions={setPendingGalleryDeletions}
           type="events"
         />
 

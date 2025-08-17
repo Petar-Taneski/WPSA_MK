@@ -12,6 +12,7 @@ import {
   linkCorrespondingPosts,
   unlinkCorrespondingPosts,
   getCorrespondingPost,
+  deletePendingImages,
 } from "@/services/api";
 import { NewsArticle } from "@/services/interfaces";
 import ReactQuill from "react-quill-new";
@@ -29,6 +30,7 @@ interface GalleryImage {
   url: string;
   altText: string;
   file?: File;
+  pendingDeletion?: boolean;
 }
 
 interface ImageData {
@@ -78,6 +80,10 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     null
   );
   const [pendingUnlink, setPendingUnlink] = useState(false);
+  // Track pending gallery image deletions
+  const [pendingGalleryDeletions, setPendingGalleryDeletions] = useState<
+    string[]
+  >([]);
 
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -86,13 +92,18 @@ export const NewsForm: React.FC<NewsFormProps> = ({
   useEffect(() => {
     return () => {
       // Clear any pending operations when component unmounts
-      if (pendingLinkPost || pendingUnlink) {
+      if (
+        pendingLinkPost ||
+        pendingUnlink ||
+        pendingGalleryDeletions.length > 0
+      ) {
         // Reset pending states
         setPendingLinkPost(null);
         setPendingUnlink(false);
+        setPendingGalleryDeletions([]);
       }
     };
-  }, [pendingLinkPost, pendingUnlink]);
+  }, [pendingLinkPost, pendingUnlink, pendingGalleryDeletions]);
 
   // Check if there are unsaved changes
   const hasUnsavedChanges = () => {
@@ -108,7 +119,8 @@ export const NewsForm: React.FC<NewsFormProps> = ({
         formData.links.length > 0 ||
         formData.gallery.length > 0 ||
         pendingLinkPost !== null ||
-        pendingUnlink
+        pendingUnlink ||
+        pendingGalleryDeletions.length > 0
       );
     } else {
       // For existing items, check if any fields have changed
@@ -125,6 +137,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
           JSON.stringify(editingItem.gallery || []) ||
         pendingLinkPost !== null ||
         pendingUnlink ||
+        pendingGalleryDeletions.length > 0 ||
         formData.mainImage?.url !== editingItem.imageUrl ||
         formData.mainImage?.altText !== (editingItem.altText || "")
       );
@@ -142,7 +155,13 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, editingItem, pendingLinkPost, pendingUnlink]);
+  }, [
+    formData,
+    editingItem,
+    pendingLinkPost,
+    pendingUnlink,
+    pendingGalleryDeletions,
+  ]);
 
   // Initialize form when editing
   useEffect(() => {
@@ -169,6 +188,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
       // Reset pending changes when loading a new post
       setPendingLinkPost(null);
       setPendingUnlink(false);
+      setPendingGalleryDeletions([]);
 
       // Load corresponding post if it exists
       if (editingItem.correspondingId) {
@@ -368,6 +388,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
         });
       }
 
+      // Filter out images marked for deletion
+      finalGallery = finalGallery.filter((img) => !img.pendingDeletion);
+
       // Prepare data for submission
       const newsData = {
         title: formData.title,
@@ -439,6 +462,27 @@ export const NewsForm: React.FC<NewsFormProps> = ({
           console.error("Error unlinking posts after save:", error);
           toast.error(
             t("dashboard.errorUnlinkingPosts", "Error unlinking posts")
+          );
+        }
+      }
+
+      // Handle pending gallery deletions after the post is saved
+      if (pendingGalleryDeletions.length > 0) {
+        try {
+          await deletePendingImages(pendingGalleryDeletions);
+          toast.success(
+            t(
+              "dashboard.galleryImagesDeleted",
+              "Gallery images deleted successfully"
+            )
+          );
+        } catch (error) {
+          console.error("Error deleting gallery images after save:", error);
+          toast.error(
+            t(
+              "dashboard.errorDeletingGalleryImages",
+              "Error deleting some gallery images"
+            )
           );
         }
       }
@@ -954,6 +998,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
         <GalleryUpload
           images={formData.gallery}
           onChange={(gallery) => handleChange("gallery", gallery)}
+          onPendingDeletions={setPendingGalleryDeletions}
           type="news"
         />
 

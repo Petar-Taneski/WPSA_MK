@@ -50,3 +50,11 @@ export const uploadGalleryImages = async (
 
   return Promise.all(uploadPromises);
 };
+
+// Delete multiple images (for pending deletions)
+export const deletePendingImages = async (
+  imageUrls: string[]
+): Promise<void> => {
+  const deletePromises = imageUrls.map((url) => deleteImage(url));
+  await Promise.all(deletePromises);
+};
