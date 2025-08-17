@@ -73,9 +73,76 @@ export const NewsForm: React.FC<NewsFormProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingCorresponding, setLoadingCorresponding] = useState(false);
   const [hasBeenUnlinked, setHasBeenUnlinked] = useState(false);
+  // Track pending link changes that haven't been saved yet
+  const [pendingLinkPost, setPendingLinkPost] = useState<NewsArticle | null>(
+    null
+  );
+  const [pendingUnlink, setPendingUnlink] = useState(false);
 
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Cleanup effect to handle component unmounting (e.g., when user navigates back)
+  useEffect(() => {
+    return () => {
+      // Clear any pending operations when component unmounts
+      if (pendingLinkPost || pendingUnlink) {
+        // Reset pending states
+        setPendingLinkPost(null);
+        setPendingUnlink(false);
+      }
+    };
+  }, [pendingLinkPost, pendingUnlink]);
+
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = () => {
+    if (!editingItem) {
+      // For new items, check if any fields have been filled
+      return (
+        formData.title.trim() !== "" ||
+        formData.summary.trim() !== "" ||
+        formData.content.trim() !== "" ||
+        formData.author.trim() !== "" ||
+        formData.tags.trim() !== "" ||
+        formData.mainImage !== null ||
+        formData.links.length > 0 ||
+        formData.gallery.length > 0 ||
+        pendingLinkPost !== null ||
+        pendingUnlink
+      );
+    } else {
+      // For existing items, check if any fields have changed
+      return (
+        formData.title !== editingItem.title ||
+        formData.summary !== editingItem.summary ||
+        formData.content !== editingItem.content ||
+        formData.author !== (editingItem.author || "") ||
+        formData.tags !== (editingItem.tags?.join(", ") || "") ||
+        formData.lang !== editingItem.lang ||
+        JSON.stringify(formData.links) !==
+          JSON.stringify(editingItem.links || []) ||
+        JSON.stringify(formData.gallery) !==
+          JSON.stringify(editingItem.gallery || []) ||
+        pendingLinkPost !== null ||
+        pendingUnlink ||
+        formData.mainImage?.url !== editingItem.imageUrl ||
+        formData.mainImage?.altText !== (editingItem.altText || "")
+      );
+    }
+  };
+
+  // Warn user about unsaved changes when leaving the page
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, editingItem, pendingLinkPost, pendingUnlink]);
 
   // Initialize form when editing
   useEffect(() => {
@@ -99,6 +166,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
       // Reset unlinked flag when loading new post
       setHasBeenUnlinked(false);
+      // Reset pending changes when loading a new post
+      setPendingLinkPost(null);
+      setPendingUnlink(false);
 
       // Load corresponding post if it exists
       if (editingItem.correspondingId) {
@@ -150,9 +220,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     }
   };
 
-  // Handle linking posts
-  const handleLinkPost = async (selectedPost: NewsArticle) => {
-    if (!editingItem || !user) {
+  // Handle linking posts - now deferred until form submission
+  const handleLinkPost = (selectedPost: NewsArticle) => {
+    if (!editingItem) {
       toast.error(
         t(
           "dashboard.saveFirstToLink",
@@ -162,39 +232,28 @@ export const NewsForm: React.FC<NewsFormProps> = ({
       return;
     }
 
-    setLoadingCorresponding(true);
-    try {
-      await linkCorrespondingPosts(editingItem.id, selectedPost.id, user.uid);
-      setCorrespondingPost(selectedPost);
-      setHasBeenUnlinked(false); // Reset unlinked flag
-      setShowPostSelector(false);
-      toast.success(t("dashboard.postsLinked", "Posts linked successfully"));
-    } catch (error) {
-      console.error("Error linking posts:", error);
-      toast.error(t("dashboard.errorLinkingPosts", "Error linking posts"));
-    } finally {
-      setLoadingCorresponding(false);
-    }
+    // Store the pending link operation
+    setPendingLinkPost(selectedPost);
+    setPendingUnlink(false); // Clear any pending unlink
+    setShowPostSelector(false);
+    toast.info(
+      t("dashboard.linkPending", "Link will be applied when you save the post")
+    );
   };
 
-  // Handle unlinking posts
-  const handleUnlinkPost = async () => {
-    if (!editingItem || !user) return;
+  // Handle unlinking posts - now deferred until form submission
+  const handleUnlinkPost = () => {
+    if (!editingItem) return;
 
-    setLoadingCorresponding(true);
-    try {
-      await unlinkCorrespondingPosts(editingItem.id, user.uid);
-      setCorrespondingPost(null);
-      setHasBeenUnlinked(true); // Mark as explicitly unlinked
-      toast.success(
-        t("dashboard.postsUnlinked", "Posts unlinked successfully")
-      );
-    } catch (error) {
-      console.error("Error unlinking posts:", error);
-      toast.error(t("dashboard.errorUnlinkingPosts", "Error unlinking posts"));
-    } finally {
-      setLoadingCorresponding(false);
-    }
+    // Store the pending unlink operation
+    setPendingUnlink(true);
+    setPendingLinkPost(null); // Clear any pending link
+    toast.info(
+      t(
+        "dashboard.unlinkPending",
+        "Unlink will be applied when you save the post"
+      )
+    );
   };
 
   // Filter available posts based on search term
@@ -335,21 +394,53 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                 altText: img.altText,
               }))
             : undefined,
-        correspondingId: hasBeenUnlinked
+        // Handle corresponding ID based on pending operations
+        correspondingId: pendingUnlink
           ? undefined
-          : correspondingPost?.id || editingItem?.correspondingId || undefined,
+          : pendingLinkPost?.id ||
+            (hasBeenUnlinked
+              ? undefined
+              : correspondingPost?.id || editingItem?.correspondingId) ||
+            undefined,
       };
 
+      let postId: string;
       if (editingItem) {
         await updateNewsArticle(editingItem.id, newsData, user.uid);
+        postId = editingItem.id;
         toast.success(
           t("dashboard.newsUpdated", "News article updated successfully")
         );
       } else {
-        await createNewsArticle(newsData, user.uid);
+        postId = await createNewsArticle(newsData, user.uid);
         toast.success(
           t("dashboard.newsCreated", "News article created successfully")
         );
+      }
+
+      // Handle pending link/unlink operations after the post is saved
+      if (pendingLinkPost && user) {
+        try {
+          await linkCorrespondingPosts(postId, pendingLinkPost.id, user.uid);
+          toast.success(
+            t("dashboard.postsLinked", "Posts linked successfully")
+          );
+        } catch (error) {
+          console.error("Error linking posts after save:", error);
+          toast.error(t("dashboard.errorLinkingPosts", "Error linking posts"));
+        }
+      } else if (pendingUnlink && user && editingItem) {
+        try {
+          await unlinkCorrespondingPosts(postId, user.uid);
+          toast.success(
+            t("dashboard.postsUnlinked", "Posts unlinked successfully")
+          );
+        } catch (error) {
+          console.error("Error unlinking posts after save:", error);
+          toast.error(
+            t("dashboard.errorUnlinkingPosts", "Error unlinking posts")
+          );
+        }
       }
 
       onSuccess();
@@ -373,6 +464,22 @@ export const NewsForm: React.FC<NewsFormProps> = ({
     }
   };
 
+  // Enhanced cancel handler with unsaved changes warning
+  const handleCancel = () => {
+    if (hasUnsavedChanges()) {
+      const confirmDiscard = window.confirm(
+        t(
+          "dashboard.confirmDiscard",
+          "You have unsaved changes. Are you sure you want to discard them?"
+        )
+      );
+      if (!confirmDiscard) {
+        return;
+      }
+    }
+    onCancel();
+  };
+
   return (
     <div className="p-6">
       {/* Form Header */}
@@ -383,7 +490,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
             : t("dashboard.createNewsArticle", "Create News Article")}
         </h2>
         <button
-          onClick={onCancel}
+          onClick={handleCancel}
           className="p-1 text-gray-500 hover:text-gray-700"
         >
           <X className="w-6 h-6" />
@@ -509,7 +616,71 @@ export const NewsForm: React.FC<NewsFormProps> = ({
             </div>
           </div>
 
-          {correspondingPost ? (
+          {/* Show pending link if exists */}
+          {pendingLinkPost && !pendingUnlink ? (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h4 className="font-medium text-gray-800">
+                      {pendingLinkPost.title}
+                    </h4>
+                    <span className="px-2 py-1 text-xs text-yellow-800 bg-yellow-200 rounded">
+                      {t("dashboard.pendingLink", "Pending Link")}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {pendingLinkPost.summary}
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    <span>
+                      {pendingLinkPost.lang === "english"
+                        ? "English"
+                        : "Macedonian"}
+                    </span>
+                    <span>•</span>
+                    <span>{pendingLinkPost.publishDate}</span>
+                    {pendingLinkPost.author && (
+                      <>
+                        <span>•</span>
+                        <span>{pendingLinkPost.author}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      window.open(
+                        pendingLinkPost.lang === "english"
+                          ? `/en/news/${pendingLinkPost.id}`
+                          : `/mk/вести/${pendingLinkPost.id}`,
+                        "_blank"
+                      )
+                    }
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                  >
+                    <Eye className="w-4 h-4" />
+                    {t("dashboard.preview", "Preview")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPendingLinkPost(null);
+                      toast.info(
+                        t("dashboard.linkCancelled", "Pending link cancelled")
+                      );
+                    }}
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 bg-gray-50 rounded hover:bg-gray-100"
+                  >
+                    <X className="w-4 h-4" />
+                    {t("dashboard.cancel", "Cancel")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : correspondingPost && !pendingUnlink ? (
             <div className="bg-white border rounded-lg p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -554,13 +725,41 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                   <button
                     type="button"
                     onClick={handleUnlinkPost}
-                    disabled={loadingCorresponding}
-                    className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 bg-red-50 rounded hover:bg-red-100 disabled:opacity-50"
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 bg-red-50 rounded hover:bg-red-100"
                   >
                     <Unlink className="w-4 h-4" />
                     {t("dashboard.unlink", "Unlink")}
                   </button>
                 </div>
+              </div>
+            </div>
+          ) : pendingUnlink ? (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-red-800 font-medium">
+                    {t("dashboard.pendingUnlink", "Pending Unlink")}
+                  </span>
+                  <span className="text-sm text-red-600">
+                    {t(
+                      "dashboard.pendingUnlinkDescription",
+                      "The link will be removed when you save"
+                    )}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingUnlink(false);
+                    toast.info(
+                      t("dashboard.unlinkCancelled", "Pending unlink cancelled")
+                    );
+                  }}
+                  className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 bg-gray-50 rounded hover:bg-gray-100"
+                >
+                  <X className="w-4 h-4" />
+                  {t("dashboard.cancel", "Cancel")}
+                </button>
               </div>
             </div>
           ) : (
@@ -762,7 +961,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
         <div className="flex justify-end pt-6 space-x-4 border-t border-gray-200">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md transition-colors hover:bg-gray-200"
           >
             {t("dashboard.cancel", "Cancel")}

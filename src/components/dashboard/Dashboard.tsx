@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/auth";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Edit,
@@ -28,6 +29,9 @@ type LanguageFilter = "all" | "english" | "macedonian";
 export const Dashboard = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState<TabType>("news");
   const [currentView, setCurrentView] = useState<ViewType>("list");
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
@@ -38,6 +42,35 @@ export const Dashboard = () => {
     null
   );
 
+  // Initialize and sync state from URL parameters
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = (params.get("tab") as TabType) || "news";
+    const view = (params.get("view") as ViewType) || "list";
+    const itemId = params.get("itemId");
+    const filter = (params.get("filter") as LanguageFilter) || "all";
+
+    // Always update state to match URL
+    if (tab === "news" || tab === "events") {
+      setActiveTab(tab);
+    }
+    if (view === "list" || view === "create" || view === "edit") {
+      setCurrentView(view);
+    }
+    if (filter === "all" || filter === "english" || filter === "macedonian") {
+      setLanguageFilter(filter);
+    }
+
+    // Handle editing item based on URL
+    if (view === "edit" && itemId && user) {
+      // We'll find and set the editing item after data loads
+      // For now, just ensure we're in edit mode
+    } else if (view !== "edit") {
+      // Clear editing item if we're not in edit mode
+      setEditingItem(null);
+    }
+  }, [location.search, user]);
+
   // Load data based on active tab and language filter
   useEffect(() => {
     if (user) {
@@ -45,9 +78,27 @@ export const Dashboard = () => {
     }
   }, [activeTab, languageFilter, user]);
 
+  // Function to update URL with current state
+  const updateURL = (
+    tab: TabType,
+    view: ViewType,
+    itemId?: string,
+    filter?: LanguageFilter,
+    replace: boolean = false
+  ) => {
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+    params.set("view", view);
+    if (itemId) params.set("itemId", itemId);
+    if (filter && filter !== "all") params.set("filter", filter);
+
+    navigate(`/admin?${params.toString()}`, { replace });
+  };
+
   const loadData = async () => {
     setLoading(true);
     try {
+      let items: (NewsArticle | Event)[] = [];
       if (activeTab === "news") {
         const langParam =
           languageFilter === "all"
@@ -55,8 +106,9 @@ export const Dashboard = () => {
             : languageFilter === "english"
             ? "en"
             : "mk";
-        const { items } = await fetchAllNewsArticles(langParam);
-        setNewsArticles(items);
+        const { items: newsItems } = await fetchAllNewsArticles(langParam);
+        setNewsArticles(newsItems);
+        items = newsItems;
       } else {
         const langParam =
           languageFilter === "all"
@@ -64,8 +116,27 @@ export const Dashboard = () => {
             : languageFilter === "english"
             ? "en"
             : "mk";
-        const { items } = await fetchAllEvents(langParam);
-        setEvents(items);
+        const { items: eventItems } = await fetchAllEvents(langParam);
+        setEvents(eventItems);
+        items = eventItems;
+      }
+
+      // Check if we need to restore an editing item from URL
+      const params = new URLSearchParams(location.search);
+      const itemId = params.get("itemId");
+      const view = params.get("view");
+
+      if (itemId && view === "edit" && items.length > 0) {
+        const item = items.find((item) => item.id === itemId);
+        if (item) {
+          setEditingItem(item);
+        } else {
+          // Item not found, redirect to list view
+          updateURL(activeTab, "list", undefined, languageFilter, true);
+        }
+      } else if (view !== "edit") {
+        // Ensure editing item is cleared when not in edit mode
+        setEditingItem(null);
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -78,6 +149,7 @@ export const Dashboard = () => {
   const handleEdit = (item: NewsArticle | Event) => {
     setEditingItem(item);
     setCurrentView("edit");
+    updateURL(activeTab, "edit", item.id, languageFilter);
   };
 
   const handleDelete = async (item: NewsArticle | Event) => {
@@ -107,12 +179,14 @@ export const Dashboard = () => {
   const handleSuccess = () => {
     setCurrentView("list");
     setEditingItem(null);
+    updateURL(activeTab, "list", undefined, languageFilter, true);
     loadData();
   };
 
   const handleCancel = () => {
     setCurrentView("list");
     setEditingItem(null);
+    updateURL(activeTab, "list", undefined, languageFilter, true);
   };
 
   if (!user) {
@@ -153,6 +227,7 @@ export const Dashboard = () => {
               setActiveTab("news");
               setCurrentView("list");
               setEditingItem(null);
+              updateURL("news", "list", undefined, languageFilter);
             }}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               activeTab === "news"
@@ -168,6 +243,7 @@ export const Dashboard = () => {
               setActiveTab("events");
               setCurrentView("list");
               setEditingItem(null);
+              updateURL("events", "list", undefined, languageFilter);
             }}
             className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
               activeTab === "events"
@@ -202,7 +278,15 @@ export const Dashboard = () => {
                     </span>
                     <div className="flex overflow-hidden rounded-md border border-gray-300">
                       <button
-                        onClick={() => setLanguageFilter("all")}
+                        onClick={() => {
+                          setLanguageFilter("all");
+                          updateURL(
+                            activeTab,
+                            currentView,
+                            editingItem?.id,
+                            "all"
+                          );
+                        }}
                         className={`px-3 py-1 text-sm transition-colors ${
                           languageFilter === "all"
                             ? "bg-blue-600 text-white"
@@ -212,7 +296,15 @@ export const Dashboard = () => {
                         {t("dashboard.allItems", "All")}
                       </button>
                       <button
-                        onClick={() => setLanguageFilter("english")}
+                        onClick={() => {
+                          setLanguageFilter("english");
+                          updateURL(
+                            activeTab,
+                            currentView,
+                            editingItem?.id,
+                            "english"
+                          );
+                        }}
                         className={`px-3 py-1 text-sm border-l border-gray-300 transition-colors ${
                           languageFilter === "english"
                             ? "bg-blue-600 text-white"
@@ -222,7 +314,15 @@ export const Dashboard = () => {
                         EN
                       </button>
                       <button
-                        onClick={() => setLanguageFilter("macedonian")}
+                        onClick={() => {
+                          setLanguageFilter("macedonian");
+                          updateURL(
+                            activeTab,
+                            currentView,
+                            editingItem?.id,
+                            "macedonian"
+                          );
+                        }}
                         className={`px-3 py-1 text-sm border-l border-gray-300 transition-colors ${
                           languageFilter === "macedonian"
                             ? "bg-blue-600 text-white"
@@ -239,6 +339,7 @@ export const Dashboard = () => {
                   onClick={() => {
                     setEditingItem(null);
                     setCurrentView("create");
+                    updateURL(activeTab, "create", undefined, languageFilter);
                   }}
                   className="flex items-center px-4 py-2 text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700"
                 >

@@ -67,6 +67,59 @@ export const EventForm: React.FC<EventFormProps> = ({
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = () => {
+    if (!editingItem) {
+      // For new items, check if any fields have been filled
+      return (
+        formData.title.trim() !== "" ||
+        formData.summary.trim() !== "" ||
+        formData.content.trim() !== "" ||
+        formData.location.trim() !== "" ||
+        formData.formUrl.trim() !== "" ||
+        formData.eventDate !== "" ||
+        formData.eventEndDate !== "" ||
+        formData.isFeatured !== false ||
+        formData.mainImage !== null ||
+        formData.links.length > 0 ||
+        formData.gallery.length > 0
+      );
+    } else {
+      // For existing items, check if any fields have changed
+      return (
+        formData.title !== editingItem.title ||
+        formData.summary !== editingItem.summary ||
+        formData.content !== editingItem.content ||
+        formData.location !== (editingItem.location || "") ||
+        formData.formUrl !== (editingItem.formUrl || "") ||
+        formData.isFeatured !== (editingItem.isFeatured || false) ||
+        formData.lang !== editingItem.lang ||
+        JSON.stringify(formData.links) !==
+          JSON.stringify(editingItem.links || []) ||
+        JSON.stringify(formData.gallery) !==
+          JSON.stringify(editingItem.gallery || []) ||
+        formData.mainImage?.url !== editingItem.imageUrl ||
+        formData.mainImage?.altText !== (editingItem.altText || "") ||
+        formatDateForInput(editingItem.eventDate) !== formData.eventDate ||
+        formatDateForInput(editingItem.eventEndDate || "") !==
+          formData.eventEndDate
+      );
+    }
+  };
+
+  // Warn user about unsaved changes when leaving the page
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, editingItem]);
+
   // Helper function to convert formatted date string to YYYY-MM-DD format for HTML input
   const formatDateForInput = (dateString: string): string => {
     if (!dateString) return "";
@@ -308,6 +361,22 @@ export const EventForm: React.FC<EventFormProps> = ({
     }
   };
 
+  // Enhanced cancel handler with unsaved changes warning
+  const handleCancel = () => {
+    if (hasUnsavedChanges()) {
+      const confirmDiscard = window.confirm(
+        t(
+          "dashboard.confirmDiscard",
+          "You have unsaved changes. Are you sure you want to discard them?"
+        )
+      );
+      if (!confirmDiscard) {
+        return;
+      }
+    }
+    onCancel();
+  };
+
   return (
     <div className="p-6">
       {/* Form Header */}
@@ -318,7 +387,7 @@ export const EventForm: React.FC<EventFormProps> = ({
             : t("dashboard.createEvent", "Create Event")}
         </h2>
         <button
-          onClick={onCancel}
+          onClick={handleCancel}
           className="text-gray-500 hover:text-gray-700 p-1"
         >
           <X className="w-6 h-6" />
@@ -546,7 +615,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           >
             {t("dashboard.cancel", "Cancel")}
