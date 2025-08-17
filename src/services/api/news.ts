@@ -398,30 +398,136 @@ export const fetchNewsChunk = async (
   pageSize = 15,
   lastDoc?: QueryDocumentSnapshot<DocumentData>
 ) => {
-  let q = query(
-    collection(db, "news"),
-    where("lang", "==", lang === "en" ? "english" : "macedonian"),
-    orderBy("publishDate", "desc"),
-    limit(pageSize)
-  );
+  try {
+    let q;
+    const langValue = lang === "en" ? "english" : "macedonian";
 
-  if (tag) {
-    q = query(q, where("tags", "array-contains", tag));
+    if (tag) {
+      // When filtering by tag, we need to handle the composite index requirement
+      // Try the composite query first, fall back to client-side filtering if it fails
+      try {
+        const constraints = [
+          where("lang", "==", langValue),
+          where("tags", "array-contains", tag),
+          orderBy("publishDate", "desc"),
+          limit(pageSize),
+        ];
+
+        if (lastDoc) {
+          constraints.push(startAfter(lastDoc));
+        }
+
+        q = query(collection(db, "news"), ...constraints);
+        const snap = await getDocs(q);
+
+        const items = snap.docs.map((d) => {
+          const data = d.data();
+          return {
+            id: d.id,
+            ...data,
+            publishDate: formatDate(data.publishDate.toDate(), lang),
+            _doc: d,
+          };
+        }) as (NewsArticle & { _doc: DocumentSnapshot })[];
+
+        return { items, lastDoc: snap.docs.at(-1) };
+      } catch (indexError) {
+        // Use fallback when composite index is not available
+        const fallbackPageSize = Math.min(pageSize * 5, 100);
+
+        try {
+          // Try with orderBy first
+          const constraintsWithOrder = [
+            where("lang", "==", langValue),
+            orderBy("publishDate", "desc"),
+            limit(fallbackPageSize),
+          ];
+
+          if (lastDoc) {
+            constraintsWithOrder.push(startAfter(lastDoc));
+          }
+
+          q = query(collection(db, "news"), ...constraintsWithOrder);
+          const snap = await getDocs(q);
+
+          const allItems = snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              ...data,
+              publishDate: formatDate(data.publishDate.toDate(), lang),
+              _doc: d,
+            };
+          }) as (NewsArticle & { _doc: DocumentSnapshot })[];
+
+          const filteredItems = allItems
+            .filter((item) => item.tags && item.tags.includes(tag))
+            .slice(0, pageSize);
+
+          return { items: filteredItems, lastDoc: snap.docs.at(-1) };
+        } catch (orderByError) {
+          // Use most basic query if orderBy fails
+          q = query(
+            collection(db, "news"),
+            where("lang", "==", langValue),
+            limit(fallbackPageSize)
+          );
+          const snap = await getDocs(q);
+
+          const allItems = snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              ...data,
+              publishDate: formatDate(data.publishDate.toDate(), lang),
+              _doc: d,
+            };
+          }) as (NewsArticle & { _doc: DocumentSnapshot })[];
+
+          const filteredItems = allItems
+            .filter((item) => item.tags && item.tags.includes(tag))
+            .sort((a, b) => {
+              // Sort by publishDate desc client-side since we couldn't use orderBy
+              const dateA = new Date(a.publishDate);
+              const dateB = new Date(b.publishDate);
+              return dateB.getTime() - dateA.getTime();
+            })
+            .slice(0, pageSize);
+
+          return { items: filteredItems, lastDoc: snap.docs.at(-1) };
+        }
+      }
+    } else {
+      // No tag filter - simple query
+      const constraints = [
+        where("lang", "==", langValue),
+        orderBy("publishDate", "desc"),
+        limit(pageSize),
+      ];
+
+      if (lastDoc) {
+        constraints.push(startAfter(lastDoc));
+      }
+
+      q = query(collection(db, "news"), ...constraints);
+    }
+
+    const snap = await getDocs(q);
+    const items = snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        ...data,
+        publishDate: formatDate(data.publishDate.toDate(), lang),
+        _doc: d,
+      };
+    }) as (NewsArticle & { _doc: DocumentSnapshot })[];
+
+    return { items, lastDoc: snap.docs.at(-1) };
+  } catch (error) {
+    console.error("Error in fetchNewsChunk:", error);
+    throw error;
   }
-
-  if (lastDoc) {
-    q = query(q, startAfter(lastDoc));
-  }
-
-  const snap = await getDocs(q);
-  const items = snap.docs.map((d) => ({
-    id: d.id,
-    ...d.data(),
-    publishDate: formatDate(d.data().publishDate.toDate(), lang),
-    _doc: d,
-  })) as (NewsArticle & { _doc: DocumentSnapshot })[];
-
-  return { items, lastDoc: snap.docs.at(-1) };
 };
 
 export const fetchNewsArticlesFromFirebase = async ({

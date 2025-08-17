@@ -19,7 +19,7 @@ export const useInfiniteNews = (
     return ["news", lang, tag, pageSize, previous?.lastDoc];
   };
 
-  const fetcher = (
+  const fetcher = async (
     key: [
       string,
       string,
@@ -29,7 +29,13 @@ export const useInfiniteNews = (
     ]
   ) => {
     const [, l, t, ps, last] = key;
-    return fetchNewsChunk(l, t, ps, last || undefined);
+    try {
+      const result = await fetchNewsChunk(l, t, ps, last || undefined);
+      return result;
+    } catch (error) {
+      console.error("Error in useInfiniteNews fetcher:", error);
+      throw error;
+    }
   };
 
   const { data, error, size, setSize, mutate, isLoading } = useSWRInfinite(
