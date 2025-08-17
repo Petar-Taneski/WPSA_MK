@@ -11,6 +11,7 @@ import {
   limit,
   orderBy,
   query,
+  QueryConstraint,
   QueryDocumentSnapshot,
   serverTimestamp,
   startAfter,
@@ -406,7 +407,7 @@ export const fetchNewsChunk = async (
       // When filtering by tag, we need to handle the composite index requirement
       // Try the composite query first, fall back to client-side filtering if it fails
       try {
-        const constraints = [
+        const constraints: QueryConstraint[] = [
           where("lang", "==", langValue),
           where("tags", "array-contains", tag),
           orderBy("publishDate", "desc"),
@@ -437,7 +438,7 @@ export const fetchNewsChunk = async (
 
         try {
           // Try with orderBy first
-          const constraintsWithOrder = [
+          const constraintsWithOrder: QueryConstraint[] = [
             where("lang", "==", langValue),
             orderBy("publishDate", "desc"),
             limit(fallbackPageSize),
@@ -499,7 +500,7 @@ export const fetchNewsChunk = async (
       }
     } else {
       // No tag filter - simple query
-      const constraints = [
+      const constraints: QueryConstraint[] = [
         where("lang", "==", langValue),
         orderBy("publishDate", "desc"),
         limit(pageSize),
