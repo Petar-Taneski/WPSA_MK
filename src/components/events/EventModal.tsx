@@ -16,6 +16,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ArrowButton from "../common/ArrowButton";
+import ReactQuill from "react-quill-new";
 // import ReactQuill from "react-quill-new";
 
 interface EventModalProps {
@@ -288,14 +289,14 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
             <h3 className="mb-2 text-lg font-semibold text-gray-700">
               {t("events.details", "Details")}
             </h3>
-            <div className="markdown-content">{event.content}</div>
-            {/* <div className="max-w-3xl prose prose-lg" />
+
+            <div className="max-w-3xl prose prose-lg" />
             <ReactQuill
               theme="bubble"
               readOnly={true}
               value={event.content}
               className="px-4 custom-quill markdown-content"
-            /> */}
+            />
           </div>
 
           {/* Real gallery (when it exists) */}
@@ -373,7 +374,7 @@ const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, event }) => {
           }}
         >
           <div
-            className="relative w-full h-full flex items-center justify-center p-4"
+            className="flex relative justify-center items-center p-4 w-full h-full"
             onClick={(e) => e.stopPropagation()}
           >
             <img
