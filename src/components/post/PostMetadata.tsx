@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { parseDateString } from "@/lib/utils";
 
 interface PostMetadataProps {
   author?: string;
@@ -15,31 +14,24 @@ const PostMetadata: React.FC<PostMetadataProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const parsedDate = parseDateString(publishDate);
-  const formattedDate = parsedDate
-    ? parsedDate.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : publishDate;
+
 
   return (
     <div className="flex flex-wrap gap-4 md:p-4 md:pb-4">
       {author && author.trim() !== "" && (
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2 items-center">
           <span className="font-bold text-gray-600">{t("post.author")}:</span>{" "}
           {author}
         </div>
       )}
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2 items-center">
         <span className="font-bold text-gray-600">{t("post.published")}:</span>{" "}
-        {formattedDate}
+        {publishDate}
       </div>
       {Array.isArray(tags) &&
         tags.length > 0 &&
         tags.some((tag) => tag && tag.trim() !== "") && (
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 items-center">
             <span className="font-bold text-gray-600">{t("post.tags")}:</span>
             <div className="flex flex-wrap gap-2">
               {tags

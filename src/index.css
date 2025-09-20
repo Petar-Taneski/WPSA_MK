@@ -171,3 +171,10 @@
 .custom-quill .ql-editor {
   padding: 0 !important; /* Remove padding from the editor */
 }
+
+.auto-expand {
+  resize: none;
+  overflow-y: hidden;
+  transition: height 0.2s ease;
+  min-height: 40px; /* or whatever you prefer */
+}

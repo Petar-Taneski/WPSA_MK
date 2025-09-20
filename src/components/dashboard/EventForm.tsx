@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/auth";
 import { toast } from "react-toastify";
@@ -72,6 +72,19 @@ export const EventForm: React.FC<EventFormProps> = ({
   const [pendingGalleryDeletions, setPendingGalleryDeletions] = useState<
     string[]
   >([]);
+
+  // ref for the summary textarea so we can auto-resize it
+  const summaryRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // Auto-resize helper: sets height to fit content
+  const autoResize = (el?: HTMLTextAreaElement | null) => {
+    const ta = el ?? summaryRef.current;
+    if (!ta) return;
+    // reset to auto to correctly measure scrollHeight
+    ta.style.height = "auto";
+    // set to scrollHeight (plus a tiny buffer)
+    ta.style.height = `${ta.scrollHeight}px`;
+  };
 
   // Check if there are unsaved changes
   const hasUnsavedChanges = () => {
@@ -172,7 +185,14 @@ export const EventForm: React.FC<EventFormProps> = ({
         gallery: editingItem.gallery || [],
       });
     }
+    // note: we don't call autoResize here directly because formData will update;
+    // a separate effect below watches formData.summary and resizes.
   }, [editingItem]);
+
+  // Auto-resize summary textarea whenever the content changes
+  useEffect(() => {
+    autoResize();
+  }, [formData.summary]);
 
   // Form validation
   const validateForm = () => {
@@ -393,6 +413,12 @@ export const EventForm: React.FC<EventFormProps> = ({
     }
   };
 
+  // specific handler for summary that resizes the textarea as user types
+  const handleSummaryChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleChange("summary", e.target.value);
+    autoResize(e.target);
+  };
+
   // Enhanced cancel handler with unsaved changes warning
   const handleCancel = () => {
     if (hasUnsavedChanges()) {
@@ -420,7 +446,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         </h2>
         <button
           onClick={handleCancel}
-          className="text-gray-500 hover:text-gray-700 p-1"
+          className="p-1 text-gray-500 hover:text-gray-700"
         >
           <X className="w-6 h-6" />
         </button>
@@ -430,7 +456,7 @@ export const EventForm: React.FC<EventFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
             {t("dashboard.title", "Title")} *
           </label>
           <input
@@ -443,32 +469,35 @@ export const EventForm: React.FC<EventFormProps> = ({
             placeholder={t("dashboard.titlePlaceholder", "Enter title...")}
           />
           {errors.title && (
-            <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.title}</p>
           )}
         </div>
 
         {/* Summary */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
             {t("dashboard.summary", "Summary")} *
           </label>
           <textarea
+            ref={summaryRef}
             value={formData.summary}
-            onChange={(e) => handleChange("summary", e.target.value)}
+            onChange={handleSummaryChange}
             rows={3}
+            // keep overflow-hidden so the scrollbars don't show while we resize
+            style={{ overflow: "hidden" }}
             className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
               errors.summary ? "border-red-500" : "border-gray-300"
             }`}
             placeholder={t("dashboard.summaryPlaceholder", "Enter summary...")}
           />
           {errors.summary && (
-            <p className="text-red-500 text-sm mt-1">{errors.summary}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.summary}</p>
           )}
         </div>
 
         {/* Content */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
             {t("dashboard.content", "Content")} *
           </label>
           <div
@@ -497,14 +526,14 @@ export const EventForm: React.FC<EventFormProps> = ({
             />
           </div>
           {errors.content && (
-            <p className="text-red-500 text-sm mt-1">{errors.content}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.content}</p>
           )}
         </div>
 
         {/* Event Dates and Location */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
               {t("dashboard.eventDate", "Event Date")} *
             </label>
             <input
@@ -516,12 +545,12 @@ export const EventForm: React.FC<EventFormProps> = ({
               }`}
             />
             {errors.eventDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.eventDate}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.eventDate}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
               {t("dashboard.eventEndDate", "Event End Date")}
             </label>
             <input
@@ -533,12 +562,12 @@ export const EventForm: React.FC<EventFormProps> = ({
               }`}
             />
             {errors.eventEndDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.eventEndDate}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.eventEndDate}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
               {t("dashboard.location", "Location")} *
             </label>
             <input
@@ -554,21 +583,21 @@ export const EventForm: React.FC<EventFormProps> = ({
               )}
             />
             {errors.location && (
-              <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.location}</p>
             )}
           </div>
         </div>
 
         {/* Language */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
               {t("dashboard.language", "Language")} *
             </label>
             <select
               value={formData.lang}
               onChange={(e) => handleChange("lang", e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="english">English</option>
               <option value="macedonian">Macedonian</option>
@@ -578,7 +607,7 @@ export const EventForm: React.FC<EventFormProps> = ({
 
         {/* Main Image Upload */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block mb-2 text-sm font-medium text-gray-700">
             {t("dashboard.mainImage", "Main Image")} *
           </label>
           <ImageUpload
@@ -588,14 +617,14 @@ export const EventForm: React.FC<EventFormProps> = ({
             }}
           />
           {errors.mainImage && (
-            <p className="text-red-500 text-sm mt-1">{errors.mainImage}</p>
+            <p className="mt-1 text-sm text-red-500">{errors.mainImage}</p>
           )}
         </div>
 
         {/* Registration Form URL and Featured Toggle */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
               {t("dashboard.formUrl", "Registration Form URL")}
             </label>
             <input
@@ -608,17 +637,17 @@ export const EventForm: React.FC<EventFormProps> = ({
               placeholder="https://forms.example.com/register"
             />
             {errors.formUrl && (
-              <p className="text-red-500 text-sm mt-1">{errors.formUrl}</p>
+              <p className="mt-1 text-sm text-red-500">{errors.formUrl}</p>
             )}
           </div>
 
-          <div className="flex items-center space-x-2 pt-8">
+          <div className="flex items-center pt-8 space-x-2">
             <input
               type="checkbox"
               id="featured"
               checked={formData.isFeatured}
               onChange={(e) => handleChange("isFeatured", e.target.checked)}
-              className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
             />
             <label
               htmlFor="featured"
@@ -645,27 +674,27 @@ export const EventForm: React.FC<EventFormProps> = ({
         />
 
         {/* Action Buttons */}
-        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+        <div className="flex justify-end pt-6 space-x-4 border-t border-gray-200">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md transition-colors hover:bg-gray-200"
           >
             {t("dashboard.cancel", "Cancel")}
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="flex items-center px-6 py-2 text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="mr-2 w-4 h-4 rounded-full border-b-2 border-white animate-spin"></div>
                 {t("dashboard.saving", "Saving...")}
               </>
             ) : (
               <>
-                <Save className="w-4 h-4 mr-2" />
+                <Save className="mr-2 w-4 h-4" />
                 {editingItem
                   ? t("dashboard.update", "Update")
                   : t("dashboard.create", "Create")}

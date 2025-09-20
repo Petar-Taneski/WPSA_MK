@@ -21,6 +21,7 @@ import {
 import { DEFAULT_PLACEHOLDER_IMAGE } from "@/utils/consts";
 import { useSEO } from "@/hooks/useSEO";
 import { getPostSEO } from "@/config/seo";
+import { parseDateString } from "@/lib/utils"; // <- added import
 
 const Post: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -196,6 +197,18 @@ const Post: React.FC = () => {
   }
 
   const displayImageUrl = article.imageUrl || DEFAULT_PLACEHOLDER_IMAGE;
+
+  // ---------- NEW: parse + localize publishDate here (same approach as NewsCard) ----------
+  const parsedPublishDate = parseDateString(article.publishDate);
+  const formattedPublishDate = parsedPublishDate
+    ? parsedPublishDate.toLocaleDateString(i18n.language, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : article.publishDate;
+  // --------------------------------------------------------------------------------------
+
   return (
     <div className="px-4 py-8 mx-auto max-w-7xl">
       <PostHeader title={article.title} imageUrl={displayImageUrl} />
@@ -204,7 +217,7 @@ const Post: React.FC = () => {
           <div className="flex-grow">
             <PostMetadata
               author={article.author}
-              publishDate={article.publishDate}
+              publishDate={formattedPublishDate} // <-- now passing localized string
               tags={article.tags}
             />
           </div>
