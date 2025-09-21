@@ -28,7 +28,7 @@ type LanguageFilter = "all" | "english" | "macedonian";
 
 export const Dashboard = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -194,7 +194,7 @@ export const Dashboard = () => {
       <div className="flex justify-center items-center min-h-screen bg-gray-50">
         <div className="text-center">
           <h2 className="mb-4 text-2xl font-bold text-gray-800">
-            {t("dashboard.title", "Content Management Dashboard")}
+            Content Management Dashboard
           </h2>
           <p className="text-gray-600">
             {t(
@@ -210,13 +210,23 @@ export const Dashboard = () => {
   return (
     <div className="p-4 min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="mx-auto mb-8 max-w-7xl">
-        <h1 className="mb-2 text-3xl font-bold text-gray-800">
-          {t("dashboard.title", "Content Management Dashboard")}
-        </h1>
-        <p className="text-gray-600">
-          {t("dashboard.subtitle", "Manage your news articles and events")}
-        </p>
+      <div className="flex justify-between items-center mx-auto mb-8 max-w-7xl">
+        <div>
+          <h1 className="mb-2 text-3xl font-bold text-gray-800">
+            Content Management Dashboard
+          </h1>
+          <p className="text-gray-600">
+            {t("dashboard.subtitle", "Manage your news articles and events")}
+          </p>
+        </div>
+        <button
+          onClick={async () => {
+            await logout();
+          }}
+          className="flex items-center px-4 py-2 text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700"
+        >
+          Log out
+        </button>
       </div>
 
       {/* Tab Navigation */}
