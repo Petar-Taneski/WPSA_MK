@@ -34,6 +34,7 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
       const featuredEvents = await fetchEventsFromFirebase({
         lang: i18n.language,
         isFeatured: true,
+        fetchLimit: 5,
       });
       setFeaturedEvents(featuredEvents);
     };
@@ -84,7 +85,7 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
         clearInterval(timerRef.current);
       }
     };
-  }, [isPaused, featuredEvents.length]);
+  }, [isPaused, featuredEvents.length, currentSlide]);
 
   // Calculate slide positions
   const getSlidePosition = (index: number) => {
@@ -155,17 +156,12 @@ const EventCarousel = ({ onEventClick }: EventCarouselProps) => {
                   className="absolute inset-0 w-full h-full bg-center bg-cover bg-gray-50"
                   style={{
                     backgroundImage: `url(${
-                      event.imageUrl ||
-                      DEFAULT_PLACEHOLDER_IMAGE
+                      event.imageUrl || DEFAULT_PLACEHOLDER_IMAGE
                     })`,
-                    backgroundSize:
-                      !event.imageUrl
-                        ? "contain"
-                        : "cover",
+                    backgroundSize: !event.imageUrl ? "contain" : "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
-                    padding:
-                      !event.imageUrl? "2rem" : "0",
+                    padding: !event.imageUrl ? "2rem" : "0",
                   }}
                 ></div>
 

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import LanguageSwitcher from "../LanguageSwitcher";
+import SocialMediaIcons from "../common/SocialMediaIcons";
 import "../headers/mobileHeader/navigation.css";
 
 interface NavigationProps {
@@ -106,7 +107,10 @@ const Navigation: React.FC<NavigationProps> = ({ openContactModal }) => {
           </button>
         </div>
 
-        <LanguageSwitcher />
+        <div className="flex items-center space-x-10">
+          <SocialMediaIcons />
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );
