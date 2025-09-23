@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/providers/auth";
 import { toast } from "react-toastify";
@@ -9,6 +9,7 @@ import {
   uploadImage,
   uploadGalleryImages,
   deletePendingImages,
+  fetchEventsFromFirebase,
 } from "@/services/api";
 import { Event } from "@/services/interfaces";
 import ReactQuill from "react-quill-new";
@@ -49,6 +50,8 @@ export const EventForm: React.FC<EventFormProps> = ({
   const { t } = useTranslation();
   const { user } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [featuredEventsCount, setFeaturedEventsCount] = useState(0);
+  const langRef = useRef<HTMLSelectElement | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -65,6 +68,23 @@ export const EventForm: React.FC<EventFormProps> = ({
     links: [] as LinkPair[],
     gallery: [] as GalleryImage[],
   });
+
+  useEffect(() => {
+    const fetchFeaturedCount = async () => {
+      try {
+        const featuredEvents = await fetchEventsFromFirebase({
+          lang: langRef.current?.value || "english",
+          isFeatured: true,
+        });
+        setFeaturedEventsCount(featuredEvents.length);
+      } catch (error) {
+        console.error("Failed to fetch featured events count:", error);
+        toast.error("Could not fetch featured events count.");
+      }
+    };
+
+    fetchFeaturedCount();
+  }, [langRef.current?.value]);
 
   // Error state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -87,7 +107,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   };
 
   // Check if there are unsaved changes
-  const hasUnsavedChanges = () => {
+  const hasUnsavedChanges = useCallback(() => {
     if (!editingItem) {
       // For new items, check if any fields have been filled
       return (
@@ -126,7 +146,7 @@ export const EventForm: React.FC<EventFormProps> = ({
           formData.eventEndDate
       );
     }
-  };
+  }, [editingItem, formData, pendingGalleryDeletions]);
 
   // Warn user about unsaved changes when leaving the page
   useEffect(() => {
@@ -139,7 +159,7 @@ export const EventForm: React.FC<EventFormProps> = ({
 
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [formData, editingItem, pendingGalleryDeletions]);
+  }, [hasUnsavedChanges]);
 
   // Helper function to convert formatted date string to YYYY-MM-DD format for HTML input
   const formatDateForInput = (dateString: string): string => {
@@ -595,6 +615,7 @@ export const EventForm: React.FC<EventFormProps> = ({
               {t("dashboard.language", "Language")} *
             </label>
             <select
+              ref={langRef}
               value={formData.lang}
               onChange={(e) => handleChange("lang", e.target.value)}
               className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -641,20 +662,35 @@ export const EventForm: React.FC<EventFormProps> = ({
             )}
           </div>
 
-          <div className="flex items-center pt-8 space-x-2">
-            <input
-              type="checkbox"
-              id="featured"
-              checked={formData.isFeatured}
-              onChange={(e) => handleChange("isFeatured", e.target.checked)}
-              className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-            />
-            <label
-              htmlFor="featured"
-              className="text-sm font-medium text-gray-700"
-            >
-              {t("dashboard.featuredEvent", "Featured Event")}
-            </label>
+          <div className="pt-8">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="featured"
+                checked={formData.isFeatured}
+                onChange={(e) => handleChange("isFeatured", e.target.checked)}
+                disabled={featuredEventsCount >= 5 && !formData.isFeatured}
+                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <label
+                htmlFor="featured"
+                className={`text-sm font-medium ${
+                  featuredEventsCount >= 5 && !formData.isFeatured
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-gray-700"
+                }`}
+              >
+                {t("dashboard.featuredEvent", "Featured Event")}
+              </label>
+            </div>
+            {featuredEventsCount >= 5 && !formData.isFeatured && (
+              <p className="mt-2 text-sm text-gray-500/70">
+                {t(
+                  "dashboard.featuredLimitReached",
+                  "(Too many featured events, please remove one before adding more.)"
+                )}
+              </p>
+            )}
           </div>
         </div>
 
