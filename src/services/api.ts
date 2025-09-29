@@ -38,13 +38,6 @@ Message:
 ${data.message}
 `;
 
-  const html = `
-      ${escapeHtml(data.name)}
-      ${escapeHtml(data.email)}
-      Message:
-      ${escapeHtml(data.message)}
-
-  `;
 
   await addDoc(collection(db, "mail"), {
     to,
@@ -52,7 +45,6 @@ ${data.message}
     message: {
       subject: `Contact: ${data.name}`,
       text,
-      html,
     },
   });
 };
@@ -93,14 +85,3 @@ export const sendJoinUsEmail = async (formData: JoinUsFormData): Promise<void> =
     throw error;
   }
 };
-
-/** small HTML escaper (TS-safe, no any) */
-function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
