@@ -39,12 +39,11 @@ ${data.message}
 `;
 
   const html = `
-    <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6">
-      <p> ${escapeHtml(data.name)}</p>
-      <p>${escapeHtml(data.email)}</p>
-      <p><strong>Message:</strong></p>
-      <div>${escapeHtml(data.message)}</div>
-    </div>
+      ${escapeHtml(data.name)}
+      ${escapeHtml(data.email)}
+      Message:
+      ${escapeHtml(data.message)}
+
   `;
 
   await addDoc(collection(db, "mail"), {

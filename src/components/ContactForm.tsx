@@ -42,7 +42,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error(t("contact.errors.submitFailed"));
+      toast.error(t("Email not sent"));
     } finally {
       setSubmitting(false);
     }
