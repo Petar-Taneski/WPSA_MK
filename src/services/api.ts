@@ -10,12 +10,16 @@ const CONTACT_TO: string =
 
 /** Parse comma-separated recipients into string | string[] for the Firebase Email extension */
 function recipients(): string | string[] {
+  if (!CONTACT_TO) {
+    throw new Error("Missing env variable in your environment.");
+  }
   const list = CONTACT_TO.split(",").map((s) => s.trim()).filter(Boolean);
   if (list.length === 0) {
-    return "petar686@gmail.com"; // fallback to avoid silent no-recipient
+    throw new Error("env variable is empty. Please add at least one address.");
   }
   return list.length === 1 ? list[0] : list;
 }
+
 
 /** --- NEW: for your ContactForm modal --- */
 export interface ContactPayload {
