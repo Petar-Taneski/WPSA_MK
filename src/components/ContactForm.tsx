@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 // import ReCAPTCHA from "react-google-recaptcha";
-// import { toastDefaultOptions } from 'lib/consts';
 import { toast } from "react-toastify";
-// import { validateEmail } from 'lib/utils';
 import { useTranslation } from "react-i18next";
 import { SOCIAL_MEDIA_LINKS } from "@/utils/consts";
+import { sendContactEmail } from "@/services/api";
 
 interface ContactFormProps {
   isOpen: boolean;
@@ -16,20 +15,15 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   // const recaptcha = useRef<ReCAPTCHA>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // const sitekey = import.meta.env.VITE_RECAPTCHA_SITEKEY;
+  const validateEmail = (emailValue: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue);
 
-  // Simple email validation
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  // Mock handleSubmit function
-  const handleSubmit = () => {
-    // const token = recaptcha?.current?.getValue();
-    if (name === "" || email === "" || message === "") {
+  const handleSubmit = async (): Promise<void> => {
+    if (!name || !email || !message) {
       toast.error(t("contact.errors.emptyFields"));
       return;
     }
@@ -38,19 +32,22 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
       return;
     }
 
-    // Mock successful submission
-    toast.success(t("contact.success.messageSent"));
-
-    // Reset form
-    setName("");
-    setEmail("");
-    setMessage("");
-
-    // Close modal
-    onClose();
+    try {
+      setSubmitting(true);
+      await sendContactEmail({ name, email, message }); // ← Firestore write
+      toast.success(t("contact.success.messageSent"));
+      setName("");
+      setEmail("");
+      setMessage("");
+      onClose();
+    } catch (err) {
+      console.error(err);
+      toast.error(t("contact.errors.submitFailed"));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  // Copy to clipboard function
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text).then(
       () => {
@@ -62,44 +59,15 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
     );
   };
 
-  // Disable body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
-      // Save the current overflow value
       const originalStyle = window.getComputedStyle(document.body).overflow;
-      // Disable scrolling on body
       document.body.style.overflow = "hidden";
-
-      // Re-enable scrolling when component unmounts or modal closes
       return () => {
         document.body.style.overflow = originalStyle;
       };
     }
   }, [isOpen]);
-
-  // const handleSubmit = async () => {
-  //   const token = recaptcha?.current?.getValue();
-  //   if (name === "" || email === "" || message === "" || !token) {
-  //     toast.error("Please fill in all fields.", toastDefaultOptions);
-  //     return;
-  //   }
-  //   if (!validateEmail(email)) {
-  //     toast.error("Please enter a valid email address.", toastDefaultOptions);
-  //     return;
-  //   }
-  //   try {
-  //     await sendContactEmail({ name, email, message, token });
-  //     toast.success("Message sent successfully!", toastDefaultOptions);
-  //     setName("");
-  //     setEmail("");
-  //     setMessage("");
-  //   } catch (error: any) {
-  //     toast.error(
-  //       error.message || "Failed to send message. Please try again.",
-  //       toastDefaultOptions
-  //     );
-  //   }
-  // };
 
   const handleClickOutside = (e: React.MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -114,7 +82,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
         onClose();
       }
     };
-
     document.addEventListener("keydown", handleEscapeKey);
     return () => {
       document.removeEventListener("keydown", handleEscapeKey);
@@ -123,7 +90,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Contact information
   const phoneNumber = "+389 75267026";
   const emailAddress = "zivinarskozdruzenie@gmail.com";
 
@@ -139,7 +105,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
         className="bg-white rounded-lg shadow-xl p-8 md:p-10 max-w-md w-full max-h-[90vh] overflow-y-auto z-[1002] relative"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex justify-between items-center mb-4">
           <button
             onClick={onClose}
             className="ml-auto text-gray-500 hover:text-gray-700"
@@ -149,7 +115,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Localized Title */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold md:text-3xl text-primary">
             {t("contact.mainTitle")}
@@ -161,7 +126,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
             className="flex flex-col"
             onSubmit={(e) => {
               e.preventDefault();
-              handleSubmit();
+              if (!submitting) void handleSubmit();
             }}
           >
             <input
@@ -172,6 +137,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
               onChange={(e) => setName(e.target.value)}
               placeholder={t("contact.form.namePlaceholder")}
               className="w-full bg-white text-gray-800/85 placeholder:text-gray-800/85 border-b border-primary laptop-l:mt-[15px] mt-[10px] focus:outline-none focus:border-primary"
+              disabled={submitting}
             />
 
             <input
@@ -182,7 +148,9 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t("contact.form.emailPlaceholder")}
               className="laptop-l:mt-[30px] mt-[21px] w-full bg-white text-gray-800/85 placeholder:text-gray-800/85 border-b border-primary focus:outline-none focus:border-primary"
+              disabled={submitting}
             />
+
             <label
               htmlFor="message"
               className="laptop-l:mt-[30px] mt-[21px] text-gray-800/85"
@@ -196,26 +164,23 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
-                e.target.style.height = "auto"; // Reset height
-                e.target.style.height = `${e.target.scrollHeight}px`; // Set height based on content
+                e.target.style.height = "auto";
+                e.target.style.height = `${e.target.scrollHeight}px`;
               }}
               className="border-b border-primary w-full h-fit bg-white text-gray-800/85 resize-none overflow-hidden laptop-l:mt-[15px] mt-[10px] focus:outline-none focus:border-primary"
               rows={1}
+              disabled={submitting}
             />
-            {/* {sitekey && (
-              <div className="my-2">
-                {<ReCAPTCHA ref={recaptcha} sitekey={sitekey} />}
-              </div>
-            )} */}
+
             <button
               type="submit"
-              className="self-center px-6 py-3 mt-6 font-medium transition-all duration-300 rounded-sm shadow-lg cursor-pointer hover:scale-101 w-fit text-primary hover:shadow-xl"
+              className="self-center px-6 py-3 mt-6 font-medium rounded-sm shadow-lg transition-all duration-300 cursor-pointer hover:scale-101 w-fit text-primary hover:shadow-xl disabled:opacity-60"
+              disabled={submitting}
             >
-              {t("contact.form.submitButton")}
+              {submitting ? t("contact.form.sending") : t("contact.form.submitButton")}
             </button>
           </form>
 
-          {/* Contact Info Section */}
           <div className="relative pt-6 mt-8 border-t border-gray-200">
             <div className="absolute top-5 right-0 max-[360px]:top-6 max-[360px]:space-x-1 flex space-x-2">
               {SOCIAL_MEDIA_LINKS.map((social) => (
@@ -242,18 +207,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ isOpen, onClose }) => {
             <div className="space-y-3">
               <div
                 className="flex items-center space-x-2 transition-colors cursor-pointer hover:text-primary"
-                onClick={() =>
-                  copyToClipboard(phoneNumber, t("contact.info.phone"))
-                }
+                onClick={() => copyToClipboard(phoneNumber, t("contact.info.phone"))}
               >
                 <span className="material-icons text-primary">phone</span>
                 <span>{phoneNumber}</span>
               </div>
               <div
                 className="flex items-center space-x-2 transition-colors cursor-pointer hover:text-primary"
-                onClick={() =>
-                  copyToClipboard(emailAddress, t("contact.info.email"))
-                }
+                onClick={() => copyToClipboard(emailAddress, t("contact.info.email"))}
               >
                 <span className="material-icons text-primary">email</span>
                 <span>{emailAddress}</span>
