@@ -12,7 +12,7 @@ const CONTACT_TO: string =
 function recipients(): string | string[] {
   const list = CONTACT_TO.split(",").map((s) => s.trim()).filter(Boolean);
   if (list.length === 0) {
-    return "you@yourdomain.com"; // fallback to avoid silent no-recipient
+    return "petar686@gmail.com"; // fallback to avoid silent no-recipient
   }
   return list.length === 1 ? list[0] : list;
 }
@@ -36,11 +36,10 @@ ${data.message}
 
   const html = `
     <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6">
-      <h2 style="margin:0 0 12px 0">New contact form</h2>
-      <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
-      <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+      <p> ${escapeHtml(data.name)}</p>
+      <p>${escapeHtml(data.email)}</p>
       <p><strong>Message:</strong></p>
-      <div style="white-space:pre-wrap">${escapeHtml(data.message)}</div>
+      <div>${escapeHtml(data.message)}</div>
     </div>
   `;
 
