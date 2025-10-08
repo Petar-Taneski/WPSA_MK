@@ -313,43 +313,67 @@ export const EventForm: React.FC<EventFormProps> = ({
 
     setSaving(true);
     try {
+      // --- Ensure main image is uploaded ---
       let finalImageUrl = "";
       let finalAltText = "";
 
-      // Upload main image if it has a file
-      if (formData.mainImage?.file) {
-        const filename = `events/${Date.now()}_${formData.mainImage.file.name}`;
-        finalImageUrl = await uploadImage(formData.mainImage.file, filename);
-        finalAltText = formData.mainImage.altText;
-      } else if (formData.mainImage?.url) {
-        // Use existing URL if no new file
-        finalImageUrl = formData.mainImage.url;
-        finalAltText = formData.mainImage.altText;
+      if (formData.mainImage) {
+        if (formData.mainImage.file) {
+          // Upload main image and wait for completion
+          const filename = `events/${Date.now()}_${
+            formData.mainImage.file.name
+          }`;
+          finalImageUrl = await uploadImage(formData.mainImage.file, filename);
+          finalAltText = formData.mainImage.altText;
+        } else if (formData.mainImage.url) {
+          // Use existing URL if it's valid
+          if (!isValidUrl(formData.mainImage.url)) {
+            toast.error(t("dashboard.invalidUrl", "Please enter a valid URL"));
+            setSaving(false);
+            return;
+          }
+          finalImageUrl = formData.mainImage.url;
+          finalAltText = formData.mainImage.altText;
+        }
       }
 
-      // Upload gallery images if they have files
-      const galleryImagesToUpload = formData.gallery.filter((img) => img.file);
-      let finalGallery = formData.gallery;
+      // --- Ensure gallery images are uploaded ---
+      let finalGallery: GalleryImage[] = [];
+      const galleryToUpload = formData.gallery.filter((img) => img.file);
 
-      if (galleryImagesToUpload.length > 0) {
-        const files = galleryImagesToUpload.map((img) => img.file!);
+      if (galleryToUpload.length > 0) {
+        const files = galleryToUpload.map((img) => img.file!);
         const uploadedImages = await uploadGalleryImages(files, "events");
 
-        // Replace the temporary images with uploaded ones
         finalGallery = formData.gallery.map((img) => {
           if (img.file) {
-            const uploadedImg = uploadedImages.find(
-              (uploaded: { altText: string }) =>
-                uploaded.altText === img.altText
+            const uploaded = uploadedImages.find(
+              (u) => u.altText === img.altText
             );
-            return uploadedImg || img;
+            return uploaded || img;
           }
           return img;
         });
+      } else {
+        finalGallery = formData.gallery;
       }
 
-      // Filter out images marked for deletion
+      // --- Filter out any pending deletions ---
       finalGallery = finalGallery.filter((img) => !img.pendingDeletion);
+
+      // --- Validate all URLs are no longer blobs ---
+      for (const img of finalGallery) {
+        if (!img.url || img.url.startsWith("blob:")) {
+          toast.error(
+            t(
+              "dashboard.invalidGalleryImage",
+              "Please wait until all gallery images are uploaded"
+            )
+          );
+          setSaving(false);
+          return;
+        }
+      }
 
       // Prepare data for submission
       const eventData = {
@@ -458,7 +482,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   return (
     <div className="p-6">
       {/* Form Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-800">
           {editingItem
             ? t("dashboard.editEvent", "Edit Event")
@@ -618,7 +642,7 @@ export const EventForm: React.FC<EventFormProps> = ({
               ref={langRef}
               value={formData.lang}
               onChange={(e) => handleChange("lang", e.target.value)}
-              className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="english">English</option>
               <option value="macedonian">Macedonian</option>
@@ -670,7 +694,7 @@ export const EventForm: React.FC<EventFormProps> = ({
                 checked={formData.isFeatured}
                 onChange={(e) => handleChange("isFeatured", e.target.checked)}
                 disabled={featuredEventsCount >= 5 && !formData.isFeatured}
-                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <label
                 htmlFor="featured"
@@ -714,23 +738,23 @@ export const EventForm: React.FC<EventFormProps> = ({
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md transition-colors hover:bg-gray-200"
+            className="px-4 py-2 text-gray-700 transition-colors bg-gray-100 rounded-md hover:bg-gray-200"
           >
             {t("dashboard.cancel", "Cancel")}
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center px-6 py-2 text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-6 py-2 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
-                <div className="mr-2 w-4 h-4 rounded-full border-b-2 border-white animate-spin"></div>
+                <div className="w-4 h-4 mr-2 border-b-2 border-white rounded-full animate-spin"></div>
                 {t("dashboard.saving", "Saving...")}
               </>
             ) : (
               <>
-                <Save className="mr-2 w-4 h-4" />
+                <Save className="w-4 h-4 mr-2" />
                 {editingItem
                   ? t("dashboard.update", "Update")
                   : t("dashboard.create", "Create")}

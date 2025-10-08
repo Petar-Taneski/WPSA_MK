@@ -372,42 +372,65 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
     setSaving(true);
     try {
+      // --- Ensure main image is uploaded ---
       let finalImageUrl = "";
       let finalAltText = "";
 
-      // Upload main image if it has a file
-      if (formData.mainImage?.file) {
-        const filename = `news/${Date.now()}_${formData.mainImage.file.name}`;
-        finalImageUrl = await uploadImage(formData.mainImage.file, filename);
-        finalAltText = formData.mainImage.altText;
-      } else if (formData.mainImage?.url) {
-        // Use existing URL if no new file
-        finalImageUrl = formData.mainImage.url;
-        finalAltText = formData.mainImage.altText;
+      if (formData.mainImage) {
+        if (formData.mainImage.file) {
+          // Upload main image and wait for completion
+          const filename = `news/${Date.now()}_${formData.mainImage.file.name}`;
+          finalImageUrl = await uploadImage(formData.mainImage.file, filename);
+          finalAltText = formData.mainImage.altText;
+        } else if (formData.mainImage.url) {
+          // Use existing URL if it's valid
+          if (!isValidUrl(formData.mainImage.url)) {
+            toast.error(t("dashboard.invalidUrl", "Please enter a valid URL"));
+            setSaving(false);
+            return;
+          }
+          finalImageUrl = formData.mainImage.url;
+          finalAltText = formData.mainImage.altText;
+        }
       }
 
-      // Upload gallery images if they have files
-      const galleryImagesToUpload = formData.gallery.filter((img) => img.file);
-      let finalGallery = formData.gallery;
+      // --- Ensure gallery images are uploaded ---
+      let finalGallery: GalleryImage[] = [];
+      const galleryToUpload = formData.gallery.filter((img) => img.file);
 
-      if (galleryImagesToUpload.length > 0) {
-        const files = galleryImagesToUpload.map((img) => img.file!);
+      if (galleryToUpload.length > 0) {
+        const files = galleryToUpload.map((img) => img.file!);
         const uploadedImages = await uploadGalleryImages(files, "news");
 
-        // Replace the temporary images with uploaded ones
         finalGallery = formData.gallery.map((img) => {
           if (img.file) {
-            const uploadedImg = uploadedImages.find(
-              (uploaded) => uploaded.altText === img.altText
+            const uploaded = uploadedImages.find(
+              (u) => u.altText === img.altText
             );
-            return uploadedImg || img;
+            return uploaded || img;
           }
           return img;
         });
+      } else {
+        finalGallery = formData.gallery;
       }
 
-      // Filter out images marked for deletion
+      // --- Filter out any pending deletions ---
       finalGallery = finalGallery.filter((img) => !img.pendingDeletion);
+
+      // --- Validate all URLs are no longer blobs ---
+      for (const img of finalGallery) {
+        if (!img.url || img.url.startsWith("blob:")) {
+          toast.error(
+            t(
+              "dashboard.invalidGalleryImage",
+              "Please wait until all gallery images are uploaded"
+            )
+          );
+          setSaving(false);
+          return;
+        }
+      }
 
       // Prepare data for submission
       const newsData = {
@@ -545,7 +568,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
   return (
     <div className="p-6">
       {/* Form Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-800">
           {editingItem
             ? t("dashboard.editNewsArticle", "Edit News Article")
@@ -647,7 +670,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
             <select
               value={formData.lang}
               onChange={(e) => handleChange("lang", e.target.value)}
-              className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="english">English</option>
               <option value="macedonian">Macedonian</option>
@@ -662,15 +685,15 @@ export const NewsForm: React.FC<NewsFormProps> = ({
               type="text"
               value={formData.author}
               onChange={(e) => handleChange("author", e.target.value)}
-              className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder={t("dashboard.authorPlaceholder", "Author name...")}
             />
           </div>
         </div>
 
         {/* Corresponding Post Management */}
-        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="flex justify-between items-center mb-4">
+        <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium text-gray-800">
               {t("dashboard.correspondingPost", "Corresponding Post")}
             </h3>
@@ -684,10 +707,10 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
           {/* Show pending link if exists */}
           {pendingLinkPost && !pendingUnlink ? (
-            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <div className="flex justify-between items-start">
+            <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex gap-2 items-center mb-2">
+                  <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-medium text-gray-800">
                       {pendingLinkPost.title}
                     </h4>
@@ -698,7 +721,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                   <p className="mb-2 text-sm text-gray-600 line-clamp-2">
                     {pendingLinkPost.summary}
                   </p>
-                  <div className="flex gap-4 items-center text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
                     <span>
                       {pendingLinkPost.lang === "english"
                         ? "English"
@@ -725,7 +748,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                         "_blank"
                       )
                     }
-                    className="flex gap-1 items-center px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 rounded bg-blue-50 hover:bg-blue-100"
                   >
                     <Eye className="w-4 h-4" />
                     {t("dashboard.preview", "Preview")}
@@ -738,7 +761,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                         t("dashboard.linkCancelled", "Pending link cancelled")
                       );
                     }}
-                    className="flex gap-1 items-center px-3 py-1 text-sm text-gray-600 bg-gray-50 rounded hover:bg-gray-100"
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 rounded bg-gray-50 hover:bg-gray-100"
                   >
                     <X className="w-4 h-4" />
                     {t("dashboard.cancel", "Cancel")}
@@ -747,8 +770,8 @@ export const NewsForm: React.FC<NewsFormProps> = ({
               </div>
             </div>
           ) : correspondingPost && !pendingUnlink ? (
-            <div className="p-4 bg-white rounded-lg border">
-              <div className="flex justify-between items-start">
+            <div className="p-4 bg-white border rounded-lg">
+              <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h4 className="mb-2 font-medium text-gray-800">
                     {correspondingPost.title}
@@ -756,7 +779,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                   <p className="mb-2 text-sm text-gray-600 line-clamp-2">
                     {correspondingPost.summary}
                   </p>
-                  <div className="flex gap-4 items-center text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
                     <span>
                       {correspondingPost.lang === "english"
                         ? "English"
@@ -783,7 +806,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                         "_blank"
                       )
                     }
-                    className="flex gap-1 items-center px-3 py-1 text-sm text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 rounded bg-blue-50 hover:bg-blue-100"
                   >
                     <Eye className="w-4 h-4" />
                     {t("dashboard.preview", "Preview")}
@@ -791,7 +814,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                   <button
                     type="button"
                     onClick={handleUnlinkPost}
-                    className="flex gap-1 items-center px-3 py-1 text-sm text-red-600 bg-red-50 rounded hover:bg-red-100"
+                    className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 rounded bg-red-50 hover:bg-red-100"
                   >
                     <Unlink className="w-4 h-4" />
                     {t("dashboard.unlink", "Unlink")}
@@ -800,9 +823,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
               </div>
             </div>
           ) : pendingUnlink ? (
-            <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-              <div className="flex justify-between items-center">
-                <div className="flex gap-2 items-center">
+            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <span className="font-medium text-red-800">
                     {t("dashboard.pendingUnlink", "Pending Unlink")}
                   </span>
@@ -821,7 +844,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                       t("dashboard.unlinkCancelled", "Pending unlink cancelled")
                     );
                   }}
-                  className="flex gap-1 items-center px-3 py-1 text-sm text-gray-600 bg-gray-50 rounded hover:bg-gray-100"
+                  className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 rounded bg-gray-50 hover:bg-gray-100"
                 >
                   <X className="w-4 h-4" />
                   {t("dashboard.cancel", "Cancel")}
@@ -849,7 +872,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                     loadAvailablePosts();
                   }}
                   disabled={loadingCorresponding}
-                  className="flex gap-2 items-center px-4 py-2 mx-auto text-blue-600 bg-blue-50 rounded hover:bg-blue-100 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 mx-auto text-blue-600 rounded bg-blue-50 hover:bg-blue-100 disabled:opacity-50"
                 >
                   <Link2 className="w-4 h-4" />
                   {t("dashboard.linkToPost", "Link to Post")}
@@ -861,9 +884,9 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
         {/* Post Selector Modal */}
         {showPostSelector && (
-          <div className="flex fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[80vh] overflow-hidden">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">
                   {t(
                     "dashboard.selectCorrespondingPost",
@@ -881,13 +904,13 @@ export const NewsForm: React.FC<NewsFormProps> = ({
 
               <div className="mb-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 w-4 h-4 text-gray-400 transform -translate-y-1/2" />
+                  <Search className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder={t("dashboard.searchPosts", "Search posts...")}
-                    className="py-2 pr-4 pl-10 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -895,7 +918,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
               <div className="overflow-y-auto max-h-96">
                 {loadingCorresponding ? (
                   <div className="py-8 text-center">
-                    <div className="inline-block w-6 h-6 rounded-full border-2 border-blue-600 animate-spin border-t-transparent"></div>
+                    <div className="inline-block w-6 h-6 border-2 border-blue-600 rounded-full animate-spin border-t-transparent"></div>
                     <p className="mt-2 text-gray-600">
                       {t("dashboard.loading", "Loading...")}
                     </p>
@@ -917,10 +940,10 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                     {filteredPosts.map((post) => (
                       <div
                         key={post.id}
-                        className="p-4 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50"
+                        className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
                         onClick={() => handleLinkPost(post)}
                       >
-                        <div className="flex justify-between items-start">
+                        <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <h4 className="mb-1 font-medium text-gray-800">
                               {post.title}
@@ -928,7 +951,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                             <p className="mb-2 text-sm text-gray-600 line-clamp-2">
                               {post.summary}
                             </p>
-                            <div className="flex gap-4 items-center text-xs text-gray-500">
+                            <div className="flex items-center gap-4 text-xs text-gray-500">
                               <span>
                                 {post.lang === "english"
                                   ? "English"
@@ -955,7 +978,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
                                 "_blank"
                               );
                             }}
-                            className="flex gap-1 items-center px-2 py-1 text-xs text-blue-600 bg-blue-50 rounded hover:bg-blue-100"
+                            className="flex items-center gap-1 px-2 py-1 text-xs text-blue-600 rounded bg-blue-50 hover:bg-blue-100"
                           >
                             <Eye className="w-3 h-3" />
                             {t("dashboard.preview", "Preview")}
@@ -995,7 +1018,7 @@ export const NewsForm: React.FC<NewsFormProps> = ({
             type="text"
             value={formData.tags}
             onChange={(e) => handleChange("tags", e.target.value)}
-            className="px-3 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder={t(
               "dashboard.tagsPlaceholder",
               "Comma-separated tags..."
@@ -1029,23 +1052,23 @@ export const NewsForm: React.FC<NewsFormProps> = ({
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md transition-colors hover:bg-gray-200"
+            className="px-4 py-2 text-gray-700 transition-colors bg-gray-100 rounded-md hover:bg-gray-200"
           >
             {t("dashboard.cancel", "Cancel")}
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center px-6 py-2 text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-6 py-2 text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <>
-                <div className="mr-2 w-4 h-4 rounded-full border-b-2 border-white animate-spin"></div>
+                <div className="w-4 h-4 mr-2 border-b-2 border-white rounded-full animate-spin"></div>
                 {t("dashboard.saving", "Saving...")}
               </>
             ) : (
               <>
-                <Save className="mr-2 w-4 h-4" />
+                <Save className="w-4 h-4 mr-2" />
                 {editingItem
                   ? t("dashboard.update", "Update")
                   : t("dashboard.create", "Create")}
