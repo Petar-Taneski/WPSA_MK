@@ -236,7 +236,7 @@ const OpenHeader: React.FC<OpenHeaderProps> = ({
           <div className="flex justify-end w-full">
             <button
               onClick={handleLanguageChange}
-              className="flex items-center justify-center p-2 "
+              className="flex items-center justify-center cursor-pointer p-1 z-10"
               aria-label={
                 i18n.language === "en" ? t("languages.mk") : t("languages.en")
               }
